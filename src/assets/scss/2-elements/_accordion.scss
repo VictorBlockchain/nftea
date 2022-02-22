@@ -1,0 +1,76 @@
+/*--------------------------------------------------------------
+## accordion styles
+--------------------------------------------------------------*/
+.accordion {
+    background: transparent !important ;
+    overflow: inherit !important;
+    .card {
+        border-radius: 8px;
+        border: 0;
+        margin-bottom: 1rem;
+        border: solid 1px rgb(241, 243, 245);
+
+        .card-header {
+            padding: 0.5rem;
+            background-color: white;
+            box-shadow: $shadow_3;
+            border-radius: 8px;
+            border-color: #edeef1;
+            border-bottom: 0;
+            .btn-link {
+                background: transparent;
+                border-color: transparent !important;
+                width: 100%;
+                text-align: left;
+                i {
+                    color: $color_black;
+                    vertical-align: middle;
+                    font-size: 22px;
+                    margin-right: 5px;
+                    margin-top: -2px;
+                }
+                &:hover {
+                    border-color: transparent !important;
+                }
+                &::before {
+                    content: "";
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z'/%3E%3C/svg%3E");
+                    float: right;
+                    margin-top: -2px;
+                    font-size: 20px;
+                    color: $color_hard_light;
+                    transition: 0.25 $transition_function;
+                    height: 20px;
+                    width: 20px;
+                    @include prefixer(transition, 0.4s, webkit moz o ms);
+                }
+            }
+            &.active {
+                .btn-link {
+                    &::before {
+                        @include prefixer(transform, rotate(180deg), webkit moz o ms);
+                    }
+                }
+            }
+            h3 {
+                .btn-link {
+                    color: $color_black;
+                    font-size: 15.5px;
+                    font-weight: 500;
+                    text-decoration: none;
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+        .card-body {
+            p {
+                font-size: 14px !important;
+                color: $color_hard_light !important;
+                font-weight: 400 !important;
+                margin: 0px;
+            }
+        }
+    }
+}

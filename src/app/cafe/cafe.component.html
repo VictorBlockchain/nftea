@@ -1,0 +1,273 @@
+<app-header (session)="getSession($event)"></app-header>
+<div class="hero_ranking bg_white">
+			    <div class="container" style="padding-top:100px; padding-bottom:100px">
+			        <h1 class="text-center"><span style="font-family: 'Potta One'">NFTea Cafe</span></h1>
+              <h4 class="text-center pt-5" style="color:#000; font-family: 'Poiret One'; padding-top:20px">host clubhouse twitter spaces style rooms and earn Tea Tokens</h4>
+			    </div>
+			</div>
+			<section class="section forum mt-100">
+      			    <div class="container-md">
+      			        <div class="row sm:space-y-30">
+      			            <div class="col-lg-12 text-center">
+													<h3 class="text-center p5 mb-3">coming soon</h3>
+													<iframe width="560" height="315" src="https://www.youtube.com/embed/lowXP1yxQ1c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+												</div>
+										</div>
+								</div>
+			</section>
+
+
+      <section class="section forum mt-100" style="display:none">
+      			    <div class="container-md">
+      			        <div class="row sm:space-y-30">
+      			            <div class="col-lg-8" *ngIf="!showCreateRoom">
+      			                <div class="forum__content">
+      			                    <ul class="nav nav-tabs d-flex mb-30" role="tablist">
+      			                        <li class="nav-item">
+      			                            <a class="btn btn-white btn-sm active" data-toggle="tab" href="#tabs-1" role="tab">
+      			                                $1 Hand Raise</a>
+      			                        </li>
+      			                        <li class="nav-item">
+      			                            <a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-1" role="tab">
+      			                                $5 Hand Rise</a>
+      			                        </li>
+      			                        <li class="nav-item">
+      			                            <a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-1" role="tab">
+      			                                $10 Hand Raise</a>
+      			                        </li>
+      			                        <li class="nav-item">
+      			                            <a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-1" role="tab">
+      			                                $15+ Hand Raise</a>
+      			                        </li>
+      			                    </ul>
+
+      			                    <div class="tab-content">
+      			                        <div class="tab-pane active space-y-30" id="tabs-1" role="tabpanel" *ngIf="ROOMS">
+																			<div class="box is__big space-y-20" *ngIf="ROOMS && ROOMS.length<1">
+																				<div class="row">
+																					<div class="col-12">
+																						<h3 class="text-center">no rooms open</h3>
+																					</div>
+																				</div>
+																			</div>
+
+      			                            <div class="box is__big space-y-20" *ngFor="let data of ROOMS">
+      			                                <div class="d-flex justify-content-between
+      			                                    align-items-center">
+      			                                    <div class="d-flex align-items-center
+      			                                        space-x-15">
+      			                                        <div class="avatars space-x-10">
+      			                                            <div class="media has_border">
+      			                                                <a href="javascript: void(0)">
+      			                                                    <img src="assets/img/icons/cup_peach_256.png" alt="Avatar" class="avatar
+      			                                                        avatar-forum">
+      			                                                </a>
+      			                                            </div>
+      			                                            <div class="text-center">
+      			                                                <a href="javascript: void(0)">
+      			                                                    <p class="avatars_name
+      			                                                        color_brand">Host: {{data.host.slice(0,5)}}...</p>
+      			                                                </a>
+      			                                            </div>
+      			                                        </div>
+      			                                        <div class="category">
+      			                                            <p class="color_black"><span class="color_text">in:</span>
+
+      			                                            </p>
+      			                                        </div>
+      			                                    </div>
+      			                                    <div>
+      			                                        <div class="avatars space-x-3">
+      			                                            <div class="-space-x-20">
+      			                                                <small>FEE:</small> {{data.fee | number:'1.0-9'}} TEA
+
+      			                                            </div>
+      			                                        </div>
+      			                                    </div>
+      			                                </div>
+      			                                <div class="d-flex">
+      			                                    <div class="number">
+      			                                        <span class="pr-10">#{{data.id}}</span>
+      			                                    </div>
+      			                                    <div class="space-y-20">
+      			                                        <a href="post_details.html">
+      			                                            <h3 class="forum__title">{{data.title}}</h3>
+      			                                        </a>
+      			                                        <p class="forum__desc">{{data.info}}</p>
+      			                                        <div class="hr"></div>
+      			                                        <div class="d-flex
+      			                                            justify-content-between flex-wrap">
+
+      			                                            <div class="answer text-right">
+      			                                                <a href="javascript: void(0)" class="btn btn-dark
+      			                                                    btn-lg" routerLink="/cafe/room/{{data.id}}">Join Room</a>
+      			                                            </div>
+      			                                        </div>
+      			                                    </div>
+      			                                </div>
+      			                            </div>
+
+      			                        </div>
+      			                        <div class="tab-pane" id="tabs-2" role="tabpanel">
+      			                            <p>2</p>
+      			                        </div>
+      			                        <div class="tab-pane" id="tabs-3" role="tabpanel">
+      			                            <p>3</p>
+      			                        </div>
+      			                        <div class="tab-pane" id="tabs-4" role="tabpanel">
+      			                            <p>4</p>
+      			                        </div>
+      			                    </div>
+      			                </div>
+      			            </div>
+                        <div class="col-lg-8" *ngIf="showCreateRoom">
+                          <h3 class="p-3">create room</h3>
+                          <div class="box is__big">
+                            <form [formGroup]="_createRoom">
+
+			                        <div class="space-y-20 mb-0">
+			                            <div class="space-y-10">
+			                                <span class="nameInput">Title</span>
+			                                <input type="email" class="form-control" placeholder="nftea tips and tricks" formControlName="title">
+			                            </div>
+			                            <div class="space-y-10">
+			                                <span class="nameInput">Hand Raise Fee</span>
+                                      <select class="form-select
+                                          custom-select" formControlName="fee">
+																					<option value="0">FREE</option>
+                                          <option value="1">$1</option>
+                                          <option value="5">$5</option>
+                                          <option value="10">$10</option>
+                                          <option value="15">$15</option>
+                                          <option value="25">$25</option>
+                                          <option value="50">$50</option>
+                                          <option value="100">$100</option>
+                                          <option value="250">$250</option>
+                                          <option value="500">$500</option>
+                                          <option value="1000">$1,000</option>
+                                      </select>
+			                            </div>
+			                            <div class="space-y-10">
+			                                <span class="nameInput">Details</span>
+			                                <textarea style="min-height: 110px" class="mb-0" formControlName="details">
+                                      </textarea>
+			                            </div>
+			                            <div class="space-y-10">
+			                                <span class="nameInput">Category</span>
+			                                <select class="form-select
+			                                    custom-select" formControlName="category">
+			                                    <option value="nftea">NFTea</option>
+			                                    <option value="metaverse">Metaverse/VR</option>
+			                                    <option value="gaming">Gaming</option>
+                                          <option value="gaming">Music</option>
+                                          <option value="film">Film</option>
+                                          <option value="crypto">Crypto</option>
+                                          <option value="women">Women & Crypto/NFT</option>
+			                                </select>
+			                            </div>
+                                  <div class="space-y-10">
+                                      <span class="nameInput">NFT ID Required</span>
+                                      <input type="number" class="form-control" formControlName="nftid">
+                                  </div>
+                                  <p>Participants must have this NFT to join room, leave blank if none</p>
+                                  <div class="space-y-10">
+                                      <span class="nameInput">Host 2</span>
+                                      <input type="text" class="form-control" formControlName="host2">
+                                  </div>
+                                  <p>BNB Address of Host #2, leave blank if none</p>
+                                  <div class="space-y-10">
+                                      <span class="nameInput">Host 3</span>
+                                      <input type="text" class="form-control" formControlName="host3">
+                                  </div>
+                                  <p>BNB Address of Host #3, leave blank if none</p>
+                                  <div class="space-y-10">
+                                      <span class="nameInput">Host 4</span>
+                                      <input type="text" class="form-control" formControlName="host4">
+                                  </div>
+                                  <p>BNB Address of Host #4, leave blank if none</p>
+                                  <div class="space-y-10">
+                                      <span class="nameInput">Host 5</span>
+                                      <input type="text" class="form-control" formControlName="host5">
+                                  </div>
+                                  <p>BNB Address of Host #5, leave blank if none</p>
+                                  <div class="space-y-10 p-30">
+                                    <a href="javascript: void(0)"  class="btn btn-primary w-100" (click)="setRoom()">
+                                        <i class="ri-add-line"></i>
+                                        create room</a>
+
+                                  </div>
+			                        </div>
+                              </form>
+			                    </div>
+                        </div>
+      			            <div class="col-lg-4">
+      			                <div class="sidebar space-y-30">
+      			                    <a *ngIf="!showCreateRoom"  href="javascript: void(0)"  class="btn btn-grad w-100" (click)="showCreateRoom=true;">
+      			                        <i class="ri-add-line"></i>
+      			                        Start New Room</a>
+                                    <a *ngIf="showCreateRoom"  href="javascript: void(0)"  class="btn btn-dark w-100" (click)="showCreateRoom=false;">
+                                        <i class="ri-add-line"></i>
+                                        cancel</a>
+      			                    <div class="space-y-10">
+      			                        <h5>Categories</h5>
+      			                        <div class="box space-y-10 is__big">
+      			                            <div class="d-flex justify-content-between">
+      			                                <span class="color-black" (click)="LR()">NFTea</span>
+      			                                <span class="light_bg">0</span>
+      			                            </div>
+      			                            <div class="hr"></div>
+      			                            <div class="d-flex justify-content-between">
+      			                                <span class="color-black">Metaverse/VR</span>
+      			                                <span class="light_bg">0</span>
+      			                            </div>
+      			                            <div class="hr"></div>
+      			                            <div class="d-flex justify-content-between">
+      			                                <span class="color-black">Gaming</span>
+      			                                <span class="light_bg">0</span>
+      			                            </div>
+                                        <div class="hr"></div>
+
+                                        <div class="d-flex justify-content-between">
+      			                                <span class="color-black">Music</span>
+      			                                <span class="light_bg">0</span>
+      			                            </div>
+                                        <div class="hr"></div>
+
+                                        <div class="d-flex justify-content-between">
+                                            <span class="color-black">Film</span>
+                                            <span class="light_bg">0</span>
+                                        </div>
+                                        <div class="hr"></div>
+
+                                        <div class="d-flex justify-content-between">
+      			                                <span class="color-black">Crypto</span>
+      			                                <span class="light_bg">0</span>
+      			                            </div>
+                                        <div class="hr"></div>
+
+                                        <div class="d-flex justify-content-between">
+      			                                <span class="color-black">Women & Crypto/NFT</span>
+      			                                <span class="light_bg">0</span>
+      			                            </div>
+
+
+      			                       </div>
+      			                    </div>
+
+      			                    <div class="space-y-10">
+      			                        <div class="box space-y-30">
+                                      <h6 class="card_title">
+                                         - Room time is based on your Cafe NFT<br>
+                                         <small class="color_brand">ie: If you have an hour cafe NFT, you can host a room for 3 hours but will earn only 1 hour worth of presence monetization</small>
+                                      </h6>
+
+                                        <h6 class="card_title">
+                                           - Earnings split evenly between hosts
+                                        </h6>
+      			                        </div>
+      			                    </div>
+      			                </div>
+      			            </div>
+      			        </div>
+      			    </div>
+      			</section>

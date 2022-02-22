@@ -1,0 +1,638 @@
+<app-header (session)="getSession($event)"></app-header>
+<div class="modal fade popup" id="set_ids" tabindex="-1" role="dialog" aria-hidden="true">
+
+					<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<div class="modal-body space-y-20 p-40">
+											<h3 class="text-center">Reserve NFT ID's</h3>
+											<p class="text-center">reserve id's for your regenerative mint</p>
+											<form [formGroup]="_reserve">
+
+												<input type="text" class="form-control" placeholder="1000" formControlName="quantity">
+											</form>
+											<a href="javascript: void(0)" class="btn btn-dark w-full" disable> reserve</a>
+									</div>
+							</div>
+					</div>
+			</div>
+<div class="hero__upload" *ngIf="!showCreateNFT && !showCreateBrew && !showCreateCollection">
+	<div class="container">
+		<div class="space-y-20" *ngIf="!this.showApproval">
+			<h1 class="text-center">create a collectible</h1>
+			<p class="hero__text text-center form_cc_four">create a collectible or a brew pot for time locked assets to back your nft's. NFT's backed with a brew appreciate in value.</p>
+		</div>
+		<div class="space-y-20" *ngIf="this.showApproval">
+			<h1 class="text-center">approve contracts</h1>
+			<p class="hero__text text-center form_cc_four">Enable the below contracts to utilize TEA tokens</p>
+		</div>
+	</div>
+</div>
+<div class="container" *ngIf="showApproval">
+	<div class="row justify-content-center">
+		<div class="col-lg-10">
+			<div class="row justify-content-center">
+				<div class="col-lg-3" *ngIf="showEnableToken">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/icons/cup_blue_256.png" alt="" style="width:auto; height:100px">
+						<div class="space-y-10">
+							<h5> Enable NFTea/TEA</h5>
+							<h6>nft contract can hold your TEA Tokens (as NFT brews)</h6>
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(1)">
+								Enable
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3" *ngIf="showEnableToken">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/icons/cup_mug_256.png" alt="" style="width:auto; height:100px">
+						<div class="space-y-10">
+							<h5> Enable Auction/TEA</h5>
+							<h6>auction contract can hold your TEA Tokens</h6>
+
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(2)">
+								Enable
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3" *ngIf="showEnableShop">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/icons/cup_peach_256.png" alt="" style="width:auto; height:100px">
+						<div class="space-y-10">
+							<h5> Enable Auction/NFT</h5>
+							<h6>auction contract can hold/move your nfts</h6>
+
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(3)">
+								Enable
+							</a>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="col-lg-3" *ngIf="showEnableWallToken">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/logos/pot128.png" alt="" style="width:auto; height:100px">
+						<div class="space-y-10">
+							<h5> enable wall</h5>
+							<h6>nft contract can spend your shitty dollar's</h6>
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(4)">
+								Enable
+							</a>
+						</div>
+					</div>
+				</div> -->
+			</div>
+		</div>
+
+		<div class="col-lg-10 mt-30">
+			<div class="row justify-content-center">
+				<div class="col-lg-3" *ngIf="showEnableHANDTEA">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/icons/cup_mug_256.png" alt="" style="width:auto; height:100px">
+						<div class="space-y-10">
+							<h5> Enable Hands/TEA </h5>
+							<h6>hands game can hold your TEA</h6>
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(5)">
+								Enable
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-3" *ngIf="showEnableHANDNFT">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/icons/cup_peach_256.png" alt="" style="width:auto; height:100px">
+						<div class="space-y-10">
+							<h5> Enable Hands/NFT </h5>
+							<h6>hands game can hold your NFT's</h6>
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(6)">
+								Enable
+							</a>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+<div class="container" *ngIf="!showCreateNFT && !showCreateBrew && !showCreateCollection && !this.showApproval">
+	<div class="row justify-content-center">
+		<div class="col-lg-10">
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/logos/collection128.png" alt="">
+						<div class="space-y-10">
+							<h5> Create Album</h5>
+							<p class="color_text">a photo album of nft's</p>
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="showCreateCollection=true">
+								create
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/logos/cup128.png" alt="">
+						<div class="space-y-10">
+							<h5>Create NFT's</h5>
+							<p class="color_text">nft's with added value</p>
+							<div class="hr"></div>
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="showCreateNFT=true;">
+								create
+							</a>
+
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="box text-center">
+						<img class="icon" src="assets/img/logos/pot128.png" alt="">
+						<div class="space-y-10">
+							<h5> Reserve Token ID's</h5>
+							<p class="color_text">minting regenrative NFT's?</p>
+							<div class="hr"></div>
+							<a class="btn btn-white btn" href="javascript: void(0)" disable>
+								Reserve
+							</a>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+		</div>
+	</div>
+</div>
+<div class="container" *ngIf="showCreateBrew">
+	<div class="mt-40">
+		<h3 class="mb-40" (click)="showCreateBrew=false">
+			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
+											32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
+											16.352L18.816 0H19.712L22.512 16.352L38.08
+											10.64L38.528
+											11.424L25.76 21.952L38.528 32.592L38.08
+											33.376L22.512
+											27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+			</svg>
+			Create Brew Pot
+			<a href="javascript: void(0)" (click)="showCreateBrew=false" class="btn btn-white btn-sm my-40">
+					Back
+				</a>
+		</h3>
+	</div>
+	<div class="box in__upload mb-120 form_cc_four mb-20">
+		<div class="row form_cc_four mb-20">
+			<div class="col-lg-6">
+				<div class="left__part space-y-40 md:mb-20 upload_file">
+					<div class="space-y-20">
+						<img class="icon" src="assets/img/logos/pot128.png" alt="">
+						<h5>Drag and drop your file</h5>
+						<p class="color_text">PNG, GIF, WEBP, MP4 or MP3. Max
+							100mb.</p>
+					</div>
+					<div class="space-y-20">
+						<p class="color_text">or choose a file</p>
+						<a href="#" class="btn btn-white"> Browse files </a>
+						<input type="file" (change)="upload($event)">
+
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="form-group space-y-10">
+					<form [formGroup]="_createBrew">
+						<div class="space-y-20">
+							<div class="space-y-10">
+								<span class="nameInput">Title</span>
+								<input type="text" class="form-control" placeholder="e. g. `my awesome collection`">
+							</div>
+							<div class="space-y-10">
+								<span class="nameInput">NFT (token) Value</span>
+								<input type="text" class="form-control" placeholder="e. g. `100`">
+							</div>
+							<div class="space-y-10">
+								<span class="nameInput">NFT Asset</span>
+								<input type="text" class="form-control" placeholder="e. g. `100`">
+							</div>
+							<div class="space-y-10">
+								<span class="nameInput">Brew Date</span>
+								<input type="text" class="form-control" placeholder="e. g. `10/15/2022`">
+							</div>
+
+						</div>
+					</form>
+				</div>
+				<div class="row space-y-20">
+					<div class="col">
+						<div class="form_cc_four">
+							<p>A Brew Pot is a time locked vault where you put assets backing your NFT. For example, your Brew Pot could store 100 NFT tokens, 1 BNB, or other NFT's.<br /><br />
+								The NFT (token) value is the initial amount of tokens you are adding into the Pot.<br /><br />
+								NFT asset is the NFT you are backing with this Pot.</p>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container" *ngIf="showCreateCollection">
+	<div class="mt-40">
+		<h3 class="mb-40" (click)="showCreateCollection=false">
+			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
+											32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
+											16.352L18.816 0H19.712L22.512 16.352L38.08
+											10.64L38.528
+											11.424L25.76 21.952L38.528 32.592L38.08
+											33.376L22.512
+											27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+			</svg>
+			Create An Album
+			<a href="javascript: void(0)" (click)="showCreateCollection=false" class="btn btn-white btn-sm my-40">
+					Back
+				</a>
+		</h3>
+	</div>
+	<div class="box in__upload mb-120 form_cc_four mb-20">
+		<div class="row form_cc_four mb-20">
+			<div class="col-lg-6">
+				<div class="left__part space-y-40 md:mb-20 upload_file">
+					<div class="space-y-20">
+						<p>Create an album for cat NFT's and store all the NFT's you create about cats in it.<br /><br />
+						NFT's in this album will serve as the cover image.</p>
+
+					</div>
+
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="form-group space-y-10">
+					<form [formGroup]="_createCollection">
+						<div class="space-y-20">
+							<div class="space-y-10">
+								<span class="nameInput">Album Name</span>
+								<input type="text" class="form-control" placeholder="e. g. `my awesome collection`" formControlName="name">
+							</div>
+							<div class="space-y-10">
+								<span class="nameInput">Story</span>
+								<input type="text" class="form-control" placeholder="e. g. `this is a collection for my hit song`" formControlName="story">
+							</div>
+							<div class="space-y-10">
+								  <span class="nameInput">Category</span>
+									<select class="form-select custom-select" aria-label="Preference" formControlName="category">
+										<option value="1">Avatar</option>
+										<option value="2">Cover</option>
+										<option value="3">Heritage</option>
+										<option value="4">Cafe Wall</option>
+										<option value="5">Film/Video</option>
+										<option value="6">Art & All</option>
+										<option value="7">Music</option>
+										<option value="8">Prison Art</option>
+										<option value="9">Sexy Women</option>
+										<option value="10">Sexy Men</option>
+									</select>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="row space-y-20">
+					<div class="col text-center">
+						<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="createCollection()">create collection</a>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container" *ngIf="showCreateNFT">
+	<div class="mt-40">
+		<h3 class="mb-40" (click)="showCreateNFT=false">
+			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
+											32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
+											16.352L18.816 0H19.712L22.512 16.352L38.08
+											10.64L38.528
+											11.424L25.76 21.952L38.528 32.592L38.08
+											33.376L22.512
+											27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+			</svg>
+			Create An NFT
+			<a href="javascript: void(0)" (click)="showCreateNFT=false" class="btn btn-white btn-sm my-40">
+					Back
+				</a>
+		</h3>
+	</div>
+	<div class="box in__upload mb-120 form_cc_four mb-20">
+		<div class="row form_cc_four mb-20">
+			<div class="col-lg-6">
+				<div class="left__part space-y-40 md:mb-20 upload_file">
+					<div class="space-y-20">
+						<img class="icon" src="assets/img/logos/cup128.png" alt="">
+						<h5>Drag and drop your file</h5>
+						<p class="color_text">PNG, GIF, WEBP, MP4 or MP3. Max
+							100mb.</p>
+					</div>
+					<div class="space-y-20">
+						<p class="color_text">or choose a file</p>
+						<a href="#" class="btn btn-white"> Browse files </a>
+						<input type="file" (change)="upload($event)">
+
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<div class="form-group space-y-10">
+					<form [formGroup]="_createNFT">
+						<div class="space-y-20">
+							<div class="space-y-10">
+								<span class="nameInput">Title</span>
+								<input type="text" class="form-control" placeholder="e. g. `my awesome nft`" formControlName="title">
+							</div>
+
+							<div class="space-y-10">
+								<span class="nameInput">Quantity</span>
+								<input type="number" class="form-control" placeholder="e. g. `1`" formControlName="quantity">
+							</div>
+							<div class="space-y-10">
+								<span class="nameInput">Royalty</span>
+								<input type="number" class="form-control" placeholder="e. g. `10`" formControlName="royalty">
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Split With <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `0x0`" formControlName="split1">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Split % <span class="color_text">
+												(optional) </span></span>
+										<input type="number" class="form-control" placeholder="e. g. `25`" formControlName="split1Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Split With <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `0x0`" formControlName="split2">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Split % <span class="color_text">
+												(optional) </span></span>
+										<input type="number" class="form-control" placeholder="e. g. `25`" formControlName="split2Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Split With <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `0x0`" formControlName="split3">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Split % <span class="color_text">
+												(optional) </span></span>
+										<input type="number" class="form-control" placeholder="e. g. `25`" formControlName="split3Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<span class="nameInput">Story</span>
+								<input type="text" class="form-control" placeholder="e. g. `this is a story about`" formControlName="story">
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Propery Name <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `gender`" formControlName="prop1">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Property Value <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `female`" formControlName="prop1Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Propery Name <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `strength`" formControlName="prop2">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Property Value <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `10`" formControlName="prop2Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Propery Name <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `color`" formControlName="prop3">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Property Value <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `blue`" formControlName="prop3Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Propery Name <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `weapon`" formControlName="prop4">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Property Value <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `sword`" formControlName="prop4Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Propery Name <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `weapon strength`" formControlName="prop5">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Property Value <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `8`" formControlName="prop5Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10">
+								<div class=row>
+									<div class="col-6">
+										<span class="nameInput">Propery Name <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `dancing`" formControlName="prop6">
+									</div>
+									<div class="col-6">
+										<span class="nameInput">Property Value <span class="color_text">
+												(optional) </span></span>
+										<input type="text" class="form-control" placeholder="e. g. `5`" formControlName="prop6Value">
+									</div>
+								</div>
+							</div>
+							<div class="space-y-10" *ngIf="COLLECTION && COLLECTION.length>0">
+								<span class="variationInput">Choose collection</span>
+								<div class="d-flex flex-column flex-md-row">
+									<a href="javascript: void(0)" class="choose_collection mb-10
+													mb-md-0 mr-0 mr-md-3" (click)="showCreateCollection=true;showCreateNFT=false;">
+										<div class="icon">
+
+											<i class="ri-add-line"></i>
+										</div>
+										New collection
+									</a>
+									<a href="javascript: void(0)" class="choose_collection is_brand mr-3" *ngFor="let data of COLLECTION; let i = index">
+										<img src="assets/img/icons/raroin_icon.svg" alt="" (click)="setCollectonID(data.id)">
+										<span (click)="setCollectonID(data.id)">{{data.name}}</span></a>
+								</div>
+							</div>
+
+
+						</div>
+					</form>
+				</div>
+				<div class="row space-y-20">
+					<div class="col">
+						<div class="form_cc_four">
+							<p>Split earnings (sells, auctions, raffles and royalties) with up to 3 other creators + you.
+							</p>
+						</div>
+					</div>
+				</div>
+				<p class="text-center mt-30">
+
+					<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="SET_NFT()"><i class="ri-donut-chart-fill
+												            lg"></i> Create NFT</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container" *ngIf="imageURL">
+	<div class="mt-0">
+		<h3 class="mb-40">
+			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
+											32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
+											16.352L18.816 0H19.712L22.512 16.352L38.08
+											10.64L38.528
+											11.424L25.76 21.952L38.528 32.592L38.08
+											33.376L22.512
+											27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+			</svg>
+			Preview
+		</h3>
+	</div>
+	<div class="box in__upload mb-120 form_cc_four mb-20">
+<div class="item_details">
+					<div class="row sm:space-y-20">
+						<div class="col-lg-6">
+							<img class="item_img" src="{{imageURL}}" style="width:80%; height:auto" alt="">
+						</div>
+						<div class="col-lg-6">
+							<div class="space-y-20">
+								<h3>{{_createNFT.controls.title.value}}</h3>
+								<div class="d-flex justify-content-between">
+									<div class="space-x-10 d-flex align-items-center">
+										<p>1 of {{_createNFT.controls.quantity.value}}</p>
+									</div>
+								</div>
+								<div class="box">
+									<div class="space-y-20">
+										<div class="d-flex justify-content-between
+											mb-30_reset">
+											<ul class="nav nav-tabs d-flex space-x-10 mb-30" role="tablist">
+												<li class="nav-item">
+													<a class="btn btn-white btn-sm active" data-toggle="tab" href="#tabs-1" role="tab">
+														Details</a>
+												</li>
+												<li class="nav-item">
+													<a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-2" role="tab">
+														Bids</a>
+												</li>
+												<li class="nav-item">
+													<a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-3" role="tab">
+														History</a>
+												</li>
+											</ul>
+											<!-- Tab panes -->
+											<div class="dropdown d-none d-sm-block">
+												<button class="btn btn-white btn-sm
+													dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													Recent Active
+												</button>
+												<div class="dropdown-menu">
+													<a class="dropdown-item" href="javascript: void(0)">Action</a>
+													<a class="dropdown-item" href="javascript: void(0)">Another
+														action</a>
+													<a class="dropdown-item" href="javascript: void(0)">Something
+														else here</a>
+												</div>
+											</div>
+										</div>
+										<div class="hr"></div>
+										<div class="tab-content">
+											<div class="tab-pane active" id="tabs-1" role="tabpanel">
+												<p>{{_createNFT.controls.story.value}}</p>
+											</div>
+											<div class="tab-pane" id="tabs-2" role="tabpanel">
+												<p>nft in creation</p>
+											</div>
+											<div class="tab-pane space-y-20" id="tabs-3" role="tabpanel">
+												<p>nft in creation</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="numbers">
+									<div class="row">
+										<div class="col-lg-6">
+											<div class="space-y-5">
+												<p class="color_text">Minimum bid</p>
+												<h4>0 <span class="txt_sm color_text">
+														TEA</span></h4>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="hr2"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+				</div>

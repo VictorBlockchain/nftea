@@ -1,0 +1,611 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.2;
+
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+interface IERC20 {
+
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+}
+library DateTime {
+    uint256 constant SECONDS_PER_DAY = 24 * 60 * 60;
+    uint256 constant SECONDS_PER_HOUR = 60 * 60;
+    uint256 constant SECONDS_PER_MINUTE = 60;
+    int256 constant OFFSET19700101 = 2440588;
+
+    uint256 constant DOW_MON = 1;
+    uint256 constant DOW_TUE = 2;
+    uint256 constant DOW_WED = 3;
+    uint256 constant DOW_THU = 4;
+    uint256 constant DOW_FRI = 5;
+    uint256 constant DOW_SAT = 6;
+    uint256 constant DOW_SUN = 7;
+
+    // ------------------------------------------------------------------------
+    // Calculate the number of days from 1970/01/01 to year/month/day using
+    // the date conversion algorithm from
+    //   http://aa.usno.navy.mil/faq/docs/JD_Formula.php
+    // and subtracting the offset 2440588 so that 1970/01/01 is day 0
+    //
+    // days = day
+    //      - 32075
+    //      + 1461 * (year + 4800 + (month - 14) / 12) / 4
+    //      + 367 * (month - 2 - (month - 14) / 12 * 12) / 12
+    //      - 3 * ((year + 4900 + (month - 14) / 12) / 100) / 4
+    //      - offset
+    // ------------------------------------------------------------------------
+    function _daysFromDate(
+        uint256 year,
+        uint256 month,
+        uint256 day
+    ) internal pure returns (uint256 _days) {
+        require(year >= 1970);
+        int256 _year = int256(year);
+        int256 _month = int256(month);
+        int256 _day = int256(day);
+
+        int256 __days =
+            _day -
+                32075 +
+                (1461 * (_year + 4800 + (_month - 14) / 12)) /
+                4 +
+                (367 * (_month - 2 - ((_month - 14) / 12) * 12)) /
+                12 -
+                (3 * ((_year + 4900 + (_month - 14) / 12) / 100)) /
+                4 -
+                OFFSET19700101;
+
+        _days = uint256(__days);
+    }
+
+    function getMinute(uint256 timestamp)
+        internal
+        pure
+        returns (uint256 minute)
+    {
+        uint256 secs = timestamp % SECONDS_PER_HOUR;
+        minute = secs / SECONDS_PER_MINUTE;
+    }
+
+    function getSecond(uint256 timestamp)
+        internal
+        pure
+        returns (uint256 second)
+    {
+        second = timestamp % SECONDS_PER_MINUTE;
+    }
+
+    function addDays(uint256 timestamp, uint256 _days)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp + _days * SECONDS_PER_DAY;
+        require(newTimestamp >= timestamp);
+    }
+
+    function addHours(uint256 timestamp, uint256 _hours)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp + _hours * SECONDS_PER_HOUR;
+        require(newTimestamp >= timestamp);
+    }
+
+    function addMinutes(uint256 timestamp, uint256 _minutes)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp + _minutes * SECONDS_PER_MINUTE;
+        require(newTimestamp >= timestamp);
+    }
+
+    function addSeconds(uint256 timestamp, uint256 _seconds)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp + _seconds;
+        require(newTimestamp >= timestamp);
+    }
+
+    function subDays(uint256 timestamp, uint256 _days)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp - _days * SECONDS_PER_DAY;
+        require(newTimestamp <= timestamp);
+    }
+
+    function subHours(uint256 timestamp, uint256 _hours)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp - _hours * SECONDS_PER_HOUR;
+        require(newTimestamp <= timestamp);
+    }
+
+    function subMinutes(uint256 timestamp, uint256 _minutes)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp - _minutes * SECONDS_PER_MINUTE;
+        require(newTimestamp <= timestamp);
+    }
+
+    function subSeconds(uint256 timestamp, uint256 _seconds)
+        internal
+        pure
+        returns (uint256 newTimestamp)
+    {
+        newTimestamp = timestamp - _seconds;
+        require(newTimestamp <= timestamp);
+    }
+
+    function diffHours(uint256 fromTimestamp, uint256 toTimestamp)
+        internal
+        pure
+        returns (uint256 _hours)
+    {
+        require(fromTimestamp <= toTimestamp);
+        _hours = (toTimestamp - fromTimestamp) / SECONDS_PER_HOUR;
+    }
+
+    function diffMinutes(uint256 fromTimestamp, uint256 toTimestamp)
+        internal
+        pure
+        returns (uint256 _minutes)
+    {
+        require(fromTimestamp <= toTimestamp);
+        _minutes = (toTimestamp - fromTimestamp) / SECONDS_PER_MINUTE;
+    }
+
+    function diffSeconds(uint256 fromTimestamp, uint256 toTimestamp)
+        internal
+        pure
+        returns (uint256 _seconds)
+    {
+        require(fromTimestamp <= toTimestamp);
+        _seconds = toTimestamp - fromTimestamp;
+    }
+}
+
+library SafeMath {
+
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "SafeMath: addition overflow");
+
+        return c;
+    }
+
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        return sub(a, b, "SafeMath: subtraction overflow");
+    }
+
+    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b <= a, errorMessage);
+        uint256 c = a - b;
+
+        return c;
+    }
+
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+
+        uint256 c = a * b;
+        require(c / a == b, "SafeMath: multiplication overflow");
+
+        return c;
+    }
+
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        return div(a, b, "SafeMath: division by zero");
+    }
+
+    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b > 0, errorMessage);
+        uint256 c = a / b;
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+
+        return c;
+    }
+
+    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        return mod(a, b, "SafeMath: modulo by zero");
+    }
+
+    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b != 0, errorMessage);
+        return a % b;
+    }
+}
+contract NFTEACAFE is Initializable, ERC1155Upgradeable, OwnableUpgradeable, ERC1155BurnableUpgradeable, ERC1155SupplyUpgradeable {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    using SafeMath for uint256;
+
+    event roomOpen(
+
+        uint256 _room,
+        address _owner
+    );
+    event roomClosed(
+
+        uint256 _room,
+        address _owner
+    );
+    event passConnected(
+
+        uint256 _room,
+        address _listener
+    );
+    event roomExit(
+
+        uint256 _room,
+        address _listener
+    );
+    event handRaised(
+      uint256 _room,
+      address _listerner
+    );
+    struct ROOMS{
+
+      uint256 id;
+      address host;
+      string title;
+      string info;
+      uint256 earnings;
+      uint256 start;
+      uint256 stop;
+      uint256 fee;
+      bool paid;
+      uint256 rate;
+      uint256 timePay;
+    }
+    ROOMS[] public rooms;
+
+    struct USERS{
+
+      uint256 avatar;
+      uint256 cover;
+      uint256 power;
+      uint256 streamMins;
+    }
+    USERS[] public users;
+
+    struct NFTS{
+
+      uint256 id;
+      uint256 price;
+      string ipfs;
+      bool canTransfer;
+      uint256 quantity;
+    }
+    NFTS[] public nft;
+
+    mapping(uint256=>NFTS) public idToNFT;
+    mapping(uint256=>ROOMS) public idToRoom;
+    mapping(address=>USERS) public user;
+    mapping(address=>mapping(uint256=>ROOMS)) public hostToRoom;
+    mapping(address=>uint256[]) public hostToAllRooms;
+    mapping(address=>USERS) public userToProfile;
+    mapping(uint256=>address[]) public roomToCoHosts;
+    mapping(uint256=>address[]) public roomToListeners;
+    mapping(address=>uint256) public listenerToRoom;
+    mapping(uint256=>uint256) public roomToEarnings;
+    mapping(address=>bool) public isAdmin;
+    mapping(address=>mapping(uint256=>uint256)) public listenerToRoomToStartTime;
+    mapping(address=>mapping(uint256=>uint256)) public listenerToRoomToEndTime;
+    mapping(address=>mapping(uint256=>uint256)) public listenerToRoomToPayment;
+    mapping(address=>uint256) public listenerToTotalPayment;
+    mapping(address=>uint256) public hostToTotalEarned;
+    mapping(address=>uint256) public userToWarning;
+    mapping(address=>bool) public banned;
+    mapping(address=>uint256) public bannedExpire;
+    mapping(address=>uint256) public userToNftForBanRemove;
+    mapping(uint256=>uint256) public roomToMaxTime;
+    mapping(address=>uint256[]) public listenerToAllRooms;
+    mapping(uint256=>address[]) public roomToHandsRaised;
+    mapping(uint256=>bool) public idToRoomOpen;
+    mapping(uint256=>uint256) public idToRoomCloseByTime;
+    mapping(uint256=>uint256) public nftToTransfers;
+    mapping(uint256=>bool) public canTransfer;
+    mapping(uint256=>uint256) public roomToPayDate;
+    mapping(uint256=>uint256) public roomToNFTToJoin;
+    mapping(uint256=>uint256) public nftToStreamTime;
+
+    address public TEA;
+    address public NFTEA;
+    uint256 public rate;
+    uint256 public purse;
+    uint256 public cheers;
+    uint256 public roomId;
+    uint256 public nftId;
+    uint256 public penalty;
+    address public burn = 0x000000000000000000000000000000000000dEaD;
+    address public operations;
+
+
+    constructor() initializer {}
+
+    function initialize() initializer public {
+
+        __ERC1155_init("https://nftea.app/audio/{id}.json");
+        __Ownable_init();
+        __ERC1155Burnable_init();
+        __ERC1155Supply_init();
+
+        roomId = 0;
+        nftId = 0;
+        // bytes memory empty;
+        // mint(address(this), 1, _tTotal,empty);
+
+    }
+
+    receive () external payable {
+
+    }
+
+    function SETUSER() public returns(bool){
+
+      USERS memory save = USERS({
+        avatar: 0,
+        cover:0,
+        power: 0,
+        streamMins:30
+
+      });
+      user[msg.sender] = save;
+      return true;
+    }
+
+    function SETROOM(uint256 _fee, address[] memory _cohosts, string memory _info, string memory _title,uint256 _nft) public{
+
+       // require(IERC20(TEA).balanceOf(msg.sender)>=penalty,' You must have TEA tokens to host a room');
+
+        roomId = SafeMath.add(roomId,1);
+        uint256 h = user[msg.sender].streamMins;
+        uint256 _end = DateTime.addMinutes(block.timestamp,h);
+        uint256 _start = block.timestamp + 3 minutes;
+
+        ROOMS memory save = ROOMS({
+
+          id:roomId,
+          host: msg.sender,
+          fee: _fee,
+          start: _start,
+          stop: _end,
+          info: _info,
+          title: _title,
+          earnings: 0,
+          paid:false,
+          rate:0,
+          timePay:0
+
+        });
+
+        roomToCoHosts[roomId] = _cohosts;
+
+        roomToNFTToJoin[roomId]=_nft;
+        idToRoom[roomId] = save;
+        hostToRoom[msg.sender][roomId] = save;
+        hostToAllRooms[msg.sender].push(roomId);
+        roomToMaxTime[roomId] =_end;
+        idToRoomOpen[roomId] = true;
+        idToRoomCloseByTime[roomId] = block.timestamp + 180 minutes;
+        emit roomOpen(roomId, msg.sender);
+
+    }
+
+    function CONNECTPASS(uint256 _room) public returns(bool){
+
+      require(idToRoomOpen[_room], 'this room is closed');
+
+      uint256 _inRoom = listenerToRoom[msg.sender];
+      if(_inRoom>0 && idToRoom[_room].stop<block.timestamp){
+
+        SETDISCONNECT(_room);
+
+        return true;
+
+      }else{
+
+        if(roomToNFTToJoin[_room]>0){
+
+          uint256 b = IERC1155Upgradeable(NFTEA).balanceOf(msg.sender,roomToNFTToJoin[_room]);
+
+          require(b>0, 'you must own nft to enter');
+        }
+
+        listenerToRoom[msg.sender] = _room;
+        roomToListeners[_room].push(msg.sender);
+        listenerToRoomToStartTime[msg.sender][_room] = block.timestamp;
+        listenerToRoomToPayment[msg.sender][_room] = 0;
+        listenerToAllRooms[msg.sender].push(_room);
+        purse = IERC20(TEA).balanceOf(address(this));
+        emit passConnected(_room, msg.sender);
+        return true;
+
+      }
+    }
+
+    function SETDISCONNECT(uint256 _room) public returns(bool){
+
+      require(listenerToRoom[msg.sender] == _room, ' you are not in this room');
+      uint256 roomTime = listenerToRoomToStartTime[msg.sender][_room].sub(block.timestamp);
+      uint256 maxTime = idToRoom[_room].start.sub(idToRoom[_room].stop);
+
+      if(roomTime>maxTime){
+
+        roomTime = listenerToRoomToStartTime[msg.sender][_room].sub(idToRoom[_room].stop);
+
+      }else{
+
+        roomTime = listenerToRoomToStartTime[msg.sender][_room].sub(block.timestamp);
+
+      }
+
+      uint256 hostPay = roomTime.div(60).mul(rate);
+      listenerToRoomToPayment[msg.sender][_room] = hostPay;
+      listenerToRoomToEndTime[msg.sender][_room] = block.timestamp;
+      hostToTotalEarned[idToRoom[_room].host] = hostToTotalEarned[idToRoom[_room].host].add(hostPay);
+      roomToEarnings[_room] = roomToEarnings[_room].add(hostPay);
+      listenerToRoom[msg.sender] = 0;
+      purse = IERC20(TEA).balanceOf(address(this));
+      emit roomExit(_room, msg.sender);
+      return true;
+    }
+
+    function SETRAISEHAND(uint256 _room) public returns(bool){
+
+      uint256 _fee = idToRoom[_room].fee;
+      uint256 _cheers = _fee.mul(10).div(100);
+      uint256 _value = _fee.sub(_cheers);
+      require(listenerToRoom[msg.sender] == _room, ' you are not in this room');
+      require(IERC20(TEA).balanceOf(msg.sender)>=_fee,' You must have enough to cover the question fee');
+      require(idToRoomOpen[_room], 'this room is closed');
+
+      bool success = IERC20(TEA).transferFrom(msg.sender,address(this),_fee);
+      if(success){
+
+        roomToHandsRaised[_room].push(msg.sender);
+        hostToTotalEarned[idToRoom[_room].host] = hostToTotalEarned[idToRoom[_room].host].add(_value);
+        listenerToTotalPayment[msg.sender]= listenerToTotalPayment[msg.sender].add(_value);
+        roomToEarnings[_room]= roomToEarnings[_room].add(_value);
+        listenerToRoomToPayment[msg.sender][_room] = _value;
+        user[msg.sender].power = user[msg.sender].power.add(1);
+        purse = IERC20(TEA).balanceOf(address(this)).sub(_value);
+        emit handRaised(_room,msg.sender);
+        return true;
+
+      }else{
+
+        return false;
+
+      }
+
+    }
+
+    function SETCLOSEROOM(uint256 _room) public{
+
+      require(idToRoom[_room].host == msg.sender, ' you are not the host');
+      if(idToRoomCloseByTime[_room]<block.timestamp){
+
+        bool success = IERC20(TEA).transferFrom(idToRoom[_room].host,address(this),penalty);
+        if(success){
+
+          PAYHOSTS(_room);
+
+        }
+
+      }else{
+
+        PAYHOSTS(_room);
+
+        user[msg.sender].power = user[msg.sender].power.add(2);
+        idToRoomOpen[_room] = false;
+        purse = IERC20(TEA).balanceOf(address(this));
+        if(hostToAllRooms[msg.sender].length % 20 == 0 && user[msg.sender].streamMins <240){
+          user[msg.sender].streamMins = user[msg.sender].streamMins.add(30);
+        }
+
+      }
+    }
+
+    function PAYHOSTS(uint256 _room) private returns(bool){
+
+      require(!idToRoom[_room].paid, 'earnings already paid');
+      uint256 total = roomToCoHosts[_room].length;
+
+      uint256 tax = roomToEarnings[_room].mul(total).div(100);
+      uint256 amount = roomToEarnings[_room].sub(tax);
+
+      uint256 totalTime = 0;
+
+      for (uint256 i = 0; i < roomToListeners[_room].length; i++) {
+        address participants = roomToListeners[_room][i];
+        if(listenerToRoomToEndTime[participants][_room]==0){
+          listenerToRoomToEndTime[participants][_room] = idToRoom[_room].stop;
+        }
+        uint256 time = listenerToRoomToStartTime[participants][_room].sub(listenerToRoomToEndTime[participants][_room]);
+        totalTime.add(time);
+      }
+      totalTime = totalTime.div(60);
+      uint256 timePay = totalTime.mul(rate);
+      amount = amount.add(timePay).div(total);
+
+      for (uint256 i = 0; i < roomToCoHosts[_room].length; i++) {
+
+        bool success = IERC20(TEA).transfer(roomToCoHosts[_room][i],amount);
+        if(success){
+          user[roomToCoHosts[_room][i]].power = user[roomToCoHosts[_room][i]].power.add(1);
+        }
+
+      }
+      idToRoom[_room].rate = rate;
+      idToRoom[_room].timePay = timePay;
+      idToRoomOpen[_room] = false;
+      idToRoom[_room].paid = true;
+      roomToPayDate[_room] = block.timestamp;
+      emit roomClosed(_room, msg.sender);
+      return true;
+
+    }
+
+    function SETADMIN(address _user) public returns(bool){
+      require(isAdmin[msg.sender], 'you are not an admin');
+      if(isAdmin[_user]){
+
+        isAdmin[_user] = false;
+      }else{
+        isAdmin[_user] = true;
+      }
+      return true;
+    }
+    function SETTEA(address _TEA,address _NFTEA) public returns(bool){
+      require(isAdmin[msg.sender], 'you are not an admin');
+      TEA = _TEA;
+      NFTEA = _NFTEA;
+      return true;
+    }
+    function withdraw() public returns(bool){
+
+      require(isAdmin[msg.sender], ' you are not an admin');
+      uint256 bal = IERC20(TEA).balanceOf(address(this));
+      IERC20(TEA).transfer(operations,bal);
+
+      return true;
+
+    }
+    function setURI(string memory newuri) public onlyOwner {
+        _setURI(newuri);
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        internal
+        override(ERC1155Upgradeable, ERC1155SupplyUpgradeable)
+    {
+      super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    }
+}

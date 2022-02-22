@@ -1,0 +1,169 @@
+
+<div class="modal fade popup" id="popup_raffle" tabindex="-1" role="dialog" aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+      <div class="modal-body space-y-20 p-40">
+        <h3 class="text-center">Create Hands Raffle </h3>
+        <p class="text-center">Raffle your NFT or other ShitCoins</p>
+        <form [formGroup]="_create">
+          <div class="space-y-10">
+            <span class="nameInput">Type</span>
+            <select class="form-select custom-select" aria-label="Preference" formControlName="type">
+              <option>Please Select</option>
+              <option value="1">Token</option>
+              <option value="2">NFT</option>
+            </select>
+          </div>
+          <p class="mb-10 mt-10">Title
+          </p>
+          <input type="text" class="form-control" placeholder="win $50 SATO" formControlName="title">
+
+          <p class="mb-10 mt-10" *ngIf="_create.controls.type.value==1">Address Of Token <span class="color_green">enter 1 for SATO</span>
+          </p>
+          <input type="text" class="form-control" placeholder="0x" formControlName="token" *ngIf="_create.controls.type.value==1">
+          <p class="mb-10 mt-10" *ngIf="_create.controls.type.value==2">NFT ID
+          </p>
+          <input type="number" class="form-control" placeholder="25" formControlName="nft" *ngIf="_create.controls.type.value==2">
+          <p class="mb-10 mt-10">Prize Value
+          </p>
+          <input type="number" class="form-control" placeholder="$50" formControlName="value">
+          <p class="mb-10 mt-10">Min Players
+          </p>
+          <input type="number" class="form-control" placeholder="5" formControlName="minPlayers">
+          <p class="mb-10 mt-10">Entry Fee (in SATO)
+          </p>
+          <input type="number" class="form-control" placeholder="1000" formControlName="entryFee">
+          <p class="mb-10 mt-10">Hodl Balance (leave empty to collect entry fee)
+          </p>
+          <input type="number" class="form-control" placeholder="1000" formControlName="hodlBalance">
+          <div class="hr"></div>
+          <a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="SET_CREATE()"> Create</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container mt-40" *ngIf="showGame">
+  <div class="row justify-content-center mb-10">
+    <div class="col-lg-6">
+      <div class="creator_item creator_card space-x-10">
+      									<div class="avatars space-x-10">
+      										<a href="Profile.html">
+      											<img src="https://raroin.creabik.com/assets/img/avatars/avatar_3.png" alt="Avatar" class="avatar avatar-md">
+      										</a>
+      										<div>
+      											<a href="Profile.html">
+      												<p class="avatars_name color_black">$50 SATO</p>
+      											</a>
+      											<span class="price color_green">Players: 6/21 | Entry: 1000 SATO</span>
+      										</div>
+      									</div>
+      								</div>
+    					</div>
+  </div>
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+  									<div class="creator_item creator_card space-y-20 mb-20">
+  										<div class="avatars flex-column space-y-10">
+  											<div class="cover">
+  												<img src="https://raroin.creabik.com/assets/img/items/cover_2.png" alt="Avatar" class="img-fluid">
+  											</div>
+  											<div class="media">
+  												<a href="Profile.html">
+  													<img src="https://raroin.creabik.com/assets/img/avatars/avatar_9.png" alt="Avatar" class="avatar
+  														avatar-md">
+  												</a>
+  											</div>
+                        <div class="body">
+                          <h4 class="text-center">
+                            starts in: 10:00
+                            </h4>
+                        </div>
+  											<div class="details text-center">
+  												<div>
+                            <a href="javascript: void(0)" class="btn btn-md btn-dark">Slap</a>
+  												</div>
+  												<div>
+                            <a href="javascript: void(0)" class="btn btn-md btn-orange">Grab</a>
+  												</div>
+  												<div>
+                            <a href="javascript: void(0)" class="btn btn-md btn-dark">Sneak</a>
+  												</div>
+  											</div>
+  										</div>
+  									</div>
+  								</div>
+
+</div>
+</div>
+
+<div class="container mt-40" *ngIf="!showGame">
+  <div class="space-y-30 mt-30">
+    <div class="section_head space-y-20">
+      <div class="d-flex space-x-30">
+        <h2 class="section__title">Hands Raffle Game</h2>
+      </div>
+      <div class="filters d-flex">
+        <div class="dropdown">
+          <button class="btn btn-white btn-sm mr-2">
+            Tokens
+          </button>
+
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-white btn-sm mr-2">
+            NFT's
+          </button>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-dark btn-sm" data-toggle="modal" data-target="#popup_raffle">
+            Create Raffle
+          </button>
+        </div>
+
+      </div>
+    </div>
+    <div class="row mb-30_reset">
+      <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6">
+        <div class="card__item eight">
+          <span class="txt_xs color_text stars"><i class="ri-star-fill txt_xs"></i>12x</span>
+          <div class="card_body space-y-10">
+            <!-- =============== -->
+            <div class="card_head space-y-10">
+              <span class="txt_xs color_text numbering">1/8</span>
+              <a href="Item-details.html">
+                <img class="product__img" src="assets/img/bg/home5/33.png" alt="">
+              </a>
+            </div>
+            <!-- =============== -->
+            <div class="card_footer justify-content-between
+			                                                    space-x-20">
+              <div class="space-y-3">
+                <div class="space-x-5 d-flex">
+                  <i class="ri-star-fill color_brand
+			                                                                txt_xs"></i>
+                  <span class="color_brand txt_xs">Karambit</span>
+                </div>
+                <a href="Profile.html">
+                  <p class="product__name txt_sm">Sanctum</p>
+                </a>
+              </div>
+              <div class="price__content space-x-5">
+                <img class="eth__img" src="assets/img/icons/ETH-2.svg" alt="eth">
+                <p class="price txt_sm _bold">665
+                  ETH</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+</div>

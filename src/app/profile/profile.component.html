@@ -1,0 +1,558 @@
+<app-header (session)="getSession($event)"></app-header>
+<div class="mb-50" *ngIf="!loading">
+	<div class="hero__profile">
+		<div class="cover">
+			<img src="https://raroin.creabik.com/assets/img/bg/prrofile.png" alt="">
+		</div>
+		<div class="infos">
+			<div class="container">
+				<div class="row flex-wrap align-items-center
+								justify-content-between">
+					<div class="col-md-auto mr-20">
+						<div class="avatars d-flex space-x-20
+										align-items-center">
+							<div class="avatar_wrap">
+								<img class="avatar avatar-lg" src="https://raroin.creabik.com/assets/img/avatars/avatar_4.png" alt="avatar">
+							</div>
+							<h5 *ngIf="!PROFILE2">@{{this._profile.controls.name.value || 'enter cool name'}}</h5>
+							<h5 *ngIf="PROFILE2 && PROFILE2.id">@{{PROFILE2.get('name')}}</h5>
+						</div>
+					</div>
+					<div class="col-md-auto">
+						<div class="d-flex flex-wrap align-items-center
+										space-x-20 mb-20_reset">
+							<div class="mb-20">
+								<div class="copy">
+									<span class="color_text"> {{user}}
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container" style="margin-bottom: 30px" *ngIf="showCreateProfile && !showEditProfile">
+	<div class="mt-20">
+		<h3 class="mb-40" (click)="showCreateBrew=false">
+			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
+														32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
+														16.352L18.816 0H19.712L22.512 16.352L38.08
+														10.64L38.528
+														11.424L25.76 21.952L38.528 32.592L38.08
+														33.376L22.512
+														27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+			</svg>
+			Create Your Profile
+		</h3>
+	</div>
+	<div class="row">
+		<div class="mt-10 col-lg-8 offset-lg-2">
+			<div class="box in__upload mb-20 form_cc_four mb-20">
+				<div class="row form_cc_four mb-20 text-center">
+					<div class="col-12">
+						Your profile avatar and cover should be NFT's you own. <br /><br />You can find avatars and profile covers in the marketplace.<br />
+						create your profile before buying NFT's.<br /><br />Adding your gender and Heritage allow us to highlight women artist or Jewish artists, or South East Asian artists and so on.
+						<br /><br />
+						Your power level increases when you buy NFT's cross heritage and gender.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+<div class="container" style="margin-bottom: 30px" *ngIf="showEditProfile">
+	<div class="mt-20">
+		<h3 class="mb-40 text-center">
+			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
+														32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
+														16.352L18.816 0H19.712L22.512 16.352L38.08
+														10.64L38.528
+														11.424L25.76 21.952L38.528 32.592L38.08
+														33.376L22.512
+														27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+			</svg>
+			Edit Your Profile
+		</h3>
+	</div>
+	<div class="row">
+		<div class="mt-10 col-lg-8 offset-lg-2">
+			<div class="box in__upload mb-20 form_cc_four mb-20">
+				<div class="row form_cc_four mb-20 text-center" *ngIf="!hasProfile1">
+					<div class="col-12 mb-30">
+						{{editMessage}}
+					</div>
+					<div class="col-12" *ngIf="showEditBlockchain">
+						<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="editBlockchainProfile()">Send To Blockchain</a>
+					</div>
+				</div>
+
+				<div class="row form_cc_four mb-20 text-center" *ngIf="hasProfile1 && hasProfile2">
+					<div class="col-12 mb-30">
+						<form [formGroup]="_editProfile">
+					 <h5>Set Your Avatar</h5>
+					 <div class="hr"></div>
+					 <div class="form-group space-y-10">
+						 <input type="number" class="form-control" formControlName="avatar" placeholder="enter nft id">
+					 </div>
+					 <div class="form-group space-y-10">
+						 <h5>Set Your Cover</h5>
+							 <input type="number" class="form-control" formControlName="cover" placeholder="enter nft id">
+					 </div>
+					 </form>
+					</div>
+					<div class="col-12">
+						<a class="btn btn-primary btn-lg" href="javascript: void(0)" (click)="SETAVATAR();">Set Avatar/Cover</a><br><br>
+						<a class="btn btn-white btn-lg mt-10" href="javascript: void(0)" (click)="showEditProfile=false;">back</a>
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+<div class="container" *ngIf="showCreateProfile && !showEditBlockchain">
+	<div class="row">
+		<div class="mt-10 col-lg-8 offset-lg-2">
+			<div class="box in__upload mb-120 form_cc_four mb-20">
+				<div class="col-12">
+					<div class="form_cc_four mb-20">
+						<form action="text" class="row justify-content-center" [formGroup]="_profile">
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group space-y-10">
+									<span class="nameInput">User Name</span>
+									<input type="text" class="form-control" placeholder="cool user name" formControlName="name">
+								</div>
+								<div class="form-group space-y-10">
+									<span class="nameInput">Your Email</span>
+									<input type="text" class="form-control input_white" placeholder="how do we contact you?" formControlName="email">
+								</div>
+								<div class="form-group space-y-10">
+									<span class="variationInput">Gender</span>
+									<select class="form-select custom-select" aria-label="Gender" formControlName="gender">
+										<option>Please Select</option>
+										<option>Female</option>
+										<option>Male</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group space-y-10">
+									<span class="variationInput">Real Name</span>
+									<input type="text" class="form-control input_white" placeholder="whats your real name?" formControlName="realName">
+
+								</div>
+								<div class="form-group space-y-10">
+									<span class="variationInput">Creator / Collector</span>
+									<select class="form-select custom-select input_white" aria-label="accountType" formControlName="accountType">
+										<option>Please Select</option>
+										<option value="1">Creator</option>
+										<option value="2">Collector</option>
+										<option value="3">Both</option>
+									</select>
+								</div>
+								<div class="form-group space-y-10">
+									<span class="variationInput">Preference</span>
+									<select class="form-select custom-select" aria-label="Preference" formControlName="preference">
+										<option>Please Select</option>
+										<option value="1">Avatar</option>
+										<option value="2">Cover</option>
+										<option value="3">Heritage</option>
+										<option value="5">Film/Video</option>
+										<option value="6">Art & All</option>
+										<option value="7">Music</option>
+										<option value="8">Prison Art</option>
+										<option value="4">Cafe Wall</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group space-y-10">
+								<span class="variationInput">Heritage</span>
+								<select class="form-select custom-select" aria-label="Preference" formControlName="heritage">
+									<option value="1">Please Select</option>
+									<option value="2"> African</option>
+									<option value="3">North African</option>
+									<option value="4">West African</option>
+									<option value="5">East African</option>
+									<option value="6">South African</option>
+									<option value="7">American</option>
+									<option value="8">American White</option>
+									<option value="9">American Black</option>
+									<option value="10">American Indian</option>
+									<option value="11">American Latino</option>
+									<option value="12">American Asain</option>
+									<option value="13">Asian</option>
+									<option value="14">East Asian</option>
+									<option value="15">South East Asian</option>
+									<option value="16">Japanese</option>
+									<option value="17">Korean</option>
+									<option value="18">Middle East</option>
+									<option value="19">Jewish</option>
+									<option value="20">Muslim</option>
+									<option value="21">Christian</option>
+									<option value="22">Buddist</option>
+									<option value="23">Alt-ist</option>
+									<option value="24">Australian</option>
+									<option value="25">Carribean</option>
+									<option value="26">European</option>
+									<option value="27">Eastern European</option>
+									<option value="28">Alien</option>
+								</select>
+							</div>
+					<div class="col-lg-12 col-md-12">
+						<div class="form-group space-y-10">
+							<span class="nameInput">Your Story</span>
+							<textarea type="text" class="form-control" placeholder="I love being an artist" formControlName="story">
+
+										</textarea>
+						</div>
+					</div>
+					<p class="text-center mt-30">
+
+						<a *ngIf="!showEditProfile" class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="SET_PROFILE()"><i class="ri-donut-chart-fill
+																            lg"></i> Create Profile</a>
+						<a *ngIf="showEditProfile" class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="editProfile()"><i class="ri-donut-chart-fill
+																																            lg"></i> Edit Profile</a>
+
+					</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+
+			<div class="container" *ngIf="showProfile && PROFILE2 && !showEditProfile">
+				<div class="row justify-content-center">
+					<div class="col-lg-3 col-md-7 order-md-0 order-1">
+						<div class="profile__sidebar">
+							<div class="space-y-40">
+								<div class="space-y-10">
+									<h5>About me</h5>
+									<div class="box space-y-20">
+										<p>
+											{{PROFILE2.get('story') || 'no story yet'}}
+										</p>
+										<div class="row">
+											<div class="col-6">
+												<span class="txt_sm color_text">Albums</span>
+												<h4 *ngIf="COLLECTION">{{COLLECTIONCOUNT}}</h4>
+											</div>
+											<div class="col-6">
+												<span class="txt_sm color_text">NFT's</span>
+												<h4 *ngIf="NFTS">{{NFTCOUNT + AUCTIONCOUNT}}</h4>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="space-y-10">
+									<h5>Power Level</h5>
+									<div class="box">
+										<ul class="social_profile space-y-10 overflow-hidden">
+											<li>
+												<a href="javascript: void(0)">
+												{{PROFILE1.power}}
+												</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+
+								<div class="space-y-10 text-center" *ngIf="user==profile">
+									<a class="btn btn-dark btn-lg" (click)="showEditProfile=true">Set Avatar/Cover</a>
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-9 col-md-12 order-md-1 order-0" *ngIf="loading">
+						<div class="profile__content mt-60">
+							<div class="d-flex justify-content-between mt-30">
+								<div class="space-x-10 text-center">
+							<img src="assets/loading.gif" style="width:25%;height:auto">
+							</div>
+							</div>
+							</div>
+
+					</div>
+					<div class="col-lg-9 col-md-12 order-md-1 order-0">
+						<div class="row" *ngIf="!loading">
+							<div class="col-12">
+								<div class="d-flex">
+									<ul class="nav nav-tabs d-flex space-x-10 mb-30" role="tablist">
+										<li class="nav-item">
+											<a class="btn btn-white btn-sm active" data-toggle="tab" href="#tabs-1" role="tab">
+												NFT's</a>
+										</li>
+										<li class="nav-item">
+											<a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-2" role="tab">
+											 For Sale</a>
+										</li>
+										<li class="nav-item">
+											<a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-3" role="tab">
+												Albums</a>
+										</li>
+									</ul>
+									<!-- Tab panes -->
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="tab-content">
+									<div class="tab-pane active" id="tabs-1" role="tabpanel">
+										<div class="row mb-30" *ngIf="NFTS && NFTS.length<1 && !loading">
+											<div class="col-12 text-center">
+												<div class="box_buy_wrapper relative mb-20">
+															<div class="box_buy_wrapper2">
+																	<div class="box box_buy">
+																			<div class="row">
+
+																					<div class="col-12 text-center">
+
+																						no nft's listed, check the for sale tab or click the create button to start your album
+																					</div>
+																			</div>
+																	</div>
+															</div>
+													</div>
+													<a href="javascript: void(0)" class="btn btn-dark btn-lg" routerLink="/create">Create NFT</a>
+
+												</div>
+										</div>
+
+										<div class="row mb-30 mt-30" *ngIf="NFTS && NFTS.length>0 && !loading">
+											<div class="col-xl-4 col-lg-4 col-md-4" *ngFor="let data of NFTS; index as i">
+												<div class="card__item three">
+													<div class="creators space-x-10">
+															<div class="avatars space-x-3">
+																	<a href="javascript: void(0)">
+																			<p class="avatars_name txt_xs">ID: #{{data.nft_id}}</p>
+																	</a>
+															</div>
+													</div>
+													<div class="card_body space-y-10">
+														<!-- =============== -->
+														<div class="card_head">
+															<img src="{{data.image}}" alt="">
+															<a href="javascript: void(0)" class="likes
+																space-x-3">
+																<i class="ri-cup-fill"></i>
+																<span class="txt_sm">{{data.brewTea/1000000000}}</span>
+															</a>
+															<div class="action">
+																<a href="javascript: void(0)" class="btn
+																	btn-primary btn-sm
+																	btn_auction" routerLink="/showcase/{{data.nft_id}}/{{user}}">
+																	<i class="ri-auction-line
+																		color_white"></i>
+																	View Showcase
+																</a>
+															</div>
+														</div>
+														<!-- =============== -->
+														<h6 class="card_title">
+															<a class="color_black" href="Item-details.html">
+																{{data.title}}
+															</a>
+														</h6>
+
+														<div class="card_footer d-block
+															space-y-10">
+															<div class="d-flex
+																justify-content-between
+																align-items-center">
+																<div class="creators
+																	space-x-10">
+
+																	<a href="Profile.html">
+																		<p class="avatars_name
+																			txt_sm">
+																			editions
+																		</p>
+																	</a>
+																</div>
+																<a href="javascript: void(0)" class="space-x-3">
+																	<p class="color_green
+																		txt_sm">
+																		{{data.quantity}}</p>
+																</a>
+															</div>
+															<div class="hr"></div>
+															<div class="d-flex
+																align-items-center
+																space-x-10">
+																<i class="ri-history-line"></i>
+																<p class="color_text txt_sm"
+																		style="width: auto">
+																		brew {{data.dateTea}}
+																</p>
+
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!--end tab one -->
+									</div>
+
+									<div class="tab-pane" id="tabs-2" role="tabpanel">
+										<div class="row mb-30" *ngIf="AUCTIONS && AUCTIONS.length<1 && !loading">
+											<div class="col-12">
+												<div class="box_buy_wrapper relative mb-20">
+															<div class="box_buy_wrapper2">
+																	<div class="box box_buy">
+																			<div class="row">
+
+																					<div class="col-12 text-center">
+
+																						nothing for sale
+																					</div>
+																			</div>
+																	</div>
+															</div>
+													</div>
+												</div>
+										</div>
+
+										<div class="row mb-30 mt-30" *ngIf="AUCTIONS && AUCTIONS.length>0 && !loading">
+											<div class="col-xl-4 col-lg-4 col-md-4" *ngFor="let data of AUCTIONS; index as i">
+												<div class="card__item three">
+													<div class="card_body space-y-10">
+														<div class="creators space-x-10">
+																<div class="avatars space-x-3">
+																		<a href="javascript: void(0)">
+																				<p class="avatars_name txt_xs">ID: #{{data.nft_id}}</p>
+																		</a>
+																</div>
+														</div>
+														<!-- =============== -->
+														<div class="card_head">
+															<img src="{{data.image}}" alt="">
+															<a href="javascript: void(0)" class="likes
+																space-x-3">
+																<i class="ri-cup-fill"></i>
+																<span class="txt_sm">0</span>
+															</a>
+															<div class="action">
+																<a href="javascript: void(0)" class="btn
+																	btn-primary btn-sm
+																	btn_auction" routerLink="/showcase/{{data.nft_id}}/{{user}}">
+																	<i class="ri-auction-line
+																		color_white"></i>
+																	View Showcase
+																</a>
+															</div>
+														</div>
+														<!-- =============== -->
+														<h6 class="card_title">
+															<a class="color_black" href="Item-details.html">
+																{{data.title}}
+															</a>
+														</h6>
+
+														<div class="card_footer d-block
+															space-y-10">
+															<div class="d-flex
+																justify-content-between
+																align-items-center">
+																<div class="creators
+																	space-x-10">
+
+																	<a href="Profile.html">
+																		<p class="avatars_name
+																			txt_sm">
+																			editions
+																		</p>
+																	</a>
+																</div>
+																<a href="javascript: void(0)" class="space-x-3">
+																	<p class="color_green
+																		txt_sm">
+																		{{data.quantity}}</p>
+																</a>
+															</div>
+															<div class="hr"></div>
+															<div class="d-flex
+																align-items-center
+																space-x-10">
+																<i class="ri-vip-crown-line"></i>
+																<p class="color_text
+																	txt_sm" style="width: auto">
+																	Highest bid
+																</p>
+																<span class="color_black
+																	txt_sm">{{data.auction.highestBid/1000000000}}
+																	SATO</span>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!--end tab 2 -->
+									</div>
+
+									<div class="tab-pane" id="tabs-3" role="tabpanel">
+										<div class="row mb-30_reset" *ngIf="COLLECTION && !loading">
+											<div class="col-lg-4 col-md-6 col-sm-8" *ngFor="let data of COLLECTION; index as i">
+												<div class="collections space-y-10 mb-30">
+													<div class="collections_item">
+														<div class="images-box space-y-10">
+															<div class="d-flex space-x-10 mb-10" *ngIf="data.nfts && data.nfts.length>0">
+																<div *ngFor="let spok of data.nfts.slice(0, 2); index as k" class="text-center" style="width:50%">
+																	<img  style="height:auto; max-witdth:100%;  margin-left:auto;margin-right:auto" class="img-thumbnail img-responsive" src="{{spok.image}}">
+																</div>
+																<hr />
+															</div>
+															<div class="row text-center">
+																<div class="col-12" *ngIf="data.nfts && data.nfts.length>0">
+																	<img [src]="data.nfts.image" style="max-height:auto; width:90%; margin-left:auto;margin-right:auto" alt="">
+																</div>
+																<div class="col-12" *ngIf="data.nfts && data.nfts.length<1">
+																	<img src="https://cloud.netlifyusercontent.com/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/4af3e5d8-3352-49bd-9570-de2aef8972b9/eric-bailey-profile.jpg" style="max-height:auto; width:90%; margin-left:auto;margin-right:auto" alt="">
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="collections_footer justify-content-between">
+														<h5 class="collection_title text-center"><a href="javascript: void(0)" routerLink="/album/{{data.id}}">{{data.name}}
+															</a></h5>
+													</div>
+													<!-- <div class="creators space-x-10">
+														<span class="color_text txt_md"> 5 items · Created by</span>
+														<div class="avatars space-x-5">
+															<a href="Profile.html">
+																<img src="assets/img/avatars/avatar_1.png" alt="Avatar" class="avatar avatar-sm">
+															</a>
+														</div>
+														<a href="Profile.html">
+															<p class="avatars_name txt_sm"> @william_jamy... </p>
+														</a>
+													</div> -->
+												</div>
+											</div>
+
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+			</div>

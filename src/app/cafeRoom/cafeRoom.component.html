@@ -1,0 +1,104 @@
+<app-header (session)="getSession($event)"></app-header>
+<div class="hero_ranking bg_white" *ngIf="ROOM">
+			    <div class="container" style="padding-top:100px; padding-bottom:100px">
+			        <h1 class="text-center"><span style="font-family: 'Potta One'">{{ROOM.title}}</span></h1>
+              <div class="row justify-content-center mb-10">
+								<div class="col-6">
+									<div class="form_cc_four mt-20">
+										<div class="creators space-x-10">
+																		<div class="avatars space-x-3">
+																			<div class="-space-x-20">
+																				<a href="Profile.html">
+																					<img src="assets/img/icons/cup_blue_256.png" alt="Avatar" class="avatar avatar-sm">
+																				</a>
+
+																			</div>
+																			<a href="Profile.html">
+																				<p class="avatars_name txt_sm">Host: {{ROOM.host.slice(0,5)}}...</p>
+																			</a>
+																		</div>
+																	</div>
+										<ul>
+											<li class="p2">Hand Raise Fee: {{ROOM.fee | number:'1.0-9'}} TEA</li>
+											<li class="p2" (click)="LR()">TEA PASS LIMIT: {{DATE(ROOM.stop) || 'none'}}</li>
+										</ul>
+											<p>
+												{{ROOM.info}}
+											</p>
+
+									</div>
+								</div>
+
+
+              </div>
+							<div class="row  justify-content-center mt-10">
+								<div class="col-6 mt-10 text-center">
+										<a class="btn btn-primary btn-lg" href="javascript: void(0)" (click)="CONNECTPASS()" *ngIf="!showDisConnectPass"><i class="ri-donut-chart-fill
+							            lg"></i> Connect Tea Pass</a>
+													<a class="btn btn-orange btn-lg" href="javascript: void(0)" (click)="DISCONNECTPASS()" *ngIf="showDisConnectPass"><i class="ri-donut-chart-fill
+																lg"></i> Disconnect Tea Pass</a>
+													&nbsp;&nbsp;
+													<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="RAISEHAND()" *ngIf="showRaiseHands"><i class="ri-donut-chart-fill
+																lg"></i> Raise Hand</a>
+																<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="CLOSEROOM()"><i class="ri-donut-chart-fill
+																			lg"></i> Close Room</a>
+
+								</div>
+							</div>
+			    </div>
+			</div>
+			<div class="container" *ngIf="(LISTENERS && LISTENERS.local.length>0 || CONNECTORS && CONNECTORS.length>0 || TALKERS && TALKERS.length>0)">
+													<div class="mt-100">
+														<h3 class="mb-40">
+															<svg width="39" height="44" viewBox="0 0 39
+																44" fill="none" xmlns="http://www.w3.org/2000/svg">
+																<path d="M18.816 43.904L16.016
+																	27.552L0.448
+																	33.376L0
+																	32.592L12.768 21.952L0 11.424L0.448
+																	10.64L16.016
+																	16.352L18.816 0H19.712L22.512
+																	16.352L38.08 10.64L38.528
+																	11.424L25.76 21.952L38.528
+																	32.592L38.08
+																	33.376L22.512
+																	27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+																</svg>
+																Participants
+															</h3>
+														</div>
+														<div class="dashed_box">
+															<div class="row">
+
+															<div class="col-lg-6 space-y-30">
+																<h3 class="text-center">Connected</h3>
+
+																<!-- creator_item -->
+																<div class="creator_item creator_card rounded_border space-x-10" *ngFor="let data of CONNECTORS">
+																	<div class="avatars space-x-10">
+																			<img src="assets/img/icons/cup_mug_256.png" alt="Avatar" class="avatar avatar-md">
+																		<div>
+																				<p class="avatars_name color_black">{{data.listener}}.</p>
+																		</div>
+																	</div>
+																</div>
+																<!-- creator_item -->
+
+														</div>
+														<div class="col-lg-6 space-y-30" *ngIf="TALKERS && TALKERS.length>0">
+															<h3 class="text-center">Talkers</h3>
+
+															<!-- creator_item -->
+															<div class="creator_item creator_card rounded_border space-x-10" *ngFor="let data of TALKERS">
+																<div class="avatars space-x-10">
+																		<img src="assets/img/icons/cup_mug_256.png" alt="Avatar" class="avatar avatar-md">
+																	<div>
+																			<p class="avatars_name color_black">{{data.listener}}.</p>
+																	</div>
+																</div>
+															</div>
+															<!-- creator_item -->
+
+													</div>
+														</div>
+													</div>

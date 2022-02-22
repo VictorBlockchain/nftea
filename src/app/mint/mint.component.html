@@ -1,0 +1,188 @@
+
+<div class="hero_marketplace bg_white">
+    <div class="container">
+        <h1 class="text-center">Regenerative Mint</h1>
+        <h5 class="text-center mt-20">collectors mint your nft's using your mint pass</h5>
+        <div class="text-center mt-30">
+            <div class="space-y-40 upload_file">
+
+              <div class="space-y-20">
+                <p class="color_text">upload your images<br />images will be uploaded to ipfs and assigned an id</p>
+                <a href="javascript: void(0)" class="btn btn-white"> Browse files </a>
+                <input type="file" (change)="upload($event)" multiple>
+
+              </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="bg_white border-b py-20">
+			    <div class="container">
+			        <div class="d-flex justify-content-center">
+			            <ul class="menu_categories space-x-20">
+			                <li> <a href="javascript: void(0)">
+			                        <i class="ri-brush-line"></i> <span> NFT Story </span>
+			                    </a>
+
+			                </li>
+			                <li> <a href="javascript: void(0)">
+			                        <i class="ri-magic-line"></i> <span> Mint Pass </span>
+			                    </a>
+
+			                </li>
+			                <li> <a href="javascript: void(0)">
+			                        <i class="ri-stock-line"></i> <span> Settings </span>
+			                    </a>
+
+			                </li>
+
+			            </ul>        </div>
+			    </div>
+			</div>
+<div class="container">
+			    <div class="section mt-100">
+			        <div class="section__head">
+			            <h2 class="section__title mb-20"> Reserved ID's</h2>
+
+			        </div>
+
+			        <div class="modal fade popup" id="popup_bid_success" tabindex="-1" role="dialog" aria-hidden="true">
+			            <div class="modal-dialog modal-dialog-centered" role="document">
+			                <div class="modal-content">
+			                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			                        <span aria-hidden="true">×</span>
+			                    </button>
+			                    <div class="modal-body space-y-20 p-40">
+			                        <h3 class="text-center">Your Bidding
+			                            Successfuly Added</h3>
+			                        <p class="text-center">your bid <span class="color_text txt
+			                                _bold">(16ETH) </span> has been listing
+			                            to our database</p>
+
+			                        <a href="" class="btn btn-dark w-full"> Watch the listings</a>
+			                    </div>
+			                </div>
+			            </div>
+			        </div>
+			        <div class="modal fade popup" id="popup_bid" tabindex="-1" role="dialog" aria-hidden="true">
+			            <div class="modal-dialog modal-dialog-centered" role="document">
+			                <div class="modal-content">
+			                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			                        <span aria-hidden="true">×</span>
+			                    </button>
+			                    <div class="modal-body space-y-20 p-40">
+			                        <h3>Place a Bid</h3>
+			                        <p>You must bid at least <span class="color_black">15 ETH</span>
+			                        </p>
+			                        <input type="text" class="form-control" placeholder="00.00 ETH">
+
+			                        <p>Enter quantity. <span class="color_green">5 available</span>
+			                        </p>
+			                        <input type="text" class="form-control" value="1">
+			                        <div class="hr"></div>
+			                        <div class="d-flex justify-content-between">
+			                            <p> You must bid at least:</p>
+			                            <p class="text-right color_black txt _bold"> 67,000 ETH </p>
+			                        </div>
+			                        <div class="d-flex justify-content-between">
+			                            <p> service free:</p>
+			                            <p class="text-right color_black txt _bold"> 0,901 ETH </p>
+			                        </div>
+			                        <div class="d-flex justify-content-between">
+			                            <p> Total bid amount:</p>
+			                            <p class="text-right color_black txt _bold"> 56,031 ETH </p>
+			                        </div>
+			                        <a href="" class="btn btn-primary w-full" data-toggle="modal" data-target="#popup_bid_success" data-dismiss="modal" aria-label="Close"> Place a bid</a>
+			                    </div>
+			                </div>
+			            </div>
+			        </div><div class="modal fade popup" id="popup_history" tabindex="-1" role="dialog" aria-hidden="true">
+			        	<div class="modal-dialog modal-dialog-centered" role="document">
+			        		<div class="modal-content">
+			        			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			        				<span aria-hidden="true">×</span>
+			        			</button>
+			        			<div class="modal-body space-y-20 p-40">
+			        				<h4> History </h4>
+			        				<div class="creator_item creator_card space-x-10">
+			        					<div class="avatars space-x-10">
+			        						<div class="media">
+			        							<div class="badge">
+			        								<img src="assets/img/icons/Badge.svg" alt="">
+			        							</div>
+			        							<a href="Profile.html">
+			        								<img src="assets/img/avatars/avatar_1.png" alt="Avatar" class="avatar avatar-md">
+			        							</a>
+			        						</div>
+			        						<div>
+			        							<p class="color_black">Bid accepted <span class="color_brand">1
+			        									ETH</span> by <a class="color_black txt
+			        									_bold" href="Profile.html">ayoub</a></p>
+			        							<span class="date color_text">28/06/2021, 12:08</span>
+			        						</div>
+			        					</div>
+			        				</div>
+			        				<div class="creator_item creator_card space-x-10">
+			        					<div class="avatars space-x-10">
+			        						<div class="media">
+			        							<div class="badge">
+			        								<img src="assets/img/icons/Badge.svg" alt="">
+			        							</div>
+			        							<a href="Profile.html">
+			        								<img src="assets/img/avatars/avatar_2.png" alt="Avatar" class="avatar avatar-md">
+			        							</a>
+			        						</div>
+			        						<div>
+			        							<p class="color_black">Bid accepted <span class="color_brand">3
+			        									ETH</span> by <a class="color_black txt
+			        									_bold" href="Profile.html">monir</a></p>
+			        							<span class="date color_text">22/05/2021, 12:08</span>
+			        						</div>
+			        					</div>
+			        				</div>
+			        			</div>
+			        		</div>
+			        	</div>
+			        </div><div class="row mb-30_reset" *ngIf="IDS && IDS.length>0">
+			        	<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" *ngFor="let data of IDS; index as i">
+			        		<div class="card__item four">
+			        			<div class="card_body space-y-10">
+
+			        				<div class="card_head">
+			        					<a href="Item-details.html">
+			        						<img src="{{data.image || 'assets/img/items/item_1.png'}}" alt="">
+			        					</a>
+
+			        					<a href="javascript: void(0)" class="likes space-x-3">
+			        						<i class="ri-cup-line"></i>
+			        						<span class="txt_sm">0</span>
+			        					</a>
+			        				</div>
+			        				<!-- =============== -->
+			        				<h6 class="card_title">
+			        					#{{data.id}}
+			        				</h6>
+			        				<div class="card_footer d-block space-y-10">
+			        					<div class="card_footer justify-content-between">
+			        						<div class="creators">
+			        							<p class="txt_sm"> 1 in stock</p>
+			        						</div>
+			        						<a href="javascript: void(0)" class="">
+			        							<p class="txt_sm">Price: <span class="color_green
+			        									txt_sm">0 TEA</span></p>
+			        						</a>
+			        					</div>
+			        					<div class="hr"></div>
+			        					<div class="text-center">
+			        						<a class="btn btn-sm btn-primary" href="javascript: void(0)">Mint</a>
+			        					</div>
+			        				</div>
+			        			</div>
+			        		</div>
+			        	</div>
+
+			        </div>
+            </div>
+
+			</div>

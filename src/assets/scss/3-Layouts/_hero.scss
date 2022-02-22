@@ -1,0 +1,183 @@
+.hero__1 {
+    overflow: hidden;
+    position: relative;
+    background: $color_white;
+    box-shadow: $shadow_1;
+    z-index: 0;
+    @include before {
+        left: 0;
+        background: url(../img/effects/hero.jpg);
+        width: 476px;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-size: contain;
+        z-index: -1;
+        @include tablet_vert_screen {
+            display: none;
+        }
+    }
+    .hero__left {
+        padding: 100px 0;
+        @include tablet_vert_screen {
+            padding: 50px 0;
+        }
+    }
+    .hero__text {
+        max-width: 30rem;
+        margin-left: 0;
+    }
+}
+.hero__2 {
+    overflow: hidden;
+    position: relative;
+    padding-top: 100px;
+    z-index: 0;
+
+    @include tablet_vert_screen {
+        padding-top: 50px;
+    }
+    @include before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: $color_white;
+        box-shadow: $shadow_1;
+        width: 100%;
+        height: 80%;
+        background-repeat: no-repeat;
+        background-size: contain;
+        z-index: -1;
+    }
+
+    .hero__text {
+        max-width: 30rem;
+    }
+    .wrapper {
+        margin-top: 50px;
+        @include card_item;
+        background-color: $color_white;
+        @include before {
+            background: url(../img/bg/ce.png);
+            background-size: cover;
+            height: 25rem;
+            width: 25rem;
+            top: -10rem;
+            left: -8rem;
+            z-index: -1;
+        }
+        @include after {
+            background: url(../img/bg/ce.png);
+            background-size: cover;
+            height: 25rem;
+            width: 25rem;
+            top: -10rem;
+            right: -8rem;
+            z-index: -1;
+        }
+        .card__hero__item {
+            background: $color_light;
+            border-radius: $border_radius;
+            .card__img {
+                border-radius: $border_radius;
+            }
+        }
+        @include tablet_vert_screen {
+            margin-bottom: -30px;
+        }
+    }
+}
+
+.hero__3 {
+    padding: 100px 0 50px;
+    background-image: url(../img/bg/effect.svg);
+    background-size: 100%;
+    background-color: $color_white;
+    background-repeat: no-repeat;
+    @include tablet_vert_screen {
+        padding-top: 50px;
+    }
+}
+.hero__kit {
+    @include hero;
+}
+.hero_marketplace {
+    @include hero;
+}
+
+.hero__profile {
+    .cover {
+        height: 20rem;
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+    }
+    .avatar_wrap {
+        position: relative;
+        width: 6rem;
+        .avatar {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: solid 5px $color_white;
+            width: 7rem;
+            height: 7rem;
+        }
+    }
+    .infos {
+        padding: 20px 0;
+        background-color: $color_white;
+        border-bottom: 1px solid $color_stroke;
+    }
+    .copy {
+        padding: 10px 20px;
+        border-radius: $border_radius * 20;
+        border: 1px solid $color_stroke;
+        display: flex;
+        justify-content: space-between;
+        i {
+            padding-left: 10px;
+            margin-left: 10px;
+            border-left: 1px solid $color_text;
+        }
+    }
+}
+
+.hero__creators {
+    padding: 100px 0 50px;
+    .hero__text {
+        max-width: 30rem;
+        margin-left: 0;
+    }
+}
+
+.hero__collections {
+    @include hero;
+}
+
+.hero__activity {
+    @include hero;
+}
+.hero__upload {
+    padding: 100px 0;
+    @include tablet_vert_screen {
+        padding: 50px 0;
+    }
+    .hero__text {
+        max-width: 30rem;
+    }
+    .switch {
+        @include sm {
+            display: flex;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+    .title {
+        @include sm {
+            text-align: center;
+        }
+    }
+}
