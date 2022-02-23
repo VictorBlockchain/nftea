@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import {  Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { SERVICE } from '../service/web3.service';
+import { environment } from '../../environments/environment';
 const Moralis = require('moralis');
 const axios = require('axios');
 declare var $: any;
@@ -50,8 +51,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    const appId = "";
-    const serverUrl = '';
+    const appId = environment.moralisKey;
+    const serverUrl = environment.moralisSerer;
     Moralis.start({ serverUrl, appId });
       this.user = localStorage.getItem('user');
       //alert(this.user);

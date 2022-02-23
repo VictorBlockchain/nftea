@@ -4,6 +4,7 @@ import {  Router, ActivatedRoute, ParamMap } from '@angular/router'
 import { ViewportScroller } from "@angular/common";
 import { SERVICE } from '../service/web3.service';
 const Moralis = require('moralis');
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-album',
@@ -32,8 +33,8 @@ export class AlbumComponent implements OnInit {
   }
 
   start(){
-    const appId = "";
-    const serverUrl = '';
+    const appId = environment.moralisKey;
+    const serverUrl = environment.moralisSerer;
     Moralis.start({ serverUrl, appId });
     this.service.GET_ALBUM(this.album_id)
     .then((res:any)=>{

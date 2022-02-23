@@ -6,6 +6,7 @@ import { SERVICE } from '../service/web3.service';
 import { CAFESERVICE } from '../service/cafe.service';
 import Swal from 'sweetalert2'
 import moment from 'moment';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-cafe',
@@ -31,8 +32,8 @@ export class CafeComponent implements OnInit {
 
   ngOnInit() {
 
-    const appId = "";
-    const serverUrl = '';
+    const appId = environment.moralisKey;
+    const serverUrl = environment.moralisSerer;
     Moralis.start({ serverUrl, appId });
 
     this.user = localStorage.getItem('user');

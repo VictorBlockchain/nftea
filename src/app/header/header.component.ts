@@ -7,6 +7,7 @@ const Moralis = require('moralis');
 import { DeviceDetectorService } from 'ngx-device-detector';
 const ABISHOP = require('../../build/teashop/artifacts/abi.json');
 const TEASHOP = "0xF29BFeF0122a67616FA64e3D49752067d2367df7";
+import { environment } from '../../environments/environment';
 declare var window:any
 declare var $: any;
 @Component({
@@ -49,8 +50,8 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const appId = "";
-    const serverUrl = '';
+    const appId = environment.moralisKey;
+    const serverUrl = environment.moralisSerer;
     Moralis.start({ serverUrl, appId });
     this.init();
   }
