@@ -8,6 +8,7 @@ const ABIWALLTOKEN = require('../../build/token/artifacts/wallabi.json');
 const Moralis = require('moralis');
 
 import { DeviceDetectorService } from 'ngx-device-detector';
+import {writeJsonFile} from 'write-json-file';
 import Big from 'big.js';
 const BN = require('bn.js');
 const NFT = "0xd4dE3Aab3F26AF139b03b93CdEc9f688641cDd8f";

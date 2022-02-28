@@ -288,9 +288,11 @@ interface IERC1155 is IERC165 {
         bytes calldata data
     ) external;
 
-    function SET_DISVALUE_PARTNERS(uint256 _nft, uint256 _value, address _token) external returns (bool);
-    function SET_POWER_UP(address _user,uint256 _power) external returns (bool);
-    function GET_HERITAGE(address _address) external returns(uint256);
+    function setPower(address _user,uint256 _power) external returns (bool);
+    function getTEAPOT(uint256 _nft) external returns(address);
+    function setVOLUME(uint256 _nft, uint256 _value) external returns(bool);
+    function setFLOOR(uint256 _nft, uint256 _value) external returns(bool);
+    function _N2_V(uint256 _nft) external returns(address);
 }
 
 // File: contracts/TeaShop.sol
@@ -371,7 +373,7 @@ library SafeMath {
 }
 
 
-contract SATOSHITCOIN_SHOP {
+contract TEA_SHOP {
 
   using SafeMath for uint256;
 
@@ -420,15 +422,17 @@ contract SATOSHITCOIN_SHOP {
   mapping(address=>mapping(uint256=>uint256)) public userToShopToRating;
   mapping(uint256=>uint256[]) public shopToRatings;
   mapping(uint256=>mapping(address=>uint256)) public nftToBidTime;
-
+  mapping(uint256=>bool) public payBidBonus;
   uint256 auctionId;
   uint256 shopId;
-  uint BIDFEE =2;
-  uint  AUCTIONFEE =1;
-  address SATO = 0xdd8531a960371462b19C7a0F27C9d1f71A3f7F2B;
-  address HONEYPOT = 0xD85581FE86ca9185539A6F6F460163F392BA9Fd0;
-  address FEEADDRESS = 0xB7279F7424a036C90873E2070609F016878Ef7ab;
-  address WALLTOKEN = 0x3F9B6061D87944a4d1F7d3e63fC693C818558A62;
+  uint BIDFEE =3;
+  uint  AUCTIONFEE =3;
+
+  address public TEATOKEN;
+  address public NFTEA;
+  address public TEAPOT;
+  address public FEEADDRESS;
+  address public WALLTOKEN;
 
   struct AUCTION {
 
@@ -506,49 +510,40 @@ contract SATOSHITCOIN_SHOP {
       isAdmin[_admin] = true;
     }
   }
-  function SET_BANNED(address _user) public{
-    require(isAdmin[msg.sender], 'you are not an admin');
 
-    if(BANNED[_user]){
-      BANNED[_user] = false;
-    }else{
-      BANNED[_user] = true;
+  function SET_ADDRESS(address _addy, uint256 _type) public{
+    require(isAdmin[msg.sender], 'you are not an admin');
+    if(_type==1){
+      TEATOKEN = _addy;
+    }else if(_type==2){
+      NFTEA = _addy;
+    }else if(_type==3){
+      TEAPOT = _addy;
+    }else if(_type==4){
+      FEEADDRESS = _addy;
+    }else if(_type==5){
+      WALLTOKEN = _addy;
+
     }
-  }
-  function SET_WALLTOKEN(address _addy) public{
-    require(isAdmin[msg.sender], 'you are not an admin');
-    WALLTOKEN = _addy;
-
-  }  function SET_HONEYPOT(address _addy) public{
-    require(isAdmin[msg.sender], 'you are not an admin');
-    HONEYPOT = _addy;
 
   }
-  function SET_FEES(uint32 _honeyPotBidFee, uint32 _auctionFee) public{
+  function SET_FEES(uint32 _NFTEABidFee, uint32 _auctionFee) public{
 
     require(isAdmin[msg.sender], 'you are not an admin');
-    BIDFEE = _honeyPotBidFee;
+    BIDFEE = _NFTEABidFee;
     AUCTIONFEE = _auctionFee;
 
   }
-  function SET_FEEADDRESS(address _addy) public{
-    require(isAdmin[msg.sender], 'you are not an admin');
-    FEEADDRESS = _addy;
-  }
-  function SET_SATO(address _addy) public{
-    require(isAdmin[msg.sender], 'you are not an admin');
-    SATO = _addy;
 
-  }
-    function GET_BALANCE(address _user, uint256 _nft) public view returns(uint256){
+  function GET_BALANCE(address _user, uint256 _nft) public view returns(uint256){
 
-    return IERC1155(HONEYPOT).balanceOf(_user,_nft);
+    return IERC1155(NFTEA).balanceOf(_user,_nft);
 
   }
 
   function SET_AUCTION(uint256 _nft,uint256 _buyNowPrice, uint256 _minPrice, address[] memory _partners, uint256[] memory _sips, uint256 _quantity, uint256 _royalty,address[] memory _taxPartners, uint256[] memory _taxSips, address _nftCreator,uint256 _market) public{
 
-    require(IERC1155(HONEYPOT).balanceOf(msg.sender,_nft)>=_quantity, 'you do not own than many nfts');
+    require(IERC1155(NFTEA).balanceOf(msg.sender,_nft)>=_quantity, 'you do not own than many nfts');
 
     auctionId = SafeMath.add(auctionId,1);
 
@@ -577,8 +572,11 @@ contract SATOSHITCOIN_SHOP {
 
     nftToHostToAuction[_nft][msg.sender] = save;
     auctions.push(save);
-    IERC1155(HONEYPOT).safeTransferFrom(msg.sender,address(this),_nft,_quantity,'');
-    IERC1155Receiver(address(this)).onERC1155Received(HONEYPOT,msg.sender,_nft,_quantity,'');
+    IERC1155(NFTEA).safeTransferFrom(msg.sender,address(this),_nft,_quantity,'');
+    IERC1155Receiver(address(this)).onERC1155Received(NFTEA,msg.sender,_nft,_quantity,'');
+    if(_quantity==1){
+      payBidBonus[_nft] = true;
+    }
     emit auctionListed(msg.sender,_nft,_market);
 
   }
@@ -638,26 +636,35 @@ contract SATOSHITCOIN_SHOP {
     require(nftToHostToAuction[_nft][_host].minPrice<_value,'bid too low');
     require(nftToHostToAuction[_nft][_host].highestBid<_value, 'bid too low');
     require(nftToHostToAuction[_nft][_host].quantity>0, 'no more left');
-
     address useThisToken;
 
     if(nftToHostToAuction[_nft][_host].market==4){
 
         useThisToken = WALLTOKEN;
     }else{
-        useThisToken = SATO;
+        useThisToken = TEATOKEN;
     }
     uint256 _fee = _value.mul(BIDFEE).div(100);
     _value = _value.sub(_fee);
+
     IERC20(useThisToken).transferFrom(msg.sender,address(this), _value);
-    IERC20(useThisToken).transferFrom(msg.sender,HONEYPOT, _fee);
-    require(checkSuccess(), "BID transfer failed");
-    IERC1155(HONEYPOT).SET_DISVALUE_PARTNERS(_nft,_fee,useThisToken);
+    if(payBidBonus[_nft]){
+
+      address _contract = IERC1155(TEAPOT)._N2_V(_nft);
+      IERC20(useThisToken).transferFrom(msg.sender,_contract, _fee);
+      require(checkSuccess(), "BID bonus transfer failed");
+
+    }else{
+
+      IERC20(useThisToken).transferFrom(msg.sender,TEAPOT, _fee);
+      require(checkSuccess(), "BID bonus transfer failed");
+
+    }
 
     if(_valueOG>=nftToHostToAuction[_nft][_host].buyNowPrice){
 
       SET_PAYOUT(_nft,_value,_host);
-      IERC1155(HONEYPOT).safeTransferFrom(address(this),msg.sender,_nft,_quantity,'');
+      IERC1155(NFTEA).safeTransferFrom(address(this),msg.sender,_nft,_quantity,'');
       require(checkSuccess(), "NFT buy now failed");
 
       if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
@@ -710,7 +717,7 @@ contract SATOSHITCOIN_SHOP {
 
     }else{
 
-      IERC1155(HONEYPOT).safeTransferFrom(address(this),msg.sender,_nft,nftToHostToAuction[_nft][_host].quantity,'');
+      IERC1155(NFTEA).safeTransferFrom(address(this),msg.sender,_nft,nftToHostToAuction[_nft][_host].quantity,'');
       require(checkSuccess(), "End auction transfer failed");
       nftToHostToAuction[_nft][_host].active = 0;
       emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
@@ -746,7 +753,7 @@ contract SATOSHITCOIN_SHOP {
 
         useThisToken = WALLTOKEN;
     }else{
-        useThisToken = SATO;
+        useThisToken = TEATOKEN;
     }
     IERC20(useThisToken).transfer(FEEADDRESS, auctionFee);
     require(checkSuccess(), "auction fee payout failed");
@@ -798,15 +805,11 @@ contract SATOSHITCOIN_SHOP {
 
     }
 
-      uint256 powerUp = 1;
-      uint256 heritageSeller = IERC1155(HONEYPOT).GET_HERITAGE(nftToHostToAuction[_nft][_host].seller);
-      uint256 heritageBuyer = IERC1155(HONEYPOT).GET_HERITAGE(msg.sender);
-      if(heritageBuyer!=heritageSeller){
-      powerUp = 3;
-      }
-      IERC1155(HONEYPOT).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder,_nft,quantity,'');
-      IERC1155(HONEYPOT).SET_POWER_UP(nftToHostToAuction[_nft][_host].highestBidder,powerUp);
-      IERC1155(HONEYPOT).SET_POWER_UP(nftToHostToAuction[_nft][_host].seller,2);
+      uint256 powerUp = 3000;
+
+      IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder,_nft,quantity,'');
+      IERC1155(TEAPOT).setPower(nftToHostToAuction[_nft][_host].highestBidder,powerUp);
+      IERC1155(TEAPOT).setPower(nftToHostToAuction[_nft][_host].seller,750);
       if(nftToHostToAuction[_nft][_host].quantity<1){
          nftToHostToAuction[_nft][_host].active = 2;
       }
@@ -823,11 +826,13 @@ contract SATOSHITCOIN_SHOP {
 
         useThisToken = WALLTOKEN;
     }else{
-        useThisToken = SATO;
+        useThisToken = TEATOKEN;
     }
 
     IERC20(useThisToken).transfer(payTo, _value);
     require(checkSuccess(), "PAY failed");
+    IERC1155(NFTEA).setVOLUME(_nft,_value);
+    IERC1155(NFTEA).setFLOOR(_nft,_value);
     return true;
   }
 
