@@ -161,7 +161,28 @@ library SafeMath {
     decQuotient = add(prod_xTEN9, y / 2) / y;
   }
 }
-
+abstract contract ContextMixin {
+    function msgSender()
+        internal
+        view
+        returns (address payable sender)
+    {
+        if (msg.sender == address(this)) {
+            bytes memory array = msg.data;
+            uint256 index = msg.data.length;
+            assembly {
+                // Load the 32 bytes word from memory with the address on the lower 20 bytes, and mask those.
+                sender := and(
+                    mload(add(array, index)),
+                    0xffffffffffffffffffffffffffffffffffffffff
+                )
+            }
+        } else {
+            sender = payable(msg.sender);
+        }
+        return sender;
+    }
+}
 contract VAULT {
 
   uint256 nft;
@@ -195,7 +216,7 @@ contract VAULT {
 
 }
 
-contract NFTEA is ERC1155 {
+contract NFTEA is ERC1155, ContextMixin {
     using SafeMath for uint256;
 
     uint256 public _Nid = 0;
@@ -312,6 +333,16 @@ contract NFTEA is ERC1155 {
       payable(address(msg.sender)).transfer(address(this).balance);
 
     }
-
+    function isApprovedForAll(
+        address _owner,
+        address _operator
+    ) public override view returns (bool isOperator) {
+        // if OpenSea's ERC1155 Proxy Address is detected, auto-return true
+       if (_operator == address(0x207Fa8Df3a17D96Ca7EA4f2893fcdCb78a304101)) {
+            return true;
+        }
+        // otherwise, use the default ERC1155.isApprovedForAll()
+        return ERC1155.isApprovedForAll(_owner, _operator);
+    }
 
 }
