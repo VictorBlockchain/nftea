@@ -3,7 +3,10 @@
 ///this contract allows you to mint NFT's with a vault contract attached to it
 //the vault can hold eth and other erc20 tokens, time locked
 // the holder of the nft is the only one who can withdraw assets from the attached contract
-//
+// @VictorBlokchain on twitter
+// tips VictorBlockchain.eth
+// $victorblockchain (cashapp)
+// nft donations: 0x1479aac671bB77d403955f71C6262aFB4e161b8b 
 
 pragma solidity ^0.8.4;
 
