@@ -201,7 +201,7 @@ contract NFTEA is ERC1155 {
     uint256 public _Nid = 0;
     uint256 public _Max = 10000;
     string public _IPFS;
-    uint256 public mintFee;
+    uint256 public mintFee = 0;
     address public artist;
     address public burn = 0x000000000000000000000000000000000000dEaD;
 
@@ -224,10 +224,13 @@ contract NFTEA is ERC1155 {
 
       _Nid = _Nid.add(1);
       require(_Nid<=_Max, 'max minded');
-      require(msg.value>=mintFee,'low balance');
-      require(msg.sender.balance>=mintFee, 'low balance');
-      payable(msg.sender).transfer(msg.value);
+      if(mintFee>0){
 
+        require(msg.value>=mintFee,'low balance');
+        require(msg.sender.balance>=mintFee, 'low balance');
+        payable(msg.sender).transfer(msg.value);
+
+      }
       address vault = address(new VAULT(_Nid,_IPFS,address(this)));
       _N2_V[_Nid] = vault;
       _V2_N[vault] = _Nid;
@@ -248,6 +251,7 @@ contract NFTEA is ERC1155 {
 
       require(balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
       require(isLimited[_nft], 'cannot wrap single mints');
+      _Nid = _Nid.add(1);
       address vault = address(new VAULT(_Nid,_IPFS,address(this)));
       _N2_V[_Nid] = vault;
       _V2_N[vault] = _Nid;
@@ -312,6 +316,4 @@ contract NFTEA is ERC1155 {
       payable(address(msg.sender)).transfer(address(this).balance);
 
     }
-
-
 }
