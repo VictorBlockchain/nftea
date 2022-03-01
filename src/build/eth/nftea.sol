@@ -1,4 +1,10 @@
 // SPDX-License-Identifier: MIT
+
+///this contract allows you to mint NFT's with a vault contract attached to it
+//the vault can hold eth and other erc20 tokens, time locked
+// the holder of the nft is the only one who can withdraw assets from the attached contract
+//
+
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -191,24 +197,32 @@ contract NFTEA is ERC1155 {
     uint256 public _Max = 10000;
     string public _IPFS;
     bool public ipfsSet;
+    uint256 public mintFee;
+    address public artist;
     mapping(address=>bool) public _isA;
     mapping(uint256=>address) public _N2_V;
     mapping(address=>uint256) public _V2_N;
     mapping(uint256=>uint256) public lockExpire;
     mapping(uint256=>string) internal _N2_uri;
 
+
     constructor() ERC1155("https://nftea.app/") {
 
         _isA[msg.sender] =true;
         ipfsSet = false;
+        artist = payable(msg.sender);
 
     }
 
-    function mint() public {
+    function mint() public payable {
 
       _Nid = _Nid.add(1);
       require(_Nid<=_Max, 'max minded');
       require(ipfsSet, 'ipfs is not set');
+      require(msg.value>=mintFee,'low balance');
+      require(msg.sender.balance>=mintFee, 'low balance');
+      payable(msg.sender).transfer(msg.value);
+
       address vault = address(new VAULT(_Nid,_IPFS,address(this)));
       _N2_V[_Nid] = vault;
       _V2_N[vault] = _Nid;
@@ -222,6 +236,12 @@ contract NFTEA is ERC1155 {
       require(!ipfsSet, 'ipfs already set');
       _IPFS= _ipfs;
       ipfsSet = true;
+    }
+    function setMintFee(uint256 _value) public {
+
+      require(_isA[msg.sender], 'you are not that cool');
+      mintFee = _value;
+
     }
     function lock(uint256 _nft, uint256 _time) public {
 
@@ -258,6 +278,12 @@ contract NFTEA is ERC1155 {
     function tokenURI(uint256 _tokenId) public view returns (string memory) {
 
       return _N2_uri[_tokenId];
+
+    }
+    function withdrawEarnings() public {
+
+      require(_isA[msg.sender], 'you are not that cool');
+      payable(address(msg.sender)).transfer(address(this).balance);
 
     }
 
