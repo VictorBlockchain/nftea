@@ -88,7 +88,7 @@ interface IERC20 {
 }
 interface EXT is IERC1155{
 
-  function withdrawBNB(address _to) external returns(bool);
+  function withdrawETH(address _to) external returns(bool);
   function approveTransfers(address _creator, address _token) external returns(bool);
 
 }
@@ -208,7 +208,7 @@ contract VAULT {
     return true;
   }
 
-  function withdrawBNB(address _to) public returns(bool){
+  function withdrawETH(address _to) public returns(bool){
     require(_isC[msg.sender], 'you are not that cool');
     payable(address(_to)).transfer(address(this).balance);
     return true;
@@ -219,10 +219,10 @@ contract VAULT {
 contract NFTEA is ERC1155, ContextMixin {
     using SafeMath for uint256;
 
-    uint256 public _Nid = 0;
+    uint256 public _Rid = 0;
+    uint256 public _Nid = 10000;
     uint256 public _Max = 10000;
-    string public _IPFS;
-    uint256 public mintFee;
+    uint256 public mintFee = 0;
     address public artist;
     address public burn = 0x000000000000000000000000000000000000dEaD;
 
@@ -234,42 +234,57 @@ contract NFTEA is ERC1155, ContextMixin {
     mapping(uint256=>uint256) public _W2_N;
     mapping(uint256=>bool) public isLimited;
 
-    constructor() ERC1155("https://nftea.app/") {
+    constructor() ERC1155("https://nftea.app/nft/eth/{id}.json") {
 
         _isA[msg.sender] =true;
         artist = payable(msg.sender);
 
     }
 
-    function mint() public payable {
+    function mint(string memory _ipfs) public payable {
 
-      _Nid = _Nid.add(1);
-      require(_Nid<=_Max, 'max minded');
-      require(msg.value>=mintFee,'low balance');
-      require(msg.sender.balance>=mintFee, 'low balance');
-      payable(msg.sender).transfer(msg.value);
+      _Rid = _Rid.add(1);
+      require(_Rid<=_Max, 'max minted');
+      if(mintFee>0){
 
-      address vault = address(new VAULT(_Nid,_IPFS,address(this)));
-      _N2_V[_Nid] = vault;
-      _V2_N[vault] = _Nid;
-      _mint(msg.sender, _Nid, 1, "");
-      _N2_uri[_Nid] = _IPFS;
+        require(msg.value>=mintFee,'low balance');
+        require(msg.sender.balance>=mintFee, 'low balance');
+        payable(msg.sender).transfer(msg.value);
+
+      }
+      address vault = address(new VAULT(_Rid,_ipfs,address(this)));
+      _N2_V[_Rid] = vault;
+      _V2_N[vault] = _Rid;
+      _mint(msg.sender, _Rid, 1, "");
+      _N2_uri[_Rid] = _ipfs;
 
     }
+
     function mintLimited(uint256 _quantity, string memory _ipfs) public {
 
       require(_isA[msg.sender], 'you are not that cool');
       _Nid = _Nid.add(1);
       _mint(msg.sender, _Nid, _quantity, "");
-      _N2_uri[_Nid] = _ipfs;
-      isLimited[_Nid] = true;
+            _N2_uri[_Nid] = _ipfs;
+      if(_quantity==1){
+
+        address vault = address(new VAULT(_Nid,_ipfs,address(this)));
+        _N2_V[_Nid] = vault;
+        _V2_N[vault] = _Nid;
+
+      }else {
+
+        isLimited[_Nid] = true;
+
+      }
 
     }
     function wrap(uint256 _nft) public {
 
       require(balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
       require(isLimited[_nft], 'cannot wrap single mints');
-      address vault = address(new VAULT(_Nid,_IPFS,address(this)));
+      _Nid = _Nid.add(1);
+      address vault = address(new VAULT(_Nid,_N2_uri[_nft],address(this)));
       _N2_V[_Nid] = vault;
       _V2_N[vault] = _Nid;
       safeTransferFrom(msg.sender,burn,_nft,1,'');
@@ -278,18 +293,14 @@ contract NFTEA is ERC1155, ContextMixin {
       _N2_uri[_Nid] = _N2_uri[_nft];
 
     }
-    function setIPFS(string memory  _ipfs) public {
 
-      require(_isA[msg.sender], 'you are not that cool');
-      _IPFS= _ipfs;
-
-    }
     function setMintFee(uint256 _value) public {
 
       require(_isA[msg.sender], 'you are not that cool');
       mintFee = _value;
 
     }
+
     function lock(uint256 _nft, uint256 _time) public {
 
       require(balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
@@ -297,12 +308,12 @@ contract NFTEA is ERC1155, ContextMixin {
       lockExpire[_nft] = _time;
 
     }
-    function unlockbnb(uint256 _nft) public {
+    function unlocketh(uint256 _nft) public {
 
       uint256 _time = lockExpire[_nft];
       require(balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
       require(block.timestamp>_time, 'not time to unlock');
-      EXT(_N2_V[_nft]).withdrawBNB(msg.sender);
+      EXT(_N2_V[_nft]).withdrawETH(msg.sender);
 
     }
     function unlocktoken(uint256 _nft, address _token) public {
@@ -344,5 +355,4 @@ contract NFTEA is ERC1155, ContextMixin {
         // otherwise, use the default ERC1155.isApprovedForAll()
         return ERC1155.isApprovedForAll(_owner, _operator);
     }
-
 }
