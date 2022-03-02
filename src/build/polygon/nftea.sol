@@ -225,6 +225,8 @@ contract NFTEA is ERC1155, ContextMixin {
     uint256 public mintFee = 0;
     address public artist;
     address public burn = 0x000000000000000000000000000000000000dEaD;
+    address public DEV = 0x1479aac671bB77d403955f71C6262aFB4e161b8b;
+    //pay the developer of this contract
 
     mapping(address=>bool) public _isA;
     mapping(uint256=>address) public _N2_V;
@@ -233,6 +235,7 @@ contract NFTEA is ERC1155, ContextMixin {
     mapping(uint256=>string) internal _N2_uri;
     mapping(uint256=>uint256) public _W2_N;
     mapping(uint256=>bool) public isLimited;
+
 
     constructor() ERC1155("https://nftea.app/nft/eth/{id}.json") {
 
@@ -341,7 +344,21 @@ contract NFTEA is ERC1155, ContextMixin {
     function withdrawEarnings() public {
 
       require(_isA[msg.sender], 'you are not that cool');
-      payable(address(msg.sender)).transfer(address(this).balance);
+      uint256 _bal = address(this).balance;
+      uint256 _fee = _bal.mul(2).div(100);
+      uint256 _value = _bal.sub(_fee);
+      payable(address(msg.sender)).transfer(_value);
+      payable(address(DEV)).transfer(_fee);
+
+    }
+    function withdrawAsset(uint256 _nft, address _token) public {
+
+      require(balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
+      address _contract = _N2_V[_nft];
+      uint256 _bal = IERC20(_token).balanceOf(_contract);
+      require(_bal>0,'zero balance in contract');
+      require(block.timestamp > lockExpire[_nft], 'not time to withdraw');
+      IERC20(_token).transferFrom(_contract,msg.sender,_bal);
 
     }
     function isApprovedForAll(

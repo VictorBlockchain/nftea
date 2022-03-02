@@ -4,16 +4,17 @@
 
 export const environment = {
   production: false,
-  moralisKey: 'TCcFGAARVl43nQb1DJueY7x2cet7HHg0iRWEqQET',
-  moralisSerer: 'https://dhfyaqe3fhef.usemoralis.com:2053/server',
+  moralisKey: 'cXzN1P8lXDvdH0v9rgJ3NX3wwvmlebXEEX1qVW9l',
+  moralisSerer:'https://9mhfqaui6s3q.usemoralis.com:2053/server',
   TOKEN:'0x587725fE0EE1d2c8FAF289Bca546B4B54D6c46D6',
-  NFTEA:'0x1A6508BB74f30c9239B8dB7A4576D7a65E7F0933',
-  TEAPOT:'0x62cfC9b4C09dA06967418345a1f4bb43EDA54bF0',
-  TEASHOP:'',
-  TEAPASS:'',
-  HONEY:'',
+  NFTEA:'0x20D4280824308366792E3CD8fDeD5D845e0Ff6c7',
+  TEAPOT:'0xff33AE5073Cb9E8ebE0EcaCC9bc438D1e8212e01',
+  TEASHOP:'0x57c03cA6E793899F70c5C259E6E9ecdD465A6Be7',
+  TEAPASS:'0xC7aa1c224Fede0f13d8DEDE8FA31c354605f3b34',
+  HONEY:'0x0C0f4dd190534C1d3289710CA14e6E81BC195F73',
   HANDS:'',
-  ESPORTS:''
+  ESPORTS:'',
+  CHAIN:97
 };
 
 /*

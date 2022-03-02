@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+pragma solidity ^0.8.4;
+pragma experimental ABIEncoderV2;
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 interface IERC20 {
     /**
      * @dev Returns the amount of tokens in existence.
@@ -82,172 +81,8 @@ interface IERC20 {
      */
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
-interface IERC165 {
-    /**
-     * @dev Returns true if this contract implements the interface defined by
-     * `interfaceId`. See the corresponding
-     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]
-     * to learn more about how these ids are created.
-     *
-     * This function call must use less than 30 000 gas.
-     */
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-}
-interface IERC1155Receiver is IERC165 {
-    /**
-        @dev Handles the receipt of a single ERC1155 token type. This function is
-        called at the end of a `safeTransferFrom` after the balance has been updated.
-        To accept the transfer, this must return
-        `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))`
-        (i.e. 0xf23a6e61, or its own function selector).
-        @param operator The address which initiated the transfer (i.e. msg.sender)
-        @param from The address which previously owned the token
-        @param id The ID of the token being transferred
-        @param value The amount of tokens being transferred
-        @param data Additional data with no specified format
-        @return `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))` if transfer is allowed
-    */
-    function onERC1155Received(
-        address operator,
-        address from,
-        uint256 id,
-        uint256 value,
-        bytes calldata data
-    ) external returns (bytes4);
 
-    /**
-        @dev Handles the receipt of a multiple ERC1155 token types. This function
-        is called at the end of a `safeBatchTransferFrom` after the balances have
-        been updated. To accept the transfer(s), this must return
-        `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))`
-        (i.e. 0xbc197c81, or its own function selector).
-        @param operator The address which initiated the batch transfer (i.e. msg.sender)
-        @param from The address which previously owned the token
-        @param ids An array containing ids of each token being transferred (order and length must match values array)
-        @param values An array containing amounts of each token being transferred (order and length must match ids array)
-        @param data Additional data with no specified format
-        @return `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))` if transfer is allowed
-    */
-    function onERC1155BatchReceived(
-        address operator,
-        address from,
-        uint256[] calldata ids,
-        uint256[] calldata values,
-        bytes calldata data
-    ) external returns (bytes4);
-}
-
-interface IERC1155 is IERC165 {
-    /**
-     * @dev Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
-     */
-    event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
-
-    /**
-     * @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
-     * transfers.
-     */
-    event TransferBatch(
-        address indexed operator,
-        address indexed from,
-        address indexed to,
-        uint256[] ids,
-        uint256[] values
-    );
-
-    /**
-     * @dev Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
-     * `approved`.
-     */
-    event ApprovalForAll(address indexed account, address indexed operator, bool approved);
-
-    /**
-     * @dev Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI.
-     *
-     * If an {URI} event was emitted for `id`, the standard
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value
-     * returned by {IERC1155MetadataURI-uri}.
-     */
-    event URI(string value, uint256 indexed id);
-
-    /**
-     * @dev Returns the amount of tokens of token type `id` owned by `account`.
-     *
-     * Requirements:
-     *
-     * - `account` cannot be the zero address.
-     */
-    function balanceOf(address account, uint256 id) external view returns (uint256);
-
-    /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}.
-     *
-     * Requirements:
-     *
-     * - `accounts` and `ids` must have the same length.
-     */
-    function balanceOfBatch(address[] calldata accounts, uint256[] calldata ids)
-        external
-        view
-        returns (uint256[] memory);
-
-    /**
-     * @dev Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`,
-     *
-     * Emits an {ApprovalForAll} event.
-     *
-     * Requirements:
-     *
-     * - `operator` cannot be the caller.
-     */
-    function setApprovalForAll(address operator, bool approved) external;
-
-    /**
-     * @dev Returns true if `operator` is approved to transfer ``account``'s tokens.
-     *
-     * See {setApprovalForAll}.
-     */
-    function isApprovedForAll(address account, address operator) external view returns (bool);
-
-    /**
-     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
-     *
-     * Emits a {TransferSingle} event.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
-     * - `from` must have a balance of tokens of type `id` of at least `amount`.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-     * acceptance magic value.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes calldata data
-    ) external;
-
-    /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}.
-     *
-     * Emits a {TransferBatch} event.
-     *
-     * Requirements:
-     *
-     * - `ids` and `amounts` must have the same length.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the
-     * acceptance magic value.
-     */
-    function safeBatchTransferFrom(
-        address from,
-        address to,
-        uint256[] calldata ids,
-        uint256[] calldata amounts,
-        bytes calldata data
-    ) external;
+interface i1155 is IERC1155{
 
     function disValue(address _contract, uint256 _value, address _token) external returns (bool);
     function setPower(address _user,uint256 _power, uint256 _type) external returns (bool);
@@ -256,6 +91,7 @@ interface IERC1155 is IERC165 {
     function payArtist(uint256 _nft, uint256 _value) external returns(bool);
     function setVault(uint256 _nft, string memory _ipfs) external returns(address);
     function clearVault(uint256 _nft, uint256 _index) external returns(bool);
+    function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
 
 }
 library SafeMath {
@@ -329,10 +165,8 @@ library SafeMath {
 }
 
 /// @custom:security-contact security@nftea.app
-contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, PausableUpgradeable, ERC1155BurnableUpgradeable, ERC1155SupplyUpgradeable, UUPSUpgradeable {
+contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
    using SafeMath for uint256;
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
     //isA = isAdmin
     //isC = isContract
     //_N = nft
@@ -378,7 +212,7 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
     mapping(uint256=>NFT) public _N;
     mapping(string=>NFT) public ipfs;
     mapping(address=>uint256[]) public _C2_As;
-    mapping(address=>address[]) public _C2_Ns;
+    mapping(address=>uint256[]) public _C2_Ns;
     mapping(address=>uint256[]) public _allAlbums;
     mapping(address=>bool) public BANNED;
     mapping(uint256=>address) public _N2_V;
@@ -387,35 +221,23 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
     mapping(uint256=>uint256) public _N2_VOLUME;
     mapping(uint256=>uint256) public _N2_FLOOR;
     mapping(uint256=>bool) public canWrapNFT;
-    mapping(uint256=>uint256) public reserveIndex;
+    mapping(uint256=>mapping(address=>uint256)) public reserveIndex;
 
     address public TEAPOT;
-    address public VAULT;
     address public TEAPASS;
-    uint256 public _Nid;
-    uint256 public _Aid;
+    address public TEASHOP;
+    address public TOKEN;
+    uint256 public _Nid = 0;
+    uint256 public _Aid = 0;
+    uint256 public mintPoints = 0;
+    uint256 public reservePoints = 0;
+    uint256 public giftPoints = 0;
     address public burn = 0x000000000000000000000000000000000000dEaD;
-    uint256 public mintPoints;
-    uint256 public reservePoints;
-    uint256 public giftPoints;
 
-    constructor() initializer {}
+    constructor() ERC1155("https://nftea.app/nft/{id}.json") {
 
-    function initialize() initializer public {
-
-        __ERC1155_init("https://nftea.app/nfts/{id}.json");
-        __Ownable_init();
-        __Pausable_init();
-        __ERC1155Burnable_init();
-        __ERC1155Supply_init();
-        __UUPSUpgradeable_init();
         isA[msg.sender] = true;
         isBA[msg.sender] = true;
-        _Nid = 0;
-        _Aid = 0;
-        mintPoints = 0;
-        reservePoints = 0;
-        giftPoints = 0;
 
     }
 
@@ -429,27 +251,26 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
       _allAlbums[address(this)].push(_Aid);
       _C2_As[msg.sender].push(_Aid);
       album.push(save);
-      IERC1155(TEAPASS).setPower(msg.sender,5000,1);
+      (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+      if(_a>0){
 
+        i1155(TEAPASS).setPower(msg.sender,5000,1);
 
+      }
     }
-    function SET_ADDRESSES(uint _type, address _token) public {
+
+    function SET_ADDRESSES(address _token, address _teapot, address _teapass, address _teashop ) public {
       require(isA[msg.sender],'you are not an admin');
 
-      if(_type==1){
-
-            TEAPOT = _token;
-
-        }else if(_type==2) {
-
-            VAULT = _token;
-
-        }else if (_type==3){
-
-            TEAPASS = _token;
-
-        }
+            TEAPOT = _teapot;
+            TEAPASS = _teapass;
+            TOKEN = _token;
+            TEASHOP = _teashop;
+            isC[TEAPOT] = true;
+            isC[TEAPASS] = true;
+            isC[TEASHOP] = true;
     }
+
     function SET_POINTS(uint256 _mint, uint256 _reserve, uint256 _gift) public {
       require(isA[msg.sender],'you are not an admin');
       mintPoints = _mint;
@@ -462,6 +283,16 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
       return _A[_album];
 
     }
+    function getCollectorAlbums(address _collector) public view returns(uint256[] memory){
+
+      return _C2_As[_collector];
+
+    }
+    function getCollectorNfts(address _collector) public view returns(uint256[] memory){
+
+      return _C2_Ns[_collector];
+
+    }
 
     function getAlBUMS(address _contract) public view returns(uint256[] memory){
 
@@ -472,6 +303,9 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
 
       return _N[_nft].ipfs;
 
+    }
+    function getAlbumOfNFT(uint256 _album) public view returns(uint256[] memory){
+      return _A2_N[_album];
     }
 
     function GET_NFT(uint _nft, string memory _ipfs) public view returns (NFT memory) {
@@ -531,6 +365,7 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
 
             require(balanceOf(msg.sender,_mintPass)>0, 'where is your mint pass?');
             require(amount==1, 'you cannot mint more than one regenrative');
+            require(reserveIndex[_useThisId][_creator]>0,'invalid reserve id');
 
         }
 
@@ -555,10 +390,9 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
 
         if(amount==1){
 
-          address vault = IERC1155(TEAPOT).setVault(_useThisId,_ipfs);
+          address vault = i1155(TEAPOT).setVault(_useThisId,_ipfs);
           _N2_V[_useThisId] = vault;
           canWrapNFT[_useThisId] = false;
-          _C2_Ns[msg.sender].push(vault);
 
         }
         else{
@@ -571,13 +405,18 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
           safeTransferFrom(msg.sender,burn, _mintPass,1,'');
 
         }
-        uint256 _rIndex = reserveIndex[_useThisId];
+        uint256 _rIndex = reserveIndex[_useThisId][msg.sender];
         if(_rIndex>0){
 
           userToReserveIds[_creator][_rIndex] = 0;
 
         }
-        IERC1155(TEAPASS).setPower(msg.sender,mintPoints,1);
+        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+        if(_a>0){
+
+        i1155(TEAPASS).setPower(msg.sender,mintPoints,1);
+      }
+        _C2_Ns[_creator].push(_useThisId);
 
         emit newMint(_creator,_useThisId,_ipfs);
     }
@@ -585,29 +424,26 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
     function wrap(uint256 _nft, bytes memory data)
         public
     {
-        require(IERC1155(address(this)).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
+        require(i1155(address(this)).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
         require(canWrapNFT[_nft], 'cannot wrap this nft');
         _Nid = _Nid.add(1);
 
-        address vault = IERC1155(TEAPOT).setVault(_Nid,_N[_nft].ipfs);
-        IERC1155(address(this)).safeTransferFrom(msg.sender,address(this),_nft,1,'');
-        IERC1155Receiver(address(this)).onERC1155Received(address(this),vault,_nft,1,'');
+        address vault = i1155(TEAPOT).setVault(_Nid,_N[_nft].ipfs);
+        i1155(address(this)).safeTransferFrom(msg.sender,address(this),_nft,1,'');
+        IERC1155Receiver(address(this)).onERC1155Received(address(this),msg.sender,_nft,1,'');
         _WN2_N[_Nid] = _nft;
-        _C2_Ns[msg.sender].push(vault);
+        _N2_V[_Nid] = vault;
+        _C2_Ns[msg.sender].push(_Nid);
         _mint(msg.sender,_Nid,1,data);
     }
+    function unwrap(uint256 _wnft) public {
 
-    function unwrap(uint256 _wnft, uint256 _vaultIndex)
-        public
-    {
+        require(i1155(address(this)).balanceOf(msg.sender,_wnft)>0, 'you do not own this nft');
         uint256 _nft = _WN2_N[_wnft];
-
-        require(IERC1155(address(this)).balanceOf(msg.sender,_wnft)>0, 'you do not own this nft');
-        IERC1155(address(this)).safeTransferFrom(msg.sender,burn,_wnft,1,'');
-        require(checkSuccess(), "burn failed");
-        IERC1155(address(this)).safeTransferFrom(address(this),msg.sender,_nft,1,'');
-        require(checkSuccess(), "nft transfer failed");
-        IERC1155(VAULT).clearVault(_wnft, _vaultIndex);
+        i1155(address(this)).safeTransferFrom(msg.sender,burn,_wnft,1,'');
+        require(checkSuccess(), 'error unwrapping');
+        i1155(address(this)).safeTransferFrom(address(this),msg.sender,_nft,1,'');
+        require(checkSuccess(), 'error unwrapping main nft');
 
     }
 
@@ -628,18 +464,24 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
     function GIFT(uint _nft, address _to, uint256 _quantity) public{
 
       require(balanceOf(msg.sender,_nft) >=_quantity, 'You do not own this nft');
-      IERC1155(address(this)).safeTransferFrom(msg.sender,_to,_nft,_quantity,'');
+      i1155(address(this)).safeTransferFrom(msg.sender,_to,_nft,_quantity,'');
+      require(checkSuccess(), 'error gifting');
+
       if(_to!=burn){
-                IERC1155(TEAPASS).setPower(msg.sender,giftPoints,1);
+        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+        if(_a>0){
 
+                i1155(TEAPASS).setPower(msg.sender,giftPoints,1);
+              }
       }
-
     }
+
     function BURN(uint256 _nft, address _collector ) public returns(bool){
 
       require(balanceOf(_collector,_nft) >0, 'collector does not own this nft');
       require(isC[msg.sender], 'you are not that cool');
-      IERC1155(address(this)).safeTransferFrom(msg.sender,burn,_nft,1,'');
+      i1155(address(this)).safeTransferFrom(msg.sender,burn,_nft,1,'');
+      require(checkSuccess(), 'error burning');
       return true;
     }
 
@@ -662,10 +504,19 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
 
             _Nid = _Nid.add(1);
             userToReserveIds[msg.sender].push(_Nid);
-            reserveIndex[_Nid] = i;
+            reserveIndex[_Nid][msg.sender] = i;
         }
-        IERC1155(TEAPASS).setPower(msg.sender,reservePoints, 1);
+        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+        if(_a>0){
 
+        i1155(TEAPASS).setPower(msg.sender,reservePoints, 1);
+      }
+
+    }
+
+    function setBan(address _collector) public {
+      require(isA[msg.sender], 'you are not an admin');
+      BANNED[_collector] = true;
     }
 
     function GET_RESERVEIDS(address _creator) public view returns(uint256[] memory){
@@ -685,16 +536,10 @@ contract NFTEA is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausabl
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
         internal
         whenNotPaused
-        override(ERC1155Upgradeable, ERC1155SupplyUpgradeable)
+        override(ERC1155, ERC1155Supply)
     {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
-
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        onlyOwner
-        override
-    {}
     function checkSuccess()
         private pure
         returns (bool)

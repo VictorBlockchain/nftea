@@ -29,54 +29,54 @@ export class CAFESERVICE {
 
   async LAUNCHROOM(_room:any,_host:any){
 
-    this.http.post('/api/rooms')
-    .subscribe((res:any)=>{
-      //console.log(res)
-      const _cafe = Moralis.Object.extend("cafe");
-      const _p = new _cafe(_room);
-      _p.save({
-
-        owner:_host,
-        room:_room,
-        roomURL:res.url,
-        dailyID:res.id,
-        roomName:res.name,
-        active:1
-
-      }).then(async()=>{
-
-        this.pop('success', 'your room is ready');
-        this.zone.run(()=>{
-          this.router.navigate(['/cafe/room/'+_room]);
-
-        })
-    });
-    })
+    // this.http.post('/api/rooms')
+    // .subscribe((res:any)=>{
+    //   //console.log(res)
+    //   const _cafe = Moralis.Object.extend("cafe");
+    //   const _p = new _cafe(_room);
+    //   _p.save({
+    //
+    //     owner:_host,
+    //     room:_room,
+    //     roomURL:res.url,
+    //     dailyID:res.id,
+    //     roomName:res.name,
+    //     active:1
+    //
+    //   }).then(async()=>{
+    //
+    //     this.pop('success', 'your room is ready');
+    //     this.zone.run(()=>{
+    //       this.router.navigate(['/cafe/room/'+_room]);
+    //
+    //     })
+    // });
+    // })
   }
 
   async CLOSEROOM(_room:any,_host:any){
 
-    const _query = new Moralis.Query(_uCafe);
-    _query.equalTo('room',_room);
-    _query.equalTo('active', 1);
-    const results = await _query.first();
-    if(results){
-      results.active = 0;
-      _query.save(results)
-      .then((res:any)=>{
-        if(res.length>0){
-
-          this.pop('success','profile updated');
-
-        }else{
-
-          this.pop('error', 'error creating your profile');
-        }
-      })
-
-    }else{
-      this.pop('error', ' room already closed');
-    }
+    // const _query = new Moralis.Query(_uCafe);
+    // _query.equalTo('room',_room);
+    // _query.equalTo('active', 1);
+    // const results = await _query.first();
+    // if(results){
+    //   results.active = 0;
+    //   _query.save(results)
+    //   .then((res:any)=>{
+    //     if(res.length>0){
+    //
+    //       this.pop('success','profile updated');
+    //
+    //     }else{
+    //
+    //       this.pop('error', 'error creating your profile');
+    //     }
+    //   })
+    //
+    // }else{
+    //   this.pop('error', ' room already closed');
+    // }
   }
 
   async GET_WEB3(): Promise<any> {
@@ -615,7 +615,7 @@ export class CAFESERVICE {
       try {
         // console.log("in the back " + user);
         await this.GET_WEB3();
-        const contract = new this.web3.eth.Contract(ABIPINK, AUDIO);
+        const contract = new this.web3.eth.Contract(ABIAUDIO, AUDIO);
         let result = await contract.methods.purse().call();
         // console.log(result);
         resolve(result);

@@ -745,24 +745,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_wnft",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_vaultIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "unwrap",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "newImplementation",
 				"type": "address"
@@ -949,9 +931,9 @@
 		"name": "_C2_Ns",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "uint256",
 				"name": "",
-				"type": "address"
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -1444,6 +1426,44 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			}
+		],
+		"name": "getCollectorAlbums",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			}
+		],
+		"name": "getCollectorNfts",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_nft",
 				"type": "uint256"
@@ -1773,6 +1793,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "TEASHOP",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -1829,19 +1862,6 @@
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "VAULT",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",

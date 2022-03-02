@@ -366,7 +366,9 @@ library SafeMath {
 contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, PausableUpgradeable, ERC1155BurnableUpgradeable, ERC1155SupplyUpgradeable, UUPSUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     using SafeMath for uint256;
-    constructor() initializer {}
+    constructor() initializer {
+      isA[msg.sender] = true;
+    }
     //_C = collector
     //_H = host
     event collectorAdded(
@@ -408,9 +410,9 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
     address public NFTEA = 0x1A6508BB74f30c9239B8dB7A4576D7a65E7F0933;
     address public TEAPOT = 0x62cfC9b4C09dA06967418345a1f4bb43EDA54bF0;
     address public burn = 0x000000000000000000000000000000000000dEaD;
-    uint256 public powerMul;
-    uint256 public upgradePowerNFT;
-    uint256 public upgradePower;
+    uint256 public powerMul = 2;
+    uint256 public upgradePowerNFT = 1000000;
+    uint256 public upgradePower = 0;
 
     function initialize() initializer public {
         __ERC1155_init("https://nftea.app/nft/{id}.json");
@@ -419,11 +421,12 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
         __ERC1155Burnable_init();
         __ERC1155Supply_init();
         __UUPSUpgradeable_init();
-        isA[msg.sender] = true;
-        upgradePower = 1000000;
-        powerMul = 2;
     }
 
+    function setAdmin (address _admin) public {
+      require(isA[msg.sender], 'you are not an admin');
+      isA[_admin] = true;
+    }
     function allowConnections(uint256 _nft, address[] memory _cohosts, uint256[] memory _sips) public {
 
       require(_C[msg.sender]._power>=1000000, 'your power is too low');
@@ -461,9 +464,10 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
       _C[msg.sender] = save;
       emit collectorAdded(msg.sender, _avatar, _cover, _heritage, _gender);
     }
-    function getProfile(address _collector) public returns(uint256,uint256,uint256,uint256,uint256,uint256){
+    function getProfile(address _collector) public view returns(uint256,uint256,uint256,uint256,uint256){
 
       return (_C[_collector]._avatar,_C[_collector]._cover,_C[_collector]._heritage,_C[_collector]._power,_C[_collector]._gender);
+
     }
     function updateProfile(uint256 _avatar, uint256 _cover, uint256 _heritage, uint256 _gender)public {
 
@@ -505,6 +509,7 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
     function setPower(address _collector, uint256 _value, uint256 _type) public returns(bool){
 
       require(isC[msg.sender] || isA[msg.sender], ' you are not that cool');
+      require(_C[_collector]._avatar>0, 'profile not set');
       if(_type==1){
 
         _C[_collector]._power = _C[_collector]._power.add(_value);

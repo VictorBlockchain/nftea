@@ -312,7 +312,7 @@
 				</div>
 				<div class="row space-y-20">
 					<div class="col text-center">
-						<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="createCollection()">create collection</a>
+						<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="createAlbum()">create Album</a>
 
 					</div>
 				</div>
@@ -504,20 +504,12 @@
 									</div>
 								</div>
 							</div>
-							<div class="space-y-10" *ngIf="COLLECTION && COLLECTION.length>0">
+							<div class="space-y-10" *ngIf="ALBUM && ALBUM.length>0">
 								<span class="variationInput">Choose collection</span>
 								<div class="d-flex flex-column flex-md-row">
-									<a href="javascript: void(0)" class="choose_collection mb-10
-													mb-md-0 mr-0 mr-md-3" (click)="showCreateCollection=true;showCreateNFT=false;">
-										<div class="icon">
-
-											<i class="ri-add-line"></i>
-										</div>
-										New collection
-									</a>
-									<a href="javascript: void(0)" class="choose_collection is_brand mr-3" *ngFor="let data of COLLECTION; let i = index">
-										<img src="assets/img/icons/raroin_icon.svg" alt="" (click)="setCollectonID(data.id)">
-										<span (click)="setCollectonID(data.id)">{{data.name}}</span></a>
+									<a href="javascript: void(0)" class="choose_collection is_brand mr-3" *ngFor="let data of ALBUM; let i = index">
+										<img src="assets/img/icons/raroin_icon.svg" alt="" (click)="setAlbumID(data.id)">
+										<span (click)="setAlbumID(data.id, data.name)">{{data.name}}</span></a>
 								</div>
 							</div>
 

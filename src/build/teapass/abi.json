@@ -131,6 +131,24 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			}
+		],
+		"name": "connectPass",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -319,24 +337,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			}
-		],
-		"name": "connectPass",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "disconnectTeaPass",
 		"outputs": [],
@@ -510,6 +510,19 @@
 			}
 		],
 		"name": "setAddress",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_admin",
+				"type": "address"
+			}
+		],
+		"name": "setAdmin",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1152,6 +1165,45 @@
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			}
+		],
+		"name": "getProfile",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",

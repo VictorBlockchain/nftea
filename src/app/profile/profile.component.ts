@@ -10,6 +10,7 @@ import moment from 'moment';
 declare var $: any;
 const NFT = "0xd4dE3Aab3F26AF139b03b93CdEc9f688641cDd8f";
 const _auction = Moralis.Object.extend("auction");
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -37,14 +38,14 @@ export class ProfileComponent implements OnInit {
   editMessage:any
   loading:boolean;
   minting:any;
-  COLLECTION:any;
-  NFTS:any;
+  ALBUM:any;
+  NFTEAS:any;
   AUCTIONS:any;
   hasProfile1:boolean;
   hasProfile2:boolean;
-  COLLECTIONCOUNT:any;
-  NFTCOUNT:any;
-  AUCTIONCOUNT:any;
+  ALBUMCOUNT = 0;
+  NFTCOUNT = 0;
+  AUCTIONCOUNT = 0;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -59,6 +60,10 @@ export class ProfileComponent implements OnInit {
 
     this.profile = this.route.snapshot.params.user
     this.user = localStorage.getItem('user');
+    const appId = environment.moralisKey;
+    const serverUrl = environment.moralisSerer;
+    Moralis.start({ serverUrl, appId });
+
     if(this.user){
       this.connected = true;
       if(this.profile==this.user){
@@ -75,85 +80,202 @@ export class ProfileComponent implements OnInit {
 
   async start(){
 
-    //console.log(this.user);
-  //console.log("getting profile 1 for " + this.user);
-  this.service.GET_PROFILE1(this.user)
-    .then(async(res:any)=>{
-      console.log(res);
+    const _uProfile = Moralis.Object.extend("profile");
+    const _query = new Moralis.Query(_uProfile);
+    _query.equalTo('user',this.user);
+    const results = await _query.first();
+    this.COLLECTOR = results;
+    if(!this.COLLECTOR){
 
-      this.PROFILE1 = res;
-      //console.log(res);
-      await this.getProfile2();
-      await this.GET_USER_NFTS();
-      await this.GET_USER_AUCTIONS();
-      await this.GET_MINTING();
-    })
+      this.showCreateProfile = true;
 
-  }
+    }else{
 
-  async getProfile2(){
-    try {
-
-      console.log("geting profile 2");
-      const _uProfile = Moralis.Object.extend("profile");
-      const _query = new Moralis.Query(_uProfile);
-      _query.equalTo('user',this.user);
-      const results = await _query.first();
-      this.PROFILE2 = results;
-      // this.loading = false;
-      //console.log(this.PROFILE2);
-
-      if(this.PROFILE2 && this.PROFILE2.get('user')){
-        //user is in the database
-        //console.log("really in db");
-        this.hasProfile2 = true;
-        if(this.PROFILE1.user != '0x0000000000000000000000000000000000000000'){
-          ///user ins on the blockchain
-          this.showEditProfile = false;
-          this.showCreateProfile = false;
-          this.showProfile = true;
-          this.editMessage = "your profile was stored in the blockchain but not on our database, try again please";
-          this.hasProfile1 = true;
-          this.loadProfile();
-          //console.log("user is in the db and in the blockchain" + this.PROFILE1);
-
-        }else{
-
-          ///user is not in the blockchain
-          this.showCreateProfile = true;
-          this.showEditProfile = true;
-          this.showEditBlockchain = true;
-          this.editMessage = "your profile was stored in our database but not on on the blockchain, try again please";
-          //console.log("user is in the db and not in the blockchain here");
-
-        }
-      }else{
-        console.log("not in db");
-        //user is not in the database
-        if(this.PROFILE1.user != '0x0000000000000000000000000000000000000000'){
-          ///user is in the blockchain
-          this.showProfile = false;
-          this.showCreateProfile = true;
-          this.showEditBlockchain = false;
-          this.showEditProfile = true;
-          this.editMessage = "your profile was stored on the blockchain, but not in our database try again please";
-          console.log("user is not in db but is on blockchain");
-
-        }else{
-
-          //user is on the blockchain
-          this.showEditProfile = false;
-          this.showCreateProfile = true;
-          this.editMessage = "your profile was stored in the database but not on the blockchain, try again please";
-          console.log("user is not in db and not on the blockchain");
-
-        }
-        //console.log('in db' + this.PROFILE2.user)
-      }
-    } catch (error) {
+      //console.log(this.COLLECTOR);
+      this.showProfile = true;
+      await this.service.GET_ALBUMS(this.user)
+      .then((res:any)=>{
+        this.ALBUMCOUNT = res.length;
+        this.getNFTSIOWN();
+      })
 
     }
+
   }
+  async getNFTSIOWN(){
+
+      console.log('getting nfts');
+    const _NFTS = Moralis.Object.extend("BscNFTOwners");
+    const _query = new Moralis.Query(_NFTS);
+    _query.equalTo('owner_of',this.user.toLowerCase());
+    const results = await _query.find();
+    if(results){
+      this.NFTCOUNT = results.length;
+    }else{
+      this.NFTCOUNT = 0;
+    }
+    console.log(results);
+  }
+
+  async getNFTSCreatedByMe(){
+    //console.log('getting nfts');
+    await this.service.GET_NFTS(this.user)
+    .then(async(res:any)=>{
+
+      this.NFTCOUNT = res.length;
+      // console.log(res);
+      if(this.NFTCOUNT>0){
+        // console.log(res);
+        let NFTS:any = res;
+        this.NFTEAS = [];
+
+        NFTS.forEach(element => {
+          //console.log('album is ' + element);
+          this.service.GET_NFTEA(element)
+          .then(async(res:any)=>{
+
+            let _vault = await this.service.GET_TEAPOT(element);
+            let ipfs:any = await axios.get(res.ipfs);
+            this.NFTEAS.push({ipfs:ipfs.data,teapot:_vault,id:element});
+            this.loading = false;
+            //console.log(ipfs.data.image);
+          });
+        });
+      }
+
+    })
+  }
+
+  async setProfile(){
+
+    if(!this._profile.controls.name.value){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'enter your cool user name',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      })
+    }else if(!this._profile.controls.email.value){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'enter your email',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      })
+    }else if(!this._profile.controls.accountType.value){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'are you a collector or creator?',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      })
+    }else if(!this._profile.controls.preference.value){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'what is your art preference?',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      })
+    }else if(!this._profile.controls.story.value){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'what is your story?',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      })
+    }else{
+
+      const _uProfile = Moralis.Object.extend("profile");
+      const _p = new _uProfile(this._profile.controls.email.value);
+
+      _p.save({
+
+        name:this._profile.controls.name.value,
+        email:this._profile.controls.email.value,
+        accountType:this._profile.controls.accountType.value,
+        preference:this._profile.controls.preference.value,
+        story:this._profile.controls.story.value,
+        heritage:this._profile.controls.heritage.value,
+        user:this.user
+
+      }).then(()=>{
+
+        this.pop('success', 'profile created');
+        this.showProfile = true;
+        this.start();
+      })
+    }
+
+  }
+
+  // async getProfile2(){
+  //   try {
+  //
+  //     console.log("geting profile 2");
+  //     const _uProfile = Moralis.Object.extend("profile");
+  //     const _query = new Moralis.Query(_uProfile);
+  //     _query.equalTo('user',this.user);
+  //     const results = await _query.first();
+  //     this.PROFILE2 = results;
+  //     // this.loading = false;
+  //     //console.log(this.PROFILE2);
+  //
+  //     if(this.PROFILE2 && this.PROFILE2.get('user')){
+  //       //user is in the database
+  //       //console.log("really in db");
+  //       this.hasProfile2 = true;
+  //       if(this.PROFILE1.user != '0x0000000000000000000000000000000000000000'){
+  //         ///user ins on the blockchain
+  //         this.showEditProfile = false;
+  //         this.showCreateProfile = false;
+  //         this.showProfile = true;
+  //         this.editMessage = "your profile was stored in the blockchain but not on our database, try again please";
+  //         this.hasProfile1 = true;
+  //         this.loadProfile();
+  //         //console.log("user is in the db and in the blockchain" + this.PROFILE1);
+  //
+  //       }else{
+  //
+  //         ///user is not in the blockchain
+  //         this.showCreateProfile = true;
+  //         this.showEditProfile = true;
+  //         this.showEditBlockchain = true;
+  //         this.editMessage = "your profile was stored in our database but not on on the blockchain, try again please";
+  //         //console.log("user is in the db and not in the blockchain here");
+  //
+  //       }
+  //     }else{
+  //       console.log("not in db");
+  //       //user is not in the database
+  //       if(this.PROFILE1.user != '0x0000000000000000000000000000000000000000'){
+  //         ///user is in the blockchain
+  //         this.showProfile = false;
+  //         this.showCreateProfile = true;
+  //         this.showEditBlockchain = false;
+  //         this.showEditProfile = true;
+  //         this.editMessage = "your profile was stored on the blockchain, but not in our database try again please";
+  //         console.log("user is not in db but is on blockchain");
+  //
+  //       }else{
+  //
+  //         //user is on the blockchain
+  //         this.showEditProfile = false;
+  //         this.showCreateProfile = true;
+  //         this.editMessage = "your profile was stored in the database but not on the blockchain, try again please";
+  //         console.log("user is not in db and not on the blockchain");
+  //
+  //       }
+  //       //console.log('in db' + this.PROFILE2.user)
+  //     }
+  //   } catch (error) {
+  //
+  //   }
+  // }
 
 async loadProfile(){
 

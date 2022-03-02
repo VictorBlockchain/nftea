@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import { NgxSummernoteModule } from 'ngx-summernote';
 const Moralis = require('moralis');
 declare var $: any;
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -24,8 +25,8 @@ export class CreateComponent implements OnInit {
   _reserve:FormGroup;
   toFile:any;
   type:any;
-  collectionImage:any;
-  collectionImageHash:any;
+  albumImage:any;
+  albumImageHash:any;
   _creatorSplit:any;
   imageURI:any;
   imageName:any;
@@ -44,8 +45,8 @@ export class CreateComponent implements OnInit {
   showEnableWallToken:boolean;
   showEnableHANDTEA:boolean;
   showEnableHANDNFT:boolean;
-  COLLECTIONID:any;
-  COLLECTION:any;
+  ALBUMID:any;
+  ALBUM:any;
   pass:boolean;
   lat:any;
   lng:any;
@@ -63,6 +64,10 @@ export class CreateComponent implements OnInit {
   }
 
   async ngOnInit() {
+
+    const appId = environment.moralisKey;
+    const serverUrl = environment.moralisSerer;
+    Moralis.start({ serverUrl, appId });
 
     this.type = this.route.snapshot.params.type
         this.user = localStorage.getItem('user');
@@ -154,41 +159,39 @@ export class CreateComponent implements OnInit {
     //console.log(this.showApproval);
     if(!this.showApproval){
 
-      this.service.GET_PROFILE1(this.user)
-      .then(async(res:any)=>{
-        if(res.user == '0x0000000000000000000000000000000000000000'){
+      const _uProfile = Moralis.Object.extend("profile");
+      const _query = new Moralis.Query(_uProfile);
+      _query.equalTo('user',this.user);
+      const results = await _query.first();
+      this.COLLECTOR = results;
+      if(!this.COLLECTOR){
+        setTimeout(() => {
+          this.pop('error', 'lets set up your profile');
+        }, 3000);
+      }else{
 
-          this.pop('error', 'lets create your profile 1st');
+         await this.service.GET_ALBUMS(this.user)
+          .then((res:any)=>{
 
-        }else{
-          //console.log(res);
-          let ALBUMS:any = res.albums;
-          this.COLLECTION = [];
+            this.ALBUMCOUNT = res.length;
+            if(this.ALBUMCOUNT>0){
+              // console.log(res);
+              let ALBUMS:any = res;
+              this.ALBUM = [];
 
-          ALBUMS.forEach(element => {
-            //console.log('album is ' + element);
-            this.service.GET_ALBUM(element)
-            .then((res:any)=>{
+              ALBUMS.forEach(element => {
+                //console.log('album is ' + element);
+                this.service.GET_ALBUM(element)
+                .then((res:any)=>{
 
-              this.COLLECTION.push({id:element,name:res.name});
-              //console.log(res);
-            })
-          });
-          //
-          // this.COLLECTION = [];
-          //   //get users collections
-          //   const _collection = Moralis.Object.extend("collection");
-          //   const _query = new Moralis.Query(_collection);
-          //   _query.equalTo('user',this.user);
-          //   const results = await _query.find();
-          //   results.forEach(element => {
-          //     //console.log(element.id, element.get('name'))
-          //
-          //     this.COLLECTION.push({id:element.id,name:element.get('name')});
-          //   });
+                  this.ALBUM.push({id:element,name:res._name});
+                  console.log(this.ALBUM);
+                })
+              });
+            }
 
-        }
-      })
+          })
+      }
     }
   }
   async upload(event:any){
@@ -205,13 +208,13 @@ export class CreateComponent implements OnInit {
   })
 
   }
-async createCollection(type:any){
+async createAlbum(type:any){
 
 if(!this.user){
 
     Swal.fire({
       title: 'Error!',
-      text: 'Connect your wallet to create a collection',
+      text: 'Connect your wallet to create a album',
       icon: 'error',
       confirmButtonText: 'Close'
     })
@@ -219,7 +222,7 @@ if(!this.user){
   }else if (!this._createCollection.controls.name.value) {
   Swal.fire({
     title: 'Error!',
-    text: 'Whats the name of this collection?',
+    text: 'Whats the name of this album?',
     icon: 'error',
     confirmButtonText: 'Close'
   })
@@ -230,8 +233,8 @@ if(!this.user){
   .then((res:any)=>{
     if(res.success){
 
-        const _collection = Moralis.Object.extend("collection");
-        const _p = new _collection();
+        const _album = Moralis.Object.extend("album");
+        const _p = new _album();
 
         _p.save({
           name:this._createCollection.controls.name.value,
@@ -241,7 +244,7 @@ if(!this.user){
 
         }).then(async(res:any)=>{
 
-          this.pop('success', 'collection created');
+          this.pop('success', 'album created');
           this.start();
 
 
@@ -277,7 +280,7 @@ async SET_NFT(){
   //
   //   Swal.fire({
   //     title: 'Error!',
-  //     text: 'get an avatar and cover before creating collections and nft\'s',
+  //     text: 'get an avatar and cover before creating albums and nft\'s',
   //     icon: 'error',
   //     confirmButtonText: 'Close'
   //   })
@@ -385,10 +388,10 @@ Swal.fire({
   icon: 'error',
   confirmButtonText: 'Close'
 })
-}else if(!this.COLLECTIONID){
+}else if(!this.ALBUMID){
   Swal.fire({
     title: 'Error!',
-    text: 'What collection is this NFTea going to?',
+    text: 'What album is this NFTea going to?',
     icon: 'error',
     confirmButtonText: 'Close'
   })
@@ -473,7 +476,7 @@ Swal.fire({
       metaData.image = this.imageURI;
       metaData.creator = this.user;
       metaData.created = this.curday('/')
-      metaData.collection = this.COLLECTIONID;
+      metaData.album = this.ALBUMID;
       let p = [];
       p.push(this.user);
       p.push(this._createNFT.controls.split1.value || '0x000000000000000000000000000000000000dEaD');
@@ -491,7 +494,7 @@ Swal.fire({
       const metaDataURI = await metaDataFile.ipfs();
       let ipfs = metaDataFile._ipfs;
       console.log(this.useThisId);
-      this.service.MINT(metaDataURI,this.user,this._createNFT.controls.quantity.value,metaDataFile._ipfs,this._createNFT.controls.royalty.value,p,s,this._createNFT.controls.story.value,this.COLLECTIONID,this.user,this.useThisId,this.mintPass)
+      this.service.MINT(metaDataURI,this.user,this._createNFT.controls.quantity.value,metaDataFile._ipfs,this._createNFT.controls.royalty.value,p,s,this._createNFT.controls.story.value,this.ALBUMID,this.user,this.useThisId,this.mintPass)
       .then(async(res:any)=>{
         // console.log(res)
           if(res.success){
@@ -536,9 +539,10 @@ SET_APPROVE(_value:any){
     }
   })
 }
-private setCollectonID(collectionID:any){
-  this.COLLECTIONID = collectionID;
-  console.log('id is ' + this.COLLECTIONID);
+private setAlbumID(albumID:any, albumName:any){
+  this.ALBUMID = albumID;
+  this.pop('success', 'you selected album ' + albumName);
+  //console.log('id is ' + this.ALBUMID);
 }
 private curday(sp){
 
