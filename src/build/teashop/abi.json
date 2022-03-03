@@ -260,24 +260,6 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_addy",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_type",
-				"type": "uint256"
-			}
-		],
-		"name": "SET_ADDRESS",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "_admin",
 				"type": "address"
 			}
@@ -415,6 +397,39 @@
 			}
 		],
 		"name": "SET_SHOP",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_teapass",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_nftea",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_teapot",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_fee",
+				"type": "address"
+			}
+		],
+		"name": "setAddress",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -1170,6 +1185,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "TEAPASS",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "TEAPOT",
 		"outputs": [
 			{
@@ -1183,7 +1211,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "TEATOKEN",
+		"name": "TOKEN",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -1213,19 +1241,6 @@
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "WALLTOKEN",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",

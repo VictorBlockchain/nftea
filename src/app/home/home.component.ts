@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(environment.CHAIN);
+    // console.log(environment.CHAIN);
     const appId = environment.moralisKey;
     const serverUrl = environment.moralisSerer;
     Moralis.start({ serverUrl, appId });
@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
 
     if(this.isMobile){
 
-      Moralis.authenticate({signingMessage: 'NFTEA.app', provider:'walletconnect',chainId: environment.CHAIN }).then((user)=> {
+      Moralis.authenticate({signingMessage: 'NFTEA.app', provider:'walletconnect',chain: environment.CHAIN }).then((user)=> {
         //console.log(user);
         this.connected = true;
         this.user = user.get('ethAddress')
@@ -125,7 +125,7 @@ export class HomeComponent implements OnInit {
         this.pop('error', 'lets set up your profile');
       }, 3000);
     }
-    console.log(this.COLLECTOR);
+    //console.log(this.COLLECTOR);
 
     // this.service.GET_PROFILE1(this.user)
     // .then((res:any)=>{

@@ -31,25 +31,6 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "previousAdmin",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "newAdmin",
-				"type": "address"
-			}
-		],
-		"name": "AdminChanged",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "account",
@@ -69,19 +50,6 @@
 			}
 		],
 		"name": "ApprovalForAll",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "beacon",
-				"type": "address"
-			}
-		],
-		"name": "BeaconUpgraded",
 		"type": "event"
 	},
 	{
@@ -132,155 +100,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_nft",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_story",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_album",
-				"type": "uint256"
-			}
-		],
-		"name": "EDITNFT",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_nft",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_quantity",
-				"type": "uint256"
-			}
-		],
-		"name": "GIFT",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "initialize",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			},
-			{
-				"internalType": "string",
-				"name": "_ipfs",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "royalty",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address[]",
-				"name": "partners",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "sips",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "string",
-				"name": "story",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_album",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_creator",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_useThisId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_mintPass",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "_canWrap",
-				"type": "bool"
-			}
-		],
-		"name": "mint",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "amounts",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "mintBatch",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -311,55 +130,6 @@
 		],
 		"name": "Paused",
 		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "RESERVEIDS",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_type",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			}
-		],
-		"name": "SET_ADDRESSES",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "_a",
-				"type": "bool"
-			}
-		],
-		"name": "SET_BA",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -471,13 +241,224 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "address",
-				"name": "implementation",
+				"name": "_collector",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
 			}
 		],
-		"name": "Upgraded",
+		"name": "couponCreated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_wnft",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			}
+		],
+		"name": "couponRedeemed",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_story",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_album",
+				"type": "uint256"
+			}
+		],
+		"name": "EDITNFT",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			}
+		],
+		"name": "gift",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_quantity",
+				"type": "uint256"
+			}
+		],
+		"name": "GIFT",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			},
+			{
+				"internalType": "string",
+				"name": "_ipfs",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "royalty",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address[]",
+				"name": "partners",
+				"type": "address[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "sips",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "string",
+				"name": "story",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_album",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_creator",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_useThisId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_mintPass",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "_canWrap",
+				"type": "bool"
+			}
+		],
+		"name": "mint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "amounts",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "mintBatch",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_album",
+				"type": "uint256"
+			}
+		],
+		"name": "newAlbum",
 		"type": "event"
 	},
 	{
@@ -506,8 +487,96 @@
 		"type": "event"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			}
+		],
+		"name": "nftEdited",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_wnft",
+				"type": "uint256"
+			}
+		],
+		"name": "nftUnWrapped",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_wnft",
+				"type": "uint256"
+			}
+		],
+		"name": "nftWrapped",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_wnft",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_count",
+				"type": "uint256"
+			}
+		],
+		"name": "redeemCoupon",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "RESERVEIDS",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -582,6 +651,34 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_teapot",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_teapass",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_teashop",
+				"type": "address"
+			}
+		],
+		"name": "SET_ADDRESSES",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_user",
 				"type": "address"
 			},
@@ -592,6 +689,24 @@
 			}
 		],
 		"name": "SET_ADMIN",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_user",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "_a",
+				"type": "bool"
+			}
+		],
+		"name": "SET_BA",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -654,6 +769,19 @@
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			}
+		],
+		"name": "setBan",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "_C",
 				"type": "address"
 			},
@@ -664,6 +792,24 @@
 			}
 		],
 		"name": "setContract",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_redeemCount",
+				"type": "uint256"
+			}
+		],
+		"name": "setCoupon",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -745,32 +891,14 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "newImplementation",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "_wnft",
+				"type": "uint256"
 			}
 		],
-		"name": "upgradeTo",
+		"name": "unwrap",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newImplementation",
-				"type": "address"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "upgradeToAndCall",
-		"outputs": [],
-		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -784,6 +912,11 @@
 				"internalType": "bytes",
 				"name": "data",
 				"type": "bytes"
+			},
+			{
+				"internalType": "string",
+				"name": "_ipfs",
+				"type": "string"
 			}
 		],
 		"name": "wrap",
@@ -988,6 +1121,11 @@
 				"internalType": "uint256",
 				"name": "mintPass",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "wrappedTo",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -1071,7 +1209,45 @@
 				"type": "uint256"
 			}
 		],
+		"name": "_Nis_coupon",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"name": "_WN2_N",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "_WN2_redeemCount",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1305,6 +1481,11 @@
 						"internalType": "uint256",
 						"name": "mintPass",
 						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "wrappedTo",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct NFTEA.NFT",
@@ -1399,6 +1580,25 @@
 				"internalType": "struct NFTEA.ALBUM",
 				"name": "",
 				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_album",
+				"type": "uint256"
+			}
+		],
+		"name": "getAlbumOfNFT",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
 			}
 		],
 		"stateMutability": "view",
@@ -1542,6 +1742,11 @@
 				"internalType": "uint256",
 				"name": "mintPass",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "wrappedTo",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -1671,6 +1876,11 @@
 				"internalType": "uint256",
 				"name": "mintPass",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "wrappedTo",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -1703,24 +1913,16 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "proxiableUUID",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"name": "reserveIndex",
@@ -1795,6 +1997,19 @@
 	{
 		"inputs": [],
 		"name": "TEASHOP",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "TOKEN",
 		"outputs": [
 			{
 				"internalType": "address",

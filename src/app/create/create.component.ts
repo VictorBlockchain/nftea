@@ -477,6 +477,7 @@ Swal.fire({
       metaData.creator = this.user;
       metaData.created = this.curday('/')
       metaData.album = this.ALBUMID;
+      metaData.wrappedTo = 0;
       let p = [];
       p.push(this.user);
       p.push(this._createNFT.controls.split1.value || '0x000000000000000000000000000000000000dEaD');
@@ -493,7 +494,7 @@ Swal.fire({
       await metaDataFile.saveIPFS();
       const metaDataURI = await metaDataFile.ipfs();
       let ipfs = metaDataFile._ipfs;
-      console.log(this.useThisId);
+      //console.log(this.useThisId);
       this.service.MINT(metaDataURI,this.user,this._createNFT.controls.quantity.value,metaDataFile._ipfs,this._createNFT.controls.royalty.value,p,s,this._createNFT.controls.story.value,this.ALBUMID,this.user,this.useThisId,this.mintPass)
       .then(async(res:any)=>{
         // console.log(res)

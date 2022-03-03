@@ -428,11 +428,11 @@ contract TEA_SHOP {
   uint BIDFEE =3;
   uint  AUCTIONFEE =3;
 
-  address public TEATOKEN;
+  address public TOKEN;
   address public NFTEA;
   address public TEAPOT;
   address public FEEADDRESS;
-  address public WALLTOKEN;
+  address public TEAPASS;
 
   struct AUCTION {
 
@@ -511,20 +511,15 @@ contract TEA_SHOP {
     }
   }
 
-  function SET_ADDRESS(address _addy, uint256 _type) public{
-    require(isAdmin[msg.sender], 'you are not an admin');
-    if(_type==1){
-      TEATOKEN = _addy;
-    }else if(_type==2){
-      NFTEA = _addy;
-    }else if(_type==3){
-      TEAPOT = _addy;
-    }else if(_type==4){
-      FEEADDRESS = _addy;
-    }else if(_type==5){
-      WALLTOKEN = _addy;
+  function setAddress(address _teapass, address _nftea, address _teapot, address _token, address _fee) public {
 
-    }
+      require(isAdmin[msg.sender], 'you are not an admin');
+      TEAPASS = _teapass;
+      NFTEA = _nftea;
+      TEAPOT = _teapot;
+      TOKEN = _token;
+      FEEADDRESS = _fee;
+
 
   }
   function SET_FEES(uint32 _NFTEABidFee, uint32 _auctionFee) public{
@@ -550,7 +545,7 @@ contract TEA_SHOP {
     AUCTION memory save = AUCTION({
 
       id:auctionId,
-      auctionEnd: block.timestamp + 21 days,
+      auctionEnd: block.timestamp + 30 days,
       minPrice: _minPrice,
       buyNowPrice: _buyNowPrice,
       highestBid: _minPrice,
@@ -636,27 +631,20 @@ contract TEA_SHOP {
     require(nftToHostToAuction[_nft][_host].minPrice<_value,'bid too low');
     require(nftToHostToAuction[_nft][_host].highestBid<_value, 'bid too low');
     require(nftToHostToAuction[_nft][_host].quantity>0, 'no more left');
-    address useThisToken;
 
-    if(nftToHostToAuction[_nft][_host].market==4){
-
-        useThisToken = WALLTOKEN;
-    }else{
-        useThisToken = TEATOKEN;
-    }
     uint256 _fee = _value.mul(BIDFEE).div(100);
     _value = _value.sub(_fee);
 
-    IERC20(useThisToken).transferFrom(msg.sender,address(this), _value);
+    IERC20(TOKEN).transferFrom(msg.sender,address(this), _value);
     if(payBidBonus[_nft]){
 
       address _contract = IERC1155(TEAPOT)._N2_V(_nft);
-      IERC20(useThisToken).transferFrom(msg.sender,_contract, _fee);
+      IERC20(TOKEN).transferFrom(msg.sender,_contract, _fee);
       require(checkSuccess(), "BID bonus transfer failed");
 
     }else{
 
-      IERC20(useThisToken).transferFrom(msg.sender,TEAPOT, _fee);
+      IERC20(TOKEN).transferFrom(msg.sender,TEAPOT, _fee);
       require(checkSuccess(), "BID bonus transfer failed");
 
     }
@@ -669,7 +657,7 @@ contract TEA_SHOP {
 
       if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
         //refund previous bidder
-        IERC20(useThisToken).transferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
+        IERC20(TOKEN).transferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
         require(checkSuccess(), "bid refund transfer failed");
       }
 
@@ -687,7 +675,7 @@ contract TEA_SHOP {
 
         if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
 
-            IERC20(useThisToken).transferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
+            IERC20(TOKEN).transferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
             require(checkSuccess(), "bid refund transfer failed");
         }
         nftToHostToAuction[_nft][_host].highestBidder = msg.sender;
@@ -747,15 +735,8 @@ contract TEA_SHOP {
 
     uint256 auctionFee = _value.mul(AUCTIONFEE).div(100);
     uint256 quantity = nftToHostToAuction[_nft][_host].bidQuantity;
-    address useThisToken;
 
-    if(nftToHostToAuction[_nft][_host].market==4){
-
-        useThisToken = WALLTOKEN;
-    }else{
-        useThisToken = TEATOKEN;
-    }
-    IERC20(useThisToken).transfer(FEEADDRESS, auctionFee);
+    IERC20(TOKEN).transfer(FEEADDRESS, auctionFee);
     require(checkSuccess(), "auction fee payout failed");
 
     _value = _value.sub(auctionFee);
@@ -768,7 +749,7 @@ contract TEA_SHOP {
 
         uint256 tax =  _value.mul(nftToHostToAuction[_nft][_host].taxSips[i]).div(100);
         _value = _value.sub(tax);
-        PAY(_nft,nftToHostToAuction[_nft][_host].taxPartners[i],tax,_host);
+        PAY(_nft,nftToHostToAuction[_nft][_host].taxPartners[i],tax);
       }
     }
 
@@ -780,7 +761,7 @@ contract TEA_SHOP {
         if(nftToHostToAuction[_nft][_host].sips[i]>0){
         royalty = _value.mul(nftToHostToAuction[_nft][_host].sips[i]).div(100);
         _value = _value.sub(royalty);
-        PAY(_nft,nftToHostToAuction[_nft][_host].partners[i],royalty,_host);
+        PAY(_nft,nftToHostToAuction[_nft][_host].partners[i],royalty);
         }
       }
 
@@ -793,7 +774,7 @@ contract TEA_SHOP {
         if(nftToHostToAuction[_nft][_host].sips[i]>0){
             royalty = royaltyValue.mul(nftToHostToAuction[_nft][_host].sips[i]).div(100);
             _value = _value.sub(royalty);
-            PAY(_nft,nftToHostToAuction[_nft][_host].partners[i],royalty,_host);
+            PAY(_nft,nftToHostToAuction[_nft][_host].partners[i],royalty);
             if(nftToHostToAuction[_nft][_host].sips[i]==0){
                 emit royaltyPaid(nftToHostToAuction[_nft][_host].nftCreator,_nft);
             }
@@ -801,7 +782,7 @@ contract TEA_SHOP {
 
       }
       //pay seller
-      PAY(_nft,nftToHostToAuction[_nft][_host].seller,_value,_host);
+      PAY(_nft,nftToHostToAuction[_nft][_host].seller,_value);
 
     }
 
@@ -819,17 +800,9 @@ contract TEA_SHOP {
       return true;
   }
 
-  function PAY(uint256 _nft, address payTo, uint256 _value, address _host) internal returns(bool){
-    address useThisToken;
+  function PAY(uint256 _nft, address payTo, uint256 _value) internal returns(bool){
 
-    if(nftToHostToAuction[_nft][_host].market==4){
-
-        useThisToken = WALLTOKEN;
-    }else{
-        useThisToken = TEATOKEN;
-    }
-
-    IERC20(useThisToken).transfer(payTo, _value);
+    IERC20(TOKEN).transfer(payTo, _value);
     require(checkSuccess(), "PAY failed");
     IERC1155(NFTEA).setVOLUME(_nft,_value);
     IERC1155(NFTEA).setFLOOR(_nft,_value);

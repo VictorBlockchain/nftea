@@ -92,7 +92,7 @@ export class HeaderComponent implements OnInit {
 
     if(this.isMobile){
 
-      Moralis.authenticate({signingMessage: 'NFTEA.app', provider:'walletconnect',chainId: environment.CHAIN }).then((user)=> {
+      Moralis.authenticate({signingMessage: 'NFTEA.app', provider:'walletconnect',chain: environment.CHAIN }).then((user)=> {
         //console.log(user);
         this.connected = true;
         this.user = user.get('ethAddress')

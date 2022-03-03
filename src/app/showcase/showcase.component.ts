@@ -36,6 +36,7 @@ export class ShowcaseComponent implements OnInit {
   NFT:any;
   nft:any;
   nft_id:any;
+  wrap_id:any;
   nft_owner:any;
   ipfs:any;
   bscscan:any;
@@ -60,6 +61,8 @@ export class ShowcaseComponent implements OnInit {
   HONEY_GIVEN:boolean;
   WALL_BREW_TYPE:any;
   PRICES:any;
+  COLLECTOR:any;
+  SELLER:any;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -76,8 +79,9 @@ export class ShowcaseComponent implements OnInit {
     // Moralis.start({ serverUrl, appId });
     this.user = localStorage.getItem('user');
     this.nft_id = this.route.snapshot.params.nftea;
+    console.log(this.nft_id);
     this.nft_owner = this.route.snapshot.params.owner;
-
+    this.COLLECTOR = this.user;
 
     //this.userIsConnected = await Moralis.User.current();
     if(this.user){
@@ -90,86 +94,138 @@ export class ShowcaseComponent implements OnInit {
       this.user = "0x0000000000000000000000000000000000000000";
     }
     //console.log(this.user);
-    this.start();
+    await this.run();
+    //await this.auction();
   }
 
-  async start(){
-    //get nftea
+  async run(){
+
     this.NFT = [];
-    this.USER = await this.service.GET_PROFILE1(this.user);
-    // console.log(this.USER)
+    this.SELLER = {};
+    this.COLLECTOR = {};
+    this.BIDDER = {};
+    // let wrappedTo = await this.service.GET_WRAP(this.nft_id);
+    let quantityIown;
+    let redeemsLeft;
+    // if(wrappedTo>0){
+    //
+    //   this.wrap_id = this.nft_id;
+    //   quantityIown = await this.service.GET_NFT_BALANCE(this.user,this.wrap_id);
+    //   redeemsLeft = await this.service.GET_REDEEM(this.wrap_id);
+    //   this.nft_id = wrappedTo;
+    //
+    // }else{
+    //
+    //   quantityIown = await this.service.GET_NFT_BALANCE(this.user,this.nft_id);
+    //
+    // }
     this.service.GET_NFT(this.nft_id,0)
     .then(async(jordi:any)=>{
+
       let ipfs = await axios.get(jordi.ipfs);
-      // console.log();
+      if(ipfs.data.wrappedTo<1){
+
+        ipfs.data.isCoupon = await this.service.GET_IS_COUPON(this.nft_id);
+
+      }
+      quantityIown = await this.service.GET_NFT_BALANCE(this.user,this.nft_id);
+      redeemsLeft = await this.service.GET_REDEEM(this.nft_id);
+
+      // console.log(this.nft_id);
       ipfs.data.nft_id = this.nft_id;
       ipfs.data.ipfs = jordi.ipfs;
       ipfs.data.partners = jordi.partners;
       ipfs.data.sips = jordi.sips;
-      ipfs.data.market = jordi.market;
-      this.market = jordi.market;
-      this.auction = await this.service.GET_AUCTION(this.nft_owner,this.nft_id);
-      if(this.auction.active==2){
-        this.CLOSE_AUCTION(this.nft_id,1);
-      }else if (this.auction.active==0){
+      ipfs.data.market = jordi.market || 0;
+      this.market = jordi.market || 0;
+      ipfs.data.quantityIown = quantityIown;
+      // ipfs.data.nftIsWraped = wrappedTo;
+      ipfs.data.redeemsLeft = redeemsLeft || 0;
+      this.NFT = ipfs.data;
+      this.NFT.auction = await this.service.GET_AUCTION(this.nft_owner,this.nft_id);
+      this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
+      console.log(this.NFT);
 
-        const _auction = Moralis.Object.extend("auction");
-        const _query = new Moralis.Query(_auction);
-        _query.equalTo('seller',this.user.toLowerCase());
-        _query.equalTo('nft', this.nft_id);
-        _query.equalTo('active',1);
-        _query.first()
-        .then((results:any)=>{
-          console.log(results);
-          if(results){
-            results.set('pending',0);
-            results.set('active',0);
-            results.save();
+      //get seller
+      let s:any = await this.service.GET_PROFILE1(this.nft_owner);
+      if(s[0]==0){
 
-          }
+        this.SELLER.avatar = 'assets/img/avatars/avatar.png';
 
-        })
-      }else if (this.auction.active==1){
+      }else{
 
-        const _auction = Moralis.Object.extend("auction");
-        const _query = new Moralis.Query(_auction);
-        _query.equalTo('seller',this.user.toLowerCase());
-        _query.equalTo('nft', this.nft_id);
-        _query.equalTo('pending',1);
-        _query.first()
-        .then((results:any)=>{
-          //console.log(results);
-          if(results){
-            results.set('pending',0);
-            results.set('active',1);
-            results.save();
-          }
-
-
-        })
+        let s_info:any = this.service.GET_NFT(s[0],0);
+        let s_ipfs = await axios.get(s_info.ipfs);
+        this.SELLER.avatar = s_ipfs.data.image;
       }
-      // console.log(this.auction);
-      ipfs.data.auction = this.auction;
-      //console.log(auction);
-      this.NFT.push(ipfs.data);
-      this.NFT = this.NFT[0];
-      // console.log(this.NFT);
-      //console.log(this.NFT.auction);
-      await this.GET_CREATOR();
-      await this.GET_SHOP();
 
-      // this.NFT_IDS.push(res.token_id);
-      // console.log(this.NFTS);
+      this.SELLER.heritage = s[2];
+      this.SELLER.power = s[3];
+      this.SELLER.gender = s[4];
 
-    })
-    // let tokenID = this.service.GET_NFT(this.nft,0)
-    // .then((res:any)=>{
-    //   this.nft = res;
-    //   this.GET_CREATOR();
-    //   this.GET_SHOP();
-    //   console.log(this.nft);
-    // })
-    await this.PRICE();
+      //get collector
+      let c:any = await this.service.GET_PROFILE1(this.user);
+      if(s[0]==0){
+
+        this.COLLECTOR.avatar = 'assets/img/avatars/avatar.png';
+
+      }else{
+        let c_info:any = this.service.GET_NFT(s[0],0);
+        let c_ipfs = await axios.get(c_info.ipfs);
+        this.COLLECTOR.avatar = c_ipfs.data.image;
+      }
+      this.COLLECTOR.heritage = c[2];
+      this.COLLECTOR.power = c[3];
+      this.COLLECTOR.gender = c[4];
+
+      ///get bidder
+      let b:any = await this.service.GET_PROFILE1(this.NFT.auction.highestBidder);
+      if(b[0]==0){
+
+        this.BIDDER.avatar = 'assets/img/avatars/avatar.png';
+
+      }else{
+
+        let b_info:any = this.service.GET_NFT(s[0],0);
+        let b_ipfs = await axios.get(c_info.ipfs);
+        this.BIDDER.avatar = c_ipfs.data.image;
+      }
+
+      //await this.PRICE();
+
+    });
+  };
+  private curday(sp){
+
+    let today:any = new Date();
+    let dd:any = today.getDate();
+    let mm:any = today.getMonth()+1; //As January is 0.
+    let yyyy:any = today.getFullYear();
+
+    if(dd<10) dd='0'+dd;
+    if(mm<10) mm='0'+mm;
+    return (mm+sp+dd+sp+yyyy);
+
+  }
+  async GIFT(){
+    if(this._gift.controls.quantity.value>this.NFT.quantity){
+
+      this.pop('error', 'quantity too high');
+
+    }else{
+
+      this.service.SET_GIFT(this.user,this.nft_id,this._gift.controls.to.value,this._gift.controls.quantity.value)
+      .then(async(res:any)=>{
+        if(res.success){
+          this.pop('success', 'gift is on the way');
+
+        }else{
+          console.log(JSON.stringify(res.msg))
+          this.pop('error', res.msg);
+
+        }
+      })
+    }
   }
   async PRICE(){
     let price:any = await  this.service.GET_PRICE();
@@ -180,9 +236,9 @@ export class ShowcaseComponent implements OnInit {
       this.PRICES = price.usdPrice.toFixed(18);
       //console.log(this.PRICES);
 
-
     },15000);
   }
+
   async GET_CREATOR(){
     await  this.service.GET_PROFILE1(this.NFT.creator)
       .then(async(res:any)=>{
@@ -197,16 +253,6 @@ export class ShowcaseComponent implements OnInit {
         // console.log(this.CREATOR);
       })
   }
-  async GET_SHOP(){
-
-    this.service.GET_SHOP(0,this.user)
-    .then((res:any)=>{
-      this.shop = res;
-      this.GET_AUCTION();
-
-      // console.log(res)
-    })
-  }
 
   async GET_AUCTION(){
 
@@ -220,6 +266,7 @@ export class ShowcaseComponent implements OnInit {
       this.HONEY_GIVEN = await this.service.GET_HONEY_GIVEN(this.user,this.nft_id);
 
   }
+
   async CLOSE_AUCTION(nft:any, sold:any){
     console.log('closing auction');
     const _auction = Moralis.Object.extend("auction");
@@ -258,6 +305,43 @@ export class ShowcaseComponent implements OnInit {
       })
     //console.log(this.BIDDER);
   }
+  async WRAP(){
+    if(this.NFT.quantity==1){
+
+      this.pop('error', 'you cannot wrap one of one nfts');
+
+    }else{
+
+      let metaData:any = new Object();
+      metaData.title = this.NFT.title;
+      metaData.quantity = 1;
+      metaData.story = this.NFT.story;
+      metaData.royalty = this.NFT.royalty;
+      metaData.sips = this.NFT.sips;
+      metaData.attributes = this.NFT.attributes;
+      metaData.image = this.NFT.image;
+      metaData.creator = this.NFT.user;
+      metaData.wrappedTo = this.nft_id;
+      metaData.created = this.curday('/');
+      metaData.album = this.NFT.album;
+      metaData.partners = this.NFT.partners;
+      const metaDataFile = new Moralis.File("metadata.json", {base64 : btoa(JSON.stringify(metaData))});
+      await metaDataFile.saveIPFS();
+      const metaDataURI = await metaDataFile.ipfs();
+      let ipfs = metaDataFile._ipfs;
+
+      await  this.service.SET_WRAP(this.user,this.nft_id,metaDataURI,ipfs)
+        .then(async(res:any)=>{
+          if(res.success){
+              this.pop('success', 'nft is being wrapped');
+          }else{
+            this.pop('error', res.msg);
+
+          }
+        })
+
+    }
+  }
   async GET_STIR(_nft:any){
 
     await  this.service.GET_STIR(_nft)
@@ -286,6 +370,7 @@ export class ShowcaseComponent implements OnInit {
     //console.log(this.BIDDER);
   }
   async GET_SHOP_APPROVAL(){
+
     this.service.GET_SHOP_APPROVAL(this.user)
     .then(async(jordi:any)=>{
       if(!jordi){
@@ -296,9 +381,6 @@ export class ShowcaseComponent implements OnInit {
   }
   async ACCEPT_BID(){
 
-    // let l = (this.auction.highestBid * 3)/100;
-    // let m = this.auction.highestBid-l;
-    // console.log(this.auction)
     this.service.SET_ACCEPT_BID(this.user,this.nft_id,this.nft_owner)
     .then(async(jordi:any)=>{
       if(jordi.success){
@@ -461,51 +543,25 @@ export class ShowcaseComponent implements OnInit {
       })
 
     }else if (this._auction.controls.buyNowValue.value <= this._auction.controls.value.value && this._auction.controls.buyNowValue.value!=0){
+
       Swal.fire({
         title: 'Error!',
         text: 'buy now price should not be less than reserve price',
         icon: 'error',
         confirmButtonText: 'Close'
-      })
+      });
+
     }else{
 
       let buyNow = this._auction.controls.buyNowValue.value;
       let minPrice = this._auction.controls.value.value;
-      // buyNow = new Big(buyNow).toString();
-      // minPrice = new Big(minPrice).toString();
-      // console.log(this.NFT);
-      this.service.SET_AUCTION(this.user,this.nft_id,buyNow,minPrice,this.NFT.partners,this.NFT.sips,this._auction.controls.quantity.value,this.NFT.royalty,this.shop.taxPartners,this.shop.taxSips,this.NFT.creator,this._auction.controls.market.value)
+
+      this.service.SET_AUCTION(this.user,this.nft_id,buyNow,minPrice,this.NFT.partners,this.NFT.sips,this._auction.controls.quantity.value,this.NFT.royalty,this.NFT.shop.taxPartners,this.NFT.shop.taxSips,this.NFT.creator,this._auction.controls.market.value)
       .then((data:any)=>{
       // console.log(data)
         if(data.success){
 
-          this.pop('success', 'auction created');
-          const _auction = Moralis.Object.extend("auction");
-          const _query = new Moralis.Query(_auction);
-          _query.equalTo('seller',this.user.toLowerCase());
-          _query.equalTo('nft', this.nft_id);
-          _query.equalTo('active',1);
-          _query.first()
-          .then((results:any)=>{
-            if(!results){
-
-              const _p = new _auction();
-              _p.save({
-
-                seller:this.user.toLowerCase(),
-                nft:this.nft_id,
-                market:this._auction.controls.market.value,
-                buyer:this.user.toLowerCase(),
-                active:0,
-                pending:1,
-                sold:0
-
-              }).then(()=>{
-                console.log("auction listed");
-                //this.pop('success', 'profile created');
-              })
-            }
-          })
+          this.pop('success', 'auction being created');
 
         }else{
 
@@ -516,6 +572,7 @@ export class ShowcaseComponent implements OnInit {
 
     }
   }
+
   private SET_BID(){
     let quantity = this._bid.controls.quantity.value;
     let _value = this._bid.controls.value.value*quantity;
@@ -530,6 +587,62 @@ export class ShowcaseComponent implements OnInit {
       }
       //console.log(res)
     })
+  }
+  private SET_COUPON(){
+
+    let count = this._coupon.controls.redeemCount.value
+    if(count<1){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'how many times can this coupon be redeemed?',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      })
+
+    }else{
+
+      this.service.SET_COUPON(this.user,this.nft_id,count)
+      .then(async(res:any)=>{
+        if(res.success){
+          // console.log(res)
+          this.pop('success', 'coupon upgrade on the way');
+
+        }else{
+
+          this.pop('error', res.msg);
+
+        }
+      })
+    }
+  }
+  private SET_REDEEM(){
+
+    let count = this._redeem.controls.redeemCount.value
+    if(count<1){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'how many redeems do you want to use?',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      })
+
+    }else{
+
+      this.service.SET_REDEEM(this.user,this.nft_id,count)
+      .then(async(res:any)=>{
+        if(res.success){
+          // console.log(res)
+          this.pop('success', 'coupon upgrade on the way');
+
+        }else{
+
+          this.pop('error', res.msg);
+
+        }
+      })
+    }
   }
   private SET_SHOP_APPROVAL(){
     //console.log("working")
@@ -801,6 +914,22 @@ createForm(){
     nft: [''],
     value:[''],
     brewDate:['']
+
+  });
+  this._coupon = this.formBuilder.group({
+
+    redeemCount:['']
+
+  });
+  this._redeem = this.formBuilder.group({
+
+    redeemCount:['']
+
+  });
+  this._gift = this.formBuilder.group({
+
+    quantity:[''],
+    to:['']
 
   });
   this._shop = this.formBuilder.group({

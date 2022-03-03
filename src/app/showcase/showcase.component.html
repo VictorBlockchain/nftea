@@ -15,6 +15,82 @@
 						        </div>
 						    </div>
 						</div>
+						<div class="modal fade popup" id="set_coupon" tabindex="-1" role="dialog" aria-hidden="true">
+
+											<div class="modal-dialog modal-dialog-centered" role="document">
+													<div class="modal-content">
+														<div class="modal-body space-y-20 p-40">
+															<form [formGroup]="_coupon">
+																<h3 class="mt-10 text-center">Coupon NFT</h3>
+																<p class="mt-10 mb-10 text-center dashed_box bg_white">Convert this NFT into a coupon, redeemable for goods/services<br><strong>you must own all the nfts</strong></p>
+																<div class="space-y-10">
+																		<span class="nameInput">Redeem Count</span>
+																		<input type="number" class="form-control" placeholder="10" formControlName="redeemCount">
+																</div>
+
+																<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="SET_COUPON()"> Set Coupon</a>
+															</form>
+														</div>
+													</div>
+											</div>
+									</div>
+									<div class="modal fade popup" id="redeem_coupon" tabindex="-1" role="dialog" aria-hidden="true">
+
+														<div class="modal-dialog modal-dialog-centered" role="document">
+																<div class="modal-content">
+																	<div class="modal-body space-y-20 p-40">
+																		<form [formGroup]="_redeem">
+																			<h3 class="mt-10 text-center">Redeem Coupon NFT</h3>
+																			<p class="mt-10 mb-10 text-center dashed_box bg_white">You have {{NFT.redeemsLeft}} redeems left</p>
+																			<div class="space-y-10">
+																					<span class="nameInput">Redeem Count</span>
+																					<input type="number" class="form-control" placeholder="10" formControlName="redeemCount">
+																			</div>
+
+																			<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="SET_REDEEM()"> Redeem Coupon</a>
+																		</form>
+																	</div>
+																</div>
+														</div>
+												</div>
+									<div class="modal fade popup" id="wrap_nft" tabindex="-1" role="dialog" aria-hidden="true">
+
+														<div class="modal-dialog modal-dialog-centered" role="document">
+																<div class="modal-content">
+																	<div class="modal-body space-y-20 p-40">
+																		<form [formGroup]="_coupon">
+																			<h3 class="mt-10 text-center">Wrap NFT</h3>
+																			<p class="mt-10 mb-10 text-center dashed_box bg_white">Wrapping this NFT gives it a unique id and creates a teapot for it. <br><br><b>If this is a coupon NFT, wrap it to redeem</b></p>
+
+																			<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="WRAP()"> WRAP NFT</a>
+																		</form>
+																	</div>
+																</div>
+														</div>
+												</div>
+									<div class="modal fade popup" id="set_gift" tabindex="-1" role="dialog" aria-hidden="true">
+
+														<div class="modal-dialog modal-dialog-centered" role="document">
+																<div class="modal-content">
+																	<div class="modal-body space-y-20 p-40">
+																		<form [formGroup]="_gift">
+																			<h3 class="mt-10 text-center">Gift This NFT</h3>
+																			<p class="mt-10 mb-10 text-center dashed_box bg_white">send to anyone you'd like</p>
+																			<div class="space-y-10">
+																					<span class="nameInput">Address</span>
+																					<input type="text" class="form-control" placeholder="0x.." formControlName="to">
+																			</div>
+																			<div class="space-y-10">
+																					<span class="nameInput">Quantity</span>
+																					<input type="number" class="form-control" placeholder="10" formControlName="quantity">
+																			</div>
+
+																			<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="GIFT()"> Gift</a>
+																		</form>
+																	</div>
+																</div>
+														</div>
+												</div>
 						<div class="modal fade popup" id="set_more_brew" tabindex="-1" role="dialog" aria-hidden="true">
 
 											<div class="modal-dialog modal-dialog-centered" role="document">
@@ -63,18 +139,20 @@
 			            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			                <span aria-hidden="true">×</span>
 			            </button>
-			            <div class="modal-body space-y-20 p-40" *ngIf="auction && NFT.auction.id">
+			            <div class="modal-body space-y-20 p-40" *ngIf="NFT.auction && NFT.auction.id">
                     <form [formGroup]="_bid">
-			                <h3 class="mb-10">Place Your Bid</h3>
-			                <p class="mb-10">You must bid at least <span class="color_black">{{minBid(NFT.auction.highestBid/1000000000)}} TEA</span>
+			                <h3 class="mb-10 text-center">Place Your Bid</h3>
+											<p class="mb-10 text-center">You must bid at least <span class="color_black">{{minBid(NFT.auction.highestBid/1000000000)}} TEA</span></p>
+											<hr>
+			                <p class="mb-10 text-center mt-10">Buy Now Price <span class="color_black"><b>{{minBid(NFT.auction.buyNowPrice/1000000000)}} TEA</b></span>
 			                </p>
 			                <input type="text" class="form-control" placeholder="{{NFT.auction.highestBid/1000000000}}" formControlName="value">
 
-			                <p class="mb-10">Enter quantity 1 of <span class="color_green">{{NFT.auction.quantity}} available</span>
+			                <p class="mb-10" style="display:none">Enter quantity 1 of <span class="color_green">{{NFT.auction.quantity}} available</span>
 			                </p>
 			                <input type="text" class="form-control" placeholder="1" formControlName="quantity" style="display:none">
 			                <div class="hr"></div>
-			                <a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="SET_BID()"> Place a bid</a>
+			                <a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="SET_BID()"> Place your bid</a>
                     </form>
                   </div>
 			        </div>
@@ -224,15 +302,16 @@
 														<option value="3">Heritage</option>
 														<option value="4">Cafe Wall</option>
 														<option value="5">Film/Video</option>
-														<option value="6">Arts</option>
+														<option value="6">Arts & All</option>
 														<option value="7">Music</option>
 														<option value="8">Prison Art</option>
 														<option value="9">Sexy Women</option>
 														<option value="10">Sexy Men</option>
+														<option value="11">Coupons</option>
 													</select>
 											</div>
 			                <div class="d-flex justify-content-between form_cc_four mt-20">
-			                    <p> Cafe wall market is paid in other parterned tokens</p>
+			                    <p> Cafe wall market is for your throw away art</p>
 			                </div>
 
 			                <a href="javascript: void(0)" class="btn btn-primary
@@ -275,7 +354,7 @@
 			    </div>
 			</div>
       <div class="container" *ngIf="NFT && NFT.image">
-				<div class="item_details mt-60">
+				<div class="item_details mt-40">
 					<div class="row sm:space-y-20">
 						<div class="col-lg-6">
 							<img class="item_img" src="{{NFT.image}}" alt="">
@@ -284,8 +363,10 @@
 							<div class="space-y-20">
 								<h3>{{NFT.title}}</h3>
 								<div class="d-flex justify-content-between">
-									<div class="space-x-10 d-flex align-items-center">
-										<p>1 of {{NFT.quantity}}</p>
+									<div class="align-items-center">
+										<p>you own <b>{{NFT.quantityIown}} of {{NFT.quantity}}</b></p>
+										<p class="text-center" *ngIf="NFT && NFT.wrappedTo>0"><b>this nft is wrapped to #{{NFT.wrappedTo}}</b></p>
+
 									</div>
 
 								</div>
@@ -340,7 +421,7 @@
 												<div class="dropdown-menu">
 													<a class="dropdown-item" href="javascript: void(0)" *ngIf="user==NFT.creator">Edit Story</a>
 													<a class="dropdown-item" href="javascript: void(0)" *ngIf="user==NFT.creator">Burn</a>
-													<a class="dropdown-item" href="javascript: void(0)" *ngIf="user==NFT.creator" (click)="GIFT()">Gift</a>
+													<a class="dropdown-item" href="javascript: void(0)" data-toggle="modal" data-target="#set_gift" *ngIf="NFT && NFT.quantityIown>0">Gift</a>
 													<a class="dropdown-item" href="javascript: void(0)" *ngIf="user!=NFT.creator">Report</a>
 
 												</div>
@@ -351,38 +432,44 @@
 											<div class="tab-pane active" id="tabs-1" role="tabpanel">
 												<div class="creator_item creator_card
 													space-x-10" >
-													<div class="avatars space-x-10" *ngIf="CREATOR">
+													<div class="avatars space-x-10" *ngIf="SELLER">
 														<div class="media">
 															<div class="badge">
 																<img src="assets/img/icons/Badge.svg" alt="">
 															</div>
 															<a href="javascript: void(0)">
-																<img src="assets/img/avatars/avatar.png" alt="Avatar" class="avatar
+																<img src="{{SELLER.avatar}}" alt="Avatar" class="avatar
 																	avatar-md">
 															</a>
 														</div>
 														<div>
 															<p class="color_black"><span class="small">
 																	created by </span><a class="color_black txt
-																	_bold" href="javascript: void(0)">{{CREATOR.get('name')}}</a></p>
-															<span class="color_brand ">Power: 4</span>
+																	_bold" href="javascript: void(0)">name coming</a></p>
+															<span class="color_brand ">Power: {{SELLER.power}}</span><br>
+															<i class="ri-star-smile-fill" *ngIf="SELLER.heritage!=COLLECTOR.heritage"></i>
+															<i class="ri-star-smile-fill" *ngIf="SELLER.gender!=COLLECTOR.gender"></i>
 														</div>
 
 													</div>
 												</div>
+
+												<div class="form_cc_four mt-20">{{NFT.story}}</div>
 												<div class="text-center mt-20" *ngIf="NFT && NFT.auction">
-													<span *ngIf="NFT.auction.market==1">Avatar Market</span>
-													<span *ngIf="NFT.auction.market==2">Cover Market</span>
-													<span *ngIf="NFT.auction.market==3">Heritage Market</span>
-													<span *ngIf="NFT.auction.market==4">Cafe Wall</span>
-													<span *ngIf="NFT.auction.market==5">Film/video</span>
-													<span *ngIf="NFT.auction.market==6">Arts</span>
-													<span *ngIf="NFT.auction.market==7">Music</span>
-													<span *ngIf="NFT.auction.market==8">Prison Art</span>
-													<span *ngIf="NFT.auction.market==9">Sexy Women</span>
-													<span *ngIf="NFT.auction.market==10">Sexy Men</span>
+													<span *ngIf="NFT.auction.market==1">Market: Avatar</span>
+													<span *ngIf="NFT.auction.market==2">Market: Cover</span>
+													<span *ngIf="NFT.auction.market==3">Market: Heritage</span>
+													<span *ngIf="NFT.auction.market==4">Market: Cafe Wall</span>
+													<span *ngIf="NFT.auction.market==5">Market: Film/video</span>
+													<span *ngIf="NFT.auction.market==6">Market: Arts & All</span>
+													<span *ngIf="NFT.auction.market==7">Market: Music</span>
+													<span *ngIf="NFT.auction.market==8">Market: Prison Art</span>
+													<span *ngIf="NFT.auction.market==9">Market: Sexy Women</span>
+													<span *ngIf="NFT.auction.market==10">Market: Sexy Men</span>
+													<span *ngIf="NFT.auction.market==11">Market: Coupons</span>
 												</div>
-												<p class="form_cc_four mt-20">{{NFT.story}}</p>
+												<p class="text-center mt-10" *ngIf="NFT && NFT.isCoupon>0"><b>this coupon nft is redeemable {{NFT.isCoupon}} times</b></p>
+												<p class="text-center mt-10" *ngIf="NFT.quantityIown>0 && NFT.redeemsLeft>0 && NFT.wrappedTo>0">this is a coupon nft<br><b>You have {{NFT.redeemsLeft}} redeems left</b></p>
 											</div>
 											<div class="tab-pane" id="tabs-2" role="tabpanel">
 												<div class="creator_item creator_card
@@ -413,11 +500,12 @@
 														<span *ngIf="NFT.auction.market==3">Heritage Market</span>
 														<span *ngIf="NFT.auction.market==4">Cafe Wall</span>
 														<span *ngIf="NFT.auction.market==5">Film/video</span>
-														<span *ngIf="NFT.auction.market==6">Arts</span>
+														<span *ngIf="NFT.auction.market==6">Arts & All</span>
 														<span *ngIf="NFT.auction.market==7">Music</span>
 														<span *ngIf="NFT.auction.market==8">Prison Art</span>
 														<span *ngIf="NFT.auction.market==9">Sexy Women</span>
 														<span *ngIf="NFT.auction.market==10">Sexy Men</span>
+														<span *ngIf="NFT.auction.market==11">Coupons</span>
 													</div>
 														<p class="form_cc_four text-center">stirs add shit from the shit pot to the brew of this NFT</p>
 												</div>
@@ -451,11 +539,13 @@
 														<span *ngIf="NFT.auction.market==3">Heritage Market</span>
 														<span *ngIf="NFT.auction.market==4">Cafe Wall</span>
 														<span *ngIf="NFT.auction.market==5">Film/video</span>
-														<span *ngIf="NFT.auction.market==6">Arts</span>
+														<span *ngIf="NFT.auction.market==6">Arts & All</span>
 														<span *ngIf="NFT.auction.market==7">Music</span>
 														<span *ngIf="NFT.auction.market==8">Prison Art</span>
 														<span *ngIf="NFT.auction.market==9">Sexy Women</span>
 														<span *ngIf="NFT.auction.market==10">Sexy Men</span>
+														<span *ngIf="NFT.auction.market==11">Coupons</span>
+
 													</div>
 														<p class="form_cc_four text-center">Your bid is automatically returned to you when a higher bid comes in</p>
 												</div>
@@ -468,24 +558,21 @@
 										<div class="col-lg-6">
 											<div class="space-y-5">
 												<p class="color_text">Minimum bid</p>
-												<h4>{{NFT.auction.highestBid/1000000000 | number:'1.0-9'}} <span class="txt_sm color_text" *ngIf="auction.market!=4">
-														TEA/ ${{(NFT.auction.highestBid/1000000000)*PRICES | number:'1.0-2'}}</span><span class="txt_sm color_text" *ngIf="auction.market==4">
-																Coffee/ $0</span></h4>
+												<h4>{{NFT.auction.highestBid/1000000000 | number:'1.0-9'}} <span class="txt_sm color_text">
+														TEA/ ${{(NFT.auction.highestBid/1000000000)*PRICES | number:'1.0-2'}}</span></h4>
 											</div>
 										</div>
 										<div class="col-lg-6">
 											<div class="space-y-5">
 												<p class="color_text">Buy Now Price</p>
-												<h4>{{NFT.auction.buyNowPrice/1000000000 | number:'1.0-9'}} <span class="txt_sm color_text" *ngIf="auction.market!=4">
-														TEA/ ${{(NFT.auction.buyNowPrice/1000000000)*PRICES | number:'1.0-2'}}</span><span class="txt_sm color_text" *ngIf="auction.market==4">
-															Coffee/ $0</span></h4>
-
+												<h4>{{NFT.auction.buyNowPrice/1000000000 | number:'1.0-9'}} <span class="txt_sm color_text">
+														TEA/ ${{(NFT.auction.buyNowPrice/1000000000)*PRICES | number:'1.0-2'}}</span></h4>
 											</div>
 										</div>
 									</div>
 								</div>
 								<div class="hr2"></div>
-								<div class="creators" *ngIf="auction && NFT.auction.id>0 && BIDDER && STIR">
+								<div class="creators" *ngIf="NFT.auction && NFT.auction.id>0 && BIDDER && STIR">
 									<div class="row">
 										<div class="col-lg-6">
 											<div class="avatars space-x-5">
@@ -526,127 +613,90 @@
 										</div>
 									</div>
 								</div>
-                <div class="d-flex space-x-20" *ngIf="user!=nft_owner && auction && NFT.auction.nft>0">
+                <div class="d-flex space-x-20" *ngIf="user!=nft_owner && NFT.auction && NFT.auction.nft>0">
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="HONEY_GIVEN"> Honey Added</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.auction.active>1 && NFT.auction.highestBidder!=NFT.auction.seller"> Auction Closed</a>
 									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#popup_honey" *ngIf="!HONEY_GIVEN && NFT.auction.active==1"> Honey</a>
-									<a href="javascript: void(0)" class="btn btn-grad btn-lg" data-toggle="modal" data-target="#popup_bid" *ngIf="BIDDER && BIDDER.get('user')!=user && NFT.auction.active==1"> Place bid</a>
-									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="BIDDER && BIDDER.get('user')==user" disable> bid placed</a>
+									<a href="javascript: void(0)" class="btn btn-grad btn-lg" data-toggle="modal" data-target="#popup_bid" *ngIf="BIDDER && BIDDER!=user && NFT.auction.active==1"> Place bid</a>
+									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="BIDDER && BIDDER==user" disable> bid placed</a>
 								</div>
-								<div class="d-flex space-x-20" *ngIf="user!=nft_owner && auction && NFT.auction.nft==0">
+								<div class="d-flex space-x-20" *ngIf="user!=nft_owner && NFT.auction && NFT.auction.nft==0">
+
 									<p class="text-center">Item not being sold</p>
 								</div>
 								<div class="d-flex space-x-20 text-center" *ngIf="user==nft_owner">
-									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#delete_auction" *ngIf="auction && NFT.auction.id>0 && NFT.auction.highestBidder==NFT.auction.seller && NFT.auction.active==1"> Cancel Auction</a>
-									<a href="javascript: void(0)" class="btn btn-success btn-lg" data-toggle="modal" data-target="#set_more_brew" *ngIf="shop && shop.id!=0 && NFT.auction.active!=2"> Add To Brew</a>
+									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#delete_auction" *ngIf="NFT.auction && NFT.auction.id>0 && NFT.auction.highestBidder==NFT.auction.seller && NFT.auction.active==1"> Cancel Auction</a>
+									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active!=2 && NFT.isCoupon<1"> Make Coupon</a>
+									<a href="javascript: void(0)" class="btn btn-success btn-lg" data-toggle="modal" data-target="#set_more_brew" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active!=2 && NFT.quantity==1"> Add To Brew</a>
 
-									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="auction && NFT.auction.id>0 && NFT.auction.highestBidder!=NFT.auction.seller && NFT.auction.active==1"> Accept Bid</a>
-									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="shop && shop.id!=0 && auction && NFT.auction.active==2 && NFT.auction.highestBidder!=NFT.auction.seller"> Auction Closed</a>
-									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="shop && shop.id!=0 && auction && NFT.auction.active<1 && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
-									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create_shop" *ngIf="shop && shop.id==0"> Create Your Teashop</a>
+									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT.auction && NFT.auction.id>0 && NFT.auction.highestBidder!=NFT.auction.seller && NFT.auction.active==1"> Accept Bid</a>
+									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==2 && NFT.auction.highestBidder!=NFT.auction.seller"> Auction Closed</a>
+									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active<1 && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
+										<a href="javascript: void(0)" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#wrap_nft" *ngIf="NFT.quantityIown>0 && NFT.isCoupon>0 && NFT.wrappedTo<1 && NFT.creator!=user"> Wrap NFT</a>
+
+									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create_shop" *ngIf="NFT.shop && NFT.shop.id==0"> Create Your Teashop</a>
+									<a href="javascript: void(0)" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#redeem_coupon" *ngIf="NFT.quantityIown>0 && NFT.redeemsLeft>0 && NFT.wrappedTo>0"> Redeem Coupon</a>
+
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="row mt-60">
-						<div class="col-lg-6 space-y-30">
-							<div class="section_head d-flex justify-content-between
-								align-items-center">
-								<h2 class="section__title">TEA Brew</h2>
-							</div>
-							<div class="box">
-								<div class="row">
-									<div class="col-lg-6">
-										<div class="space-y-10">
-
-											<div class="creator_item space-x-10">
-												<div class="avatars space-x-10">
-													<div class="media">
-															<img src="assets/img/icons/cup_blue_256.png" alt="tea avatar" class="avatar
-																avatar-md">
-													</div>
-													<div class="col-12">
-														<span class="price color_green">{{BREW_VALUE/1000000000 | number:'1.0-18' || 'empty'}}
-															TEA<br>value: ${{(BREW_VALUE/1000000000)*PRICES | number:'1.0-2'}}<br>brew <span class="price color_green">{{DATE(BREW_DATE) || 'none'}}</span></span>
-													</div>
-
-												</div>
+				<div class="section__activity bg-white">
+								<div class="container mt-100">
+									<div class="row justify-content-center">
+										<div class="col-lg-6 col-md-8 col-sm-10">
+											<div class="section_head" style="margin-top:63px; margin-bottom:33px">
+												<h2 class="text-center">TEA POT</h2>
 											</div>
-										</div>
+											<div class="dashed_box bg_white" style="margin-bottom:33px">
+									  <div class="row">
+
+									    <div class="col-lg-12">
+									      <div class="space-y-20">
+									        <p class="txt_md _bold color_black text-center" *ngIf="NFT && NFT.quantity==1">
+									          This NFT gives you access to the assets below on <br>
+														brew date
+									        </p>
+													<p class="txt_md _bold color_black text-center" *ngIf="NFT && NFT.quantity>1">
+														No TeaPot for limited edition NFT's. You can wrap this into it's own unique NFT to
+														create a TEAPOT for it.
+													</p>
+									      </div>
+
+									    </div>
+
+									  </div>
 									</div>
-									<div class="col-lg-6">
-										<div class="space-y-10">
+											<div class="space-y-20" *ngIf="NFT && NFT.quantity==1">
+												<div class="box" style="margin-bottom:33px">
+													<div class="row justify-content-between align-items-center">
+														<div class="col-auto">
+															<div class="creators_box">
+																<div class="avatars space-x-10">
+																	<div class="media">
+																		<img src="assets/img/icons/cup_blue_256.png" alt="Avatar" class="avatar
+																			avatar-md">
+																	</div>
+																	<div>
 
-											<div class="creator_item space-x-10">
-												<div class="avatars space-x-10">
-													<a href="javascript: void(0)" class="btn btn-dark
-															w-full mt-30" (click)="GET_BREW_OUT(1)" *ngIf="user==nft_owner && BREW_VALUE>0">
-															withdraw</a>
-															<a href="javascript: void(0)" class="btn btn-white
-																	w-full mt-30" (click)="pop('error', 'nothing to brew')" *ngIf="user==nft_owner && BREW_VALUE<1">
-																	withdraw</a>
-															<a href="javascript: void(0)" class="btn btn-white
-																	w-full mt-30" (click)="SET_MORE_BREW()" *ngIf="user!=nft_owner">
-																	add to brew</a>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6 space-y-30" *ngIf='market==4'>
-							<div class="section_head d-flex justify-content-between
-								align-items-center">
-								<h3 class="section__title">SATO Brew</h3>
-
-							</div>
-							<div class="box">
-								<div class="row">
-									<div class="col-lg-6">
-										<div class="space-y-10">
-
-											<div class="creator_item space-x-10">
-												<div class="avatars space-x-10">
-													<div class="media">
-														<a href="javascript: void(0)">
-															<img src="assets/img/icons/cup_mug_256.png" alt="wall avatar" class="avatar
-																avatar-md">
-														</a>
+																		<h5 class="color_black">NFTEA Tokens</h5>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="col-auto">
+															<p class="date color_text"> 100000 </p>
+														</div>
 													</div>
 
-													<div>
-														<span class="price color_green">{{WALL_BREW/1000000000 | number:'1.0-9' || 'empty'}}
-															Coffee<br>brew <span class="price color_green">{{DATE(BREW_DATE) || 'none'}}</span></span>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="col-lg-6">
-										<div class="space-y-10">
-
-											<div class="creator_item space-x-10">
-												<div class="avatars space-x-10">
-													<a href="javascript: void(0)" class="btn btn-dark
-															w-full mt-30" (click)="GET_BREW_OUT(2)" *ngIf="user==nft_owner && WALL_BREW>0">
-															withdraw</a>
-															<a href="javascript: void(0)" class="btn btn-white
-																	w-full mt-30" (click)="pop('error', 'nothing to brew')" *ngIf="user==nft_owner && WALL_BREW<1">
-																	withdraw</a>
-															<a href="javascript: void(0)" class="btn btn-white
-																	w-full mt-30" (click)="SET_MORE_BREW()" *ngIf="user!=nft_owner">
-																	add to brew</a>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>
 
 					<div class="row mt-60" style="display:none">
 							<div class="col-lg-6 space-y-30">

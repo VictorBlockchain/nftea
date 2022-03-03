@@ -8,25 +8,6 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "previousAdmin",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "newAdmin",
-				"type": "address"
-			}
-		],
-		"name": "AdminChanged",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
 				"indexed": true,
 				"internalType": "address",
 				"name": "account",
@@ -65,19 +46,6 @@
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "beacon",
-				"type": "address"
-			}
-		],
-		"name": "BeaconUpgraded",
-		"type": "event"
 	},
 	{
 		"inputs": [
@@ -162,9 +130,31 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "initialize",
-		"outputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_vault",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
+				"type": "address"
+			}
+		],
+		"name": "disValue",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -308,21 +298,113 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_A",
+				"name": "_token",
 				"type": "address"
 			},
 			{
 				"internalType": "address",
-				"name": "_B",
+				"name": "_nftea",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_teapass",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_teashop",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_fees",
+				"type": "address"
+			}
+		],
+		"name": "SET_ADDRESSES",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_user",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "_A",
+				"type": "bool"
+			}
+		],
+		"name": "setAdmin",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_token",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "_type",
+				"name": "_brewDate",
 				"type": "uint256"
 			}
 		],
-		"name": "setAddress",
+		"name": "setBrewToken",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_C",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "_A",
+				"type": "bool"
+			}
+		],
+		"name": "setContract",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -437,19 +519,6 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "implementation",
-				"type": "address"
-			}
-		],
-		"name": "Upgraded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
 				"indexed": false,
 				"internalType": "uint256",
 				"name": "_nft",
@@ -466,109 +535,23 @@
 		"type": "event"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			},
+			{
+				"indexed": false,
 				"internalType": "address",
 				"name": "_vault",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_value",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
 			}
 		],
-		"name": "disValue",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "_A",
-				"type": "bool"
-			}
-		],
-		"name": "setAdmin",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_nft",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_value",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_brewDate",
-				"type": "uint256"
-			}
-		],
-		"name": "setBrewToken",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_C",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "_A",
-				"type": "bool"
-			}
-		],
-		"name": "setContract",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "approveVaulT",
+		"type": "event"
 	},
 	{
 		"inputs": [
@@ -650,35 +633,23 @@
 		"type": "function"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
 				"internalType": "address",
-				"name": "newImplementation",
-				"type": "address"
-			}
-		],
-		"name": "upgradeTo",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newImplementation",
+				"name": "_collector",
 				"type": "address"
 			},
 			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
+				"indexed": false,
+				"internalType": "address",
+				"name": "_vault",
+				"type": "address"
 			}
 		],
-		"name": "upgradeToAndCall",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
+		"name": "vaultClaimed",
+		"type": "event"
 	},
 	{
 		"anonymous": false,
@@ -1091,32 +1062,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "proxiableUUID",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "SHOP",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -1156,7 +1101,33 @@
 	},
 	{
 		"inputs": [],
-		"name": "TEATOKEN",
+		"name": "TEAPASS",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "TEASHOP",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "TOKEN",
 		"outputs": [
 			{
 				"internalType": "address",

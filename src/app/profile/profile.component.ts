@@ -104,17 +104,27 @@ export class ProfileComponent implements OnInit {
   }
   async getNFTSIOWN(){
 
-      console.log('getting nfts');
-    const _NFTS = Moralis.Object.extend("BscNFTOwners");
-    const _query = new Moralis.Query(_NFTS);
-    _query.equalTo('owner_of',this.user.toLowerCase());
-    const results = await _query.find();
-    if(results){
-      this.NFTCOUNT = results.length;
-    }else{
-      this.NFTCOUNT = 0;
-    }
-    console.log(results);
+    this.service.GET_USER_NFTS(this.user)
+    .then(async(res:any)=>{
+
+      this.NFTCOUNT = res.msg.length;
+      let loop:any = res.msg;
+      this.NFTEAS = [];
+      for (let i = 0; i < loop.length; i++) {
+        const element = loop[i];
+
+          let ipfs:any = await axios.get(element.token_uri);
+          let isWrapped = await this.service.GET_WRAP(element.token_id);
+          let q;
+          if(isWrapped>0){
+            ipfs.data.quantity = 1;
+          }
+          let _vault = await this.service.GET_TEAPOT(element.token_id);
+          this.NFTEAS.push({ipfs:ipfs.data,teapot:_vault,id:element.token_id,wrappedTo:isWrapped});
+          this.loading = false;
+          //console.log(this.NFTEAS);
+      }
+    })
   }
 
   async getNFTSCreatedByMe(){

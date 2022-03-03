@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+pragma solidity ^0.8.4;
+pragma experimental ABIEncoderV2;
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
+import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 interface IERC20 {
     /**
      * @dev Returns the amount of tokens in existence.
@@ -83,214 +82,11 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-// File: @openzeppelin/contracts/utils/introspection/IERC165.sol
-
-
-
-pragma solidity ^0.8.0;
-
-/**
- * @dev Interface of the ERC165 standard, as defined in the
- * https://eips.ethereum.org/EIPS/eip-165[EIP].
- *
- * Implementers can declare support of contract interfaces, which can then be
- * queried by others ({ERC165Checker}).
- *
- * For an implementation, see {ERC165}.
- */
-interface IERC165 {
-    /**
-     * @dev Returns true if this contract implements the interface defined by
-     * `interfaceId`. See the corresponding
-     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]
-     * to learn more about how these ids are created.
-     *
-     * This function call must use less than 30 000 gas.
-     */
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-}
-
-// File: @openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol
-
-
-
-pragma solidity ^0.8.0;
-
-
-/**
- * @dev _Available since v3.1._
- */
-interface IERC1155Receiver is IERC165 {
-    /**
-        @dev Handles the receipt of a single ERC1155 token type. This function is
-        called at the end of a `safeTransferFrom` after the balance has been updated.
-        To accept the transfer, this must return
-        `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))`
-        (i.e. 0xf23a6e61, or its own function selector).
-        @param operator The address which initiated the transfer (i.e. msg.sender)
-        @param from The address which previously owned the token
-        @param id The ID of the token being transferred
-        @param value The amount of tokens being transferred
-        @param data Additional data with no specified format
-        @return `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))` if transfer is allowed
-    */
-    function onERC1155Received(
-        address operator,
-        address from,
-        uint256 id,
-        uint256 value,
-        bytes calldata data
-    ) external returns (bytes4);
-
-    /**
-        @dev Handles the receipt of a multiple ERC1155 token types. This function
-        is called at the end of a `safeBatchTransferFrom` after the balances have
-        been updated. To accept the transfer(s), this must return
-        `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))`
-        (i.e. 0xbc197c81, or its own function selector).
-        @param operator The address which initiated the batch transfer (i.e. msg.sender)
-        @param from The address which previously owned the token
-        @param ids An array containing ids of each token being transferred (order and length must match values array)
-        @param values An array containing amounts of each token being transferred (order and length must match ids array)
-        @param data Additional data with no specified format
-        @return `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))` if transfer is allowed
-    */
-    function onERC1155BatchReceived(
-        address operator,
-        address from,
-        uint256[] calldata ids,
-        uint256[] calldata values,
-        bytes calldata data
-    ) external returns (bytes4);
-}
-
-// File: @openzeppelin/contracts/token/ERC1155/IERC1155.sol
-
-
-
-pragma solidity ^0.8.0;
-
-
-/**
- * @dev Required interface of an ERC1155 compliant contract, as defined in the
- * https://eips.ethereum.org/EIPS/eip-1155[EIP].
- *
- * _Available since v3.1._
- */
-interface IERC1155 is IERC165 {
-    /**
-     * @dev Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
-     */
-    event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value);
-
-    /**
-     * @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
-     * transfers.
-     */
-    event TransferBatch(
-        address indexed operator,
-        address indexed from,
-        address indexed to,
-        uint256[] ids,
-        uint256[] values
-    );
-
-    /**
-     * @dev Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
-     * `approved`.
-     */
-    event ApprovalForAll(address indexed account, address indexed operator, bool approved);
-
-    /**
-     * @dev Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI.
-     *
-     * If an {URI} event was emitted for `id`, the standard
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value
-     * returned by {IERC1155MetadataURI-uri}.
-     */
-    event URI(string value, uint256 indexed id);
-
-    /**
-     * @dev Returns the amount of tokens of token type `id` owned by `account`.
-     *
-     * Requirements:
-     *
-     * - `account` cannot be the zero address.
-     */
-    function balanceOf(address account, uint256 id) external view returns (uint256);
-
-    /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}.
-     *
-     * Requirements:
-     *
-     * - `accounts` and `ids` must have the same length.
-     */
-    function balanceOfBatch(address[] calldata accounts, uint256[] calldata ids)
-        external
-        view
-        returns (uint256[] memory);
-
-    /**
-     * @dev Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`,
-     *
-     * Emits an {ApprovalForAll} event.
-     *
-     * Requirements:
-     *
-     * - `operator` cannot be the caller.
-     */
-    function setApprovalForAll(address operator, bool approved) external;
-
-    /**
-     * @dev Returns true if `operator` is approved to transfer ``account``'s tokens.
-     *
-     * See {setApprovalForAll}.
-     */
-    function isApprovedForAll(address account, address operator) external view returns (bool);
-
-    /**
-     * @dev Transfers `amount` tokens of token type `id` from `from` to `to`.
-     *
-     * Emits a {TransferSingle} event.
-     *
-     * Requirements:
-     *
-     * - `to` cannot be the zero address.
-     * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
-     * - `from` must have a balance of tokens of type `id` of at least `amount`.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-     * acceptance magic value.
-     */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes calldata data
-    ) external;
-
-    /**
-     * @dev xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}.
-     *
-     * Emits a {TransferBatch} event.
-     *
-     * Requirements:
-     *
-     * - `ids` and `amounts` must have the same length.
-     * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the
-     * acceptance magic value.
-     */
-    function safeBatchTransferFrom(
-        address from,
-        address to,
-        uint256[] calldata ids,
-        uint256[] calldata amounts,
-        bytes calldata data
-    ) external;
+interface i1155 is IERC1155{
 
     function disValue(address _contract, uint256 _value, address _token) external returns (bool);
     function BURN(uint256 _nft, address _collector) external returns (bool);
+
 }
 library SafeMath {
 
@@ -363,20 +159,33 @@ library SafeMath {
 }
 
 /// @custom:security-contact security@nftea.app
-contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, PausableUpgradeable, ERC1155BurnableUpgradeable, ERC1155SupplyUpgradeable, UUPSUpgradeable {
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    using SafeMath for uint256;
-    constructor() initializer {
-      isA[msg.sender] = true;
-    }
+contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
+   using SafeMath for uint256;
+    //isA = isAdmin
+    //isC = isContract
+    //_N = nft
+    //_A = album
     //_C = collector
-    //_H = host
     event collectorAdded(
       address _address,
       uint256 _avatar,
       uint256 _cover,
       uint256 _heritage,
       uint256 _gender
+    );
+    event passConnected(
+      address _collector,
+      address _host
+    );
+    event passDissConnected(
+      address _collector,
+      address _host
+    );
+    event acceptConnections(
+      address _host
+    );
+    event closeConnections(
+      address _host
     );
     struct COLLECTOR {
 
@@ -414,13 +223,10 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
     uint256 public upgradePowerNFT = 1000000;
     uint256 public upgradePower = 0;
 
-    function initialize() initializer public {
-        __ERC1155_init("https://nftea.app/nft/{id}.json");
-        __Ownable_init();
-        __Pausable_init();
-        __ERC1155Burnable_init();
-        __ERC1155Supply_init();
-        __UUPSUpgradeable_init();
+    constructor() ERC1155("https://nftea.app/nft/{id}.json") {
+
+        isA[msg.sender] = true;
+
     }
 
     function setAdmin (address _admin) public {
@@ -435,7 +241,7 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
       _H2_nftToConnect[msg.sender] = _nft;
       _H2_coHosts[msg.sender] = _cohosts;
       _H2_coHostSips[msg.sender] = _sips;
-
+      emit acceptConnections(msg.sender);
     }
 
     function stopConnections() public {
@@ -446,12 +252,13 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
       _H2_nftToConnect[msg.sender] = 0;
       _H2_coHosts[msg.sender] = _hosts;
       _H2_coHostSips[msg.sender] = _sips;
+      emit closeConnections(msg.sender);
 
     }
 
     function setProfile(uint256 _avatar, uint256 _cover, uint256 _heritage, uint256 _gender)public {
-      require(IERC1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
-      require(IERC1155(NFTEA).balanceOf(msg.sender,_cover)>0, 'you do not own this cover');
+      require(i1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
+      require(i1155(NFTEA).balanceOf(msg.sender,_cover)>0, 'you do not own this cover');
 
       COLLECTOR memory save = COLLECTOR({
         _address:msg.sender,
@@ -471,8 +278,8 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
     }
     function updateProfile(uint256 _avatar, uint256 _cover, uint256 _heritage, uint256 _gender)public {
 
-      require(IERC1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
-      require(IERC1155(NFTEA).balanceOf(msg.sender,_cover)>0, 'you do not own this cover');
+      require(i1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
+      require(i1155(NFTEA).balanceOf(msg.sender,_cover)>0, 'you do not own this cover');
       _C[msg.sender]._avatar = _avatar;
       _C[msg.sender]._cover = _cover;
       _C[msg.sender]._heritage = _heritage;
@@ -533,8 +340,8 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
 
     function setUpgradePower() public{
 
-      require(IERC1155(NFTEA).balanceOf(msg.sender,upgradePowerNFT)>0, 'you do not own an upgrade nft');
-      bool success = IERC1155(NFTEA).BURN(upgradePowerNFT,msg.sender);
+      require(i1155(NFTEA).balanceOf(msg.sender,upgradePowerNFT)>0, 'you do not own an upgrade nft');
+      bool success = i1155(NFTEA).BURN(upgradePowerNFT,msg.sender);
       if(success){
 
         _C[msg.sender]._power = _C[msg.sender]._power.add(upgradePower);
@@ -549,7 +356,7 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
 
       if(_H2_nftToConnect[_to]>0){
 
-        require(IERC1155(NFTEA).balanceOf(msg.sender,_H2_nftToConnect[_to])>0,'you do not own the nft required to connect');
+        require(i1155(NFTEA).balanceOf(msg.sender,_H2_nftToConnect[_to])>0,'you do not own the nft required to connect');
       }
 
       if(_C2_connected[msg.sender]){
@@ -573,7 +380,7 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
 
             royalty = _value.mul(_H2_coHostSips[_host][i]).div(100);
             sip = _value.sub(royalty);
-            bool success =  IERC1155(TEAPOT).disValue(_H2_coHosts[_host][i],sip, _token);
+            bool success =  i1155(TEAPOT).disValue(_H2_coHosts[_host][i],sip, _token);
             if(success){
               _C2_Hosts[msg.sender][_H2_coHosts[_host][i]] = _C2_Hosts[msg.sender][_H2_coHosts[_host][i]].add(sip);
 
@@ -593,6 +400,7 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
         _H2_connected[_to] = _H2_connected[_to].add(1);
 
       }
+      emit passConnected(msg.sender,_to);
     }
 
     function disconnectTeaPass() public{
@@ -610,7 +418,7 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
         uint256 time = _C2_H_end[msg.sender][_host].sub(_C2_H_start[msg.sender][_host]);
         time = time.div(60);
         uint256 _value = _C[msg.sender]._power.mul(powerMul).mul(time);
-        bool success =  IERC1155(TEAPOT).disValue(_C2_H[msg.sender],_value,TOKEN);
+        bool success =  i1155(TEAPOT).disValue(_C2_H[msg.sender],_value,TOKEN);
         _C2_Hosts[msg.sender][_C2_H[msg.sender]] = _C2_Hosts[msg.sender][_C2_H[msg.sender]].add(_value);
 
          if(success){
@@ -623,6 +431,7 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
 
          }
       }
+      emit passDissConnected(msg.sender,_host);
 
     }
     function setURI(string memory newuri) public onlyOwner {
@@ -654,14 +463,40 @@ contract TeaPass is Initializable, ERC1155Upgradeable, OwnableUpgradeable, Pausa
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
         internal
         whenNotPaused
-        override(ERC1155Upgradeable, ERC1155SupplyUpgradeable)
+        override(ERC1155, ERC1155Supply)
     {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
+    function checkSuccess()
+        private pure
+        returns (bool)
+      {
+        uint256 returnValue = 0;
 
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        onlyOwner
-        override
-    {}
+        /* solium-disable-next-line security/no-inline-assembly */
+        assembly {
+          // check number of bytes returned from last function call
+          switch returndatasize()
+
+            // no bytes returned: assume success
+            case 0x0 {
+              returnValue := 1
+            }
+
+            // 32 bytes returned: check if non-zero
+            case 0x20 {
+              // copy 32 bytes into scratch space
+              returndatacopy(0x0, 0x0, 0x20)
+
+              // load those bytes into returnValue
+              returnValue := mload(0x0)
+            }
+
+            // not sure what was returned: dont mark as success
+            default { }
+
+        }
+
+        return returnValue != 0;
+      }
 }

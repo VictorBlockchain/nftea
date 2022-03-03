@@ -48,7 +48,7 @@ async GET_WEB3(): Promise<any>{
 
         this.user = localStorage.getItem('user');
         if(this.isMobile && !this.web3 ){
-           this.web3 = await Moralis.enableWeb3({provider:'walletconnect',chainId: environment.CHAIN});
+           this.web3 = await Moralis.enableWeb3({provider:'walletconnect',chain: environment.CHAIN});
         }else if(!this.isMobile && !this.web3){
            this.web3 = await Moralis.enableWeb3();
         }
@@ -102,7 +102,7 @@ async GET_WEB3(): Promise<any>{
         await this.GET_WEB3();
         const contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
         let result = await contract.methods.getCollectorNfts(_user).call();
-        console.log(result);
+        //console.log(result);
         resolve(result);
 
       } catch (error) {
@@ -126,6 +126,50 @@ async GET_WEB3(): Promise<any>{
       const contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
       let result = await contract.methods._N2_V(_nft).call();
       resolve(result);
+    })
+  }
+  public SET_WRAP(_user: any,_nft:any,_uri,ipfs): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "wrap",
+          type: "function",
+          inputs: [{
+            type: 'uint256',
+            name: '_nft'
+          },{
+            type: 'bytes',
+            name: 'data'
+          },{
+            type: 'string',
+            name: '_ipfs'
+          }]
+        }, [_nft,this.web3.utils.asciiToHex(_uri),ipfs])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to: NFTEA,
+          gas: 3000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg: hash });
+              // console.log(hash)
+          })
+          .on('receipt',(receipt)=>{
+             console.log(receipt)
+          })
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+      } catch (error) {
+        resolve({success:false,msg:error});
+      }
     })
   }
   public SET_IDS(_user: any,_amount:any): Promise<any> {
@@ -329,7 +373,7 @@ async GET_WEB3(): Promise<any>{
         }, [_nft, 1,_owner])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
-          to:TEASHOP,
+          to:environment.TEASHOP,
           gas: 1000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
@@ -346,20 +390,7 @@ async GET_WEB3(): Promise<any>{
           {
           //console.log(confirmationNumber, receipt)
           }).on('error', console.error);
-        // const transactionHash = await ethereum.request({
-        //   method: 'eth_sendTransaction',
-        //   gas: 1000000,
-        //   params: [
-        //     {
-        //       from: _user,
-        //       to: TEASHOP,
-        //       data: encodedFunction
-        //     },
-        //   ],
-        // }).then((res: any) => {
-        //
-        //   resolve({success:true,msg:res});
-        // })
+
       } catch (error) {
         resolve({success:false,msg:error});
       }
@@ -484,37 +515,31 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
-  public SET_SUGAR(_user: any,_nft:any,_sugar:any,_value:any, _type:any): Promise<any> {
+  public SET_GIFT(_user: any,_nft:any,_to:any,_quantity:any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log(_nft,_sugar,_value,_type);
+        console.log(_nft);
         await this.GET_WEB3();
         const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
-          name: "SET_SUGAR",
+          name: "GIFT",
           type: "function",
           inputs: [{
             type: 'uint256',
             name: '_nft'
           }, {
-            type: 'uint256',
-            name: '_sugar'
+            type: 'address',
+            name: '_to'
           },{
             type:'uint256',
-            name:'_value'
-          },{
-            type:'uint256',
-            name:'_type'
-          }
-          ]
-        }, [_nft, _sugar,_value,_type])
+            name:'_quantity'
+          }]
+        }, [_nft, _to,_quantity])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:NFTEA,
           gas: 1000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
-
-          console.log(hash)
 
               resolve({ success: true, msg: hash });
               // console.log(hash)
@@ -583,7 +608,7 @@ async GET_WEB3(): Promise<any>{
       }, [name,taxParnters,taxSips])
       const txt = await this.web3.eth.sendTransaction({
         from:user,
-        to:TEASHOP,
+        to:environment.TEASHOP,
         gas: 1000000,
         data:encodedFunction
       }).on('transactionHash',(hash)=>{
@@ -636,7 +661,7 @@ async GET_WEB3(): Promise<any>{
         }, [_shop])
         const txt = await this.web3.eth.sendTransaction({
           from:user,
-          to:TEASHOP,
+          to:environment.TEASHOP,
           gas: 1000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
@@ -695,7 +720,7 @@ async GET_WEB3(): Promise<any>{
         }, [_nft,1,_user])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
-          to:TEASHOP,
+          to:environment.TEASHOP,
           gas: 1000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
@@ -794,6 +819,126 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
+  public SET_COUPON(_user: any,_nft:any,_count:any): Promise<any> {
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("setting coupon" + _nft);
+        let _token;
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "setCoupon",
+          type: "function",
+          inputs: [{
+            type:'uint256',
+            name:'_nft'
+          },{
+            type:'uint256',
+            name:'_redeemCount'
+          }]
+        }, [_nft,_count])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to:NFTEA,
+          gas: 1000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg: hash });
+              // console.log(hash)
+          })
+          .on('receipt',(receipt)=>{
+             console.log(receipt)
+          })
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+
+      } catch (error) {
+        resolve({ success: false, msg: error });
+      }
+    })
+  }
+  public GET_IS_COUPON(_nft:any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("getting honey value");
+        await this.GET_WEB3();
+        const contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
+        let result = await contract.methods._Nis_coupon(_nft).call();
+
+        // console.log(result);
+        resolve(result);
+
+      } catch (error) {
+        console.log(error);
+      }
+    })
+  }
+  public SET_REDEEM(_user: any,_nft:any,_count:any): Promise<any> {
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("redeeming coupon" + _nft);
+        let _token;
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "redeemCoupon",
+          type: "function",
+          inputs: [{
+            type:'uint256',
+            name:'_nft'
+          },{
+            type:'uint256',
+            name:'_redeemCount'
+          }]
+        }, [_nft,_count])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to:NFTEA,
+          gas: 1000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg: hash });
+              // console.log(hash)
+          })
+          .on('receipt',(receipt)=>{
+             console.log(receipt)
+          })
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+
+      } catch (error) {
+        resolve({ success: false, msg: error });
+      }
+    })
+  }
+  public GET_REDEEM(_wnft:any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("getting honey value");
+        await this.GET_WEB3();
+        const contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
+        let result = await contract.methods._WN2_redeemCount(_wnft).call();
+
+        // console.log(result);
+        resolve(result);
+
+      } catch (error) {
+        console.log(error);
+      }
+    })
+  }
   public SET_HONEY(_user: any,_nft:any,_market:any): Promise<any> {
 
     return new Promise(async (resolve, reject) => {
@@ -831,19 +976,7 @@ async GET_WEB3(): Promise<any>{
           {
           //console.log(confirmationNumber, receipt)
           }).on('error', console.error);
-        // const transactionHash = await ethereum.request({
-        //   method: 'eth_sendTransaction',
-        //   gas: 1000000,
-        //   params: [
-        //     {
-        //       from: _user,
-        //       to: NFTEA,
-        //       data: encodedFunction
-        //     },
-        //   ],
-        // }).then(async (res) => {
-        //   resolve({ success: true, msg: res });
-        // });
+
 
       } catch (error) {
         resolve({ success: false, msg: error });
@@ -875,7 +1008,7 @@ async GET_WEB3(): Promise<any>{
         }, [_nft,_owner,_value,_quantity])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
-          to:TEASHOP,
+          to:environment.TEASHOP,
           gas: 1000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
@@ -1129,7 +1262,7 @@ async GET_WEB3(): Promise<any>{
         //resolve(transactionHash);
         //console.log(transactionHash);
 
-        //   let web3 = await Moralis.enable({provider:'walletconnect',chainId: environment.CHAIN})
+        //   let web3 = await Moralis.enable({provider:'walletconnect',chain: environment.CHAIN})
         //   //const URI:any = this.web3.utils.asciiToHex(_uri)
         //   const encodedFunction= this.web3.eth.abi.encodeFunctionCall({
         //     name:"mint",
@@ -1149,7 +1282,7 @@ async GET_WEB3(): Promise<any>{
         //
         //   const txt = await this.web3.eth.sendTransaction({
         //     from:address,
-        //     to:NFTEAEAS,
+        //     to:NFTEA,
         //     data:encodedFunction
         //   }).on('transactionHash',(hash)=>{
         //         resolve(hash)
@@ -1185,13 +1318,6 @@ async GET_WEB3(): Promise<any>{
       o = o.toFixed(0);
       let _minPrice = this.web3.utils.toWei(o.toString(), 'nanoether');
 
-      if(_market==4){
-
-        _minPrice = this.web3.utils.toWei(o.toString(), 'ether');
-        _buyNow = this.web3.utils.toWei(m.toString(), 'ether');
-
-        console.log('buy now is' + _buyNow, _minPrice);
-      }
       const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
         name: "SET_AUCTION",
         type: "function",
@@ -1233,7 +1359,7 @@ async GET_WEB3(): Promise<any>{
       }, [_nft, _buyNow, _minPrice, _parnters, _sips,_quantity,_royalty,_taxParnters,_taxSips,_creator,_market])
       const txt = await this.web3.eth.sendTransaction({
         from:user,
-        to:TEASHOP,
+        to:environment.TEASHOP,
         gas: 1000000,
         data:encodedFunction
       }).on('transactionHash',(hash)=>{
@@ -1308,7 +1434,7 @@ async GET_WEB3(): Promise<any>{
   public GET_FEATURED(_featured: any): Promise<string> {
     return new Promise(async (resolve, reject) => {
 
-      const options = { chain: '0x38', token_address: NFTEA };
+      const options = { chain: environment.CHAIN, token_address: NFTEA };
       const featured = await Moralis.Web3API.account.getNFTsForContract(options);
       // const options = { address: NFT, chain: "bsc testnet" };
       // const NFTS = await Moralis.Web3API.token.getAllTokenIds(options);
@@ -1324,7 +1450,7 @@ async GET_WEB3(): Promise<any>{
   public SEARCH_NFT(album:any):Promise<any>{
     return new Promise(async (resolve,reject)=>{
 
-      const options = { q: album, chain: "0x38", token_address:NFTEA, filter: "album" };
+      const options = { q: album, chain: environment.CHAIN, token_address:NFTEA, filter: "album" };
       const NFTs = await Moralis.Web3API.token.searchNFTs(options);
       resolve(NFTs);
 
@@ -1340,7 +1466,7 @@ async GET_WEB3(): Promise<any>{
         //   contractAddress: NFT,
         //   functionName: "GET_NFT",
         //   abi: ABINFTEA,
-        //   chainId:56,
+        //   chain:56,
         //   params: {
         //     _nft: _nft,
         //   _ipfs: 'none'
@@ -1381,11 +1507,9 @@ async GET_WEB3(): Promise<any>{
 
         console.log('getting user nft\'s' + _user);
         await this.GET_WEB3();
-        // const options = { chain:'0x38',address:_user };
-        // const NFTS = await Moralis.getNFTs(options);
-        const options = { chain: '0x38', address:_user, token_address: NFTEA };
-        const NFTS = await Moralis.Web3API.account.getNFTsForContract(options);
-        //console.log(NFTS);
+        const options = { chain: environment.CHAIN, address:_user, token_address: NFTEA };
+        const NFTS = await Moralis.Web3API.account.getNFTs(options);
+        console.log(NFTS);
         let result = {success:true,msg:NFTS.result};
         resolve(result);
 
@@ -1405,7 +1529,7 @@ async GET_WEB3(): Promise<any>{
       try {
 
         await this.GET_WEB3();
-        const options = { chain: '0x38', address:TEASHOP, token_address: NFTEA };
+        const options = { chain: environment.CHAIN, address:environment.TEASHOP, token_address: NFTEA };
         const NFTS = await Moralis.Web3API.account.getNFTsForContract(options);
         // console.log(NFTS);
 
@@ -1440,6 +1564,15 @@ async GET_WEB3(): Promise<any>{
       resolve(result);
     })
   }
+  public GET_WRAP(_nft: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+
+      await this.GET_WEB3();
+      let contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
+      let result = await contract.methods._WN2_N(_nft).call();
+      resolve(result);
+    })
+  }
   public GET_APPROVAL(_user:any,_contract:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1453,7 +1586,7 @@ async GET_WEB3(): Promise<any>{
 
         }else if(_contract==2){
           let contract = new this.web3.eth.Contract(ABITOKEN, TOKEN);
-          result = await contract.methods.allowance(_user,TEASHOP).call();
+          result = await contract.methods.allowance(_user, TEASHOP).call();
 
         }else if(_contract==3){
           let contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
@@ -1493,7 +1626,7 @@ async GET_WEB3(): Promise<any>{
         console.log("gettting shop approval ");
         await this.GET_WEB3();
         const contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
-        let result = await contract.methods.isApprovedForAll(user,TEASHOP).call();
+        let result = await contract.methods.isApprovedForAll(user,environment.TEASHOP).call();
         console.log(result);
         resolve(result);
 
@@ -1533,7 +1666,7 @@ async GET_WEB3(): Promise<any>{
             const txt = await this.web3.eth.sendTransaction({
               from:_user,
               to:TOKEN,
-              gas: 1000000,
+              gas: 100000,
               data:encodedFunction
             }).on('transactionHash',(hash)=>{
 
@@ -1588,7 +1721,7 @@ async GET_WEB3(): Promise<any>{
             const txt = await this.web3.eth.sendTransaction({
               from:_user,
               to:TOKEN,
-              gas: 1000000,
+              gas: 100000,
               data:encodedFunction
             }).on('transactionHash',(hash)=>{
 
