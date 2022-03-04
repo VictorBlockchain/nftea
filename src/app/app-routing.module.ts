@@ -12,9 +12,9 @@ const routes: Routes = [
     .then(mod => mod.HomeModule)
 },
 {
-  path: 'cafe',
-  loadChildren: () => import('./cafe/cafe.module')
-    .then(mod => mod.CafeModule)
+  path: 'teapass',
+  loadChildren: () => import('./teapass/teapass.module')
+    .then(mod => mod.TeapassModule)
 },
 {
   path: 'cafe/room/:room',

@@ -388,13 +388,13 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
     ) external;
 }
 
-contract SATOSHITCOIN is Context, IERC20, Ownable {
+contract TEATOKEN is Context, IERC20, Ownable {
 
     using SafeMath for uint256;
     using Address for address;
 
-    string private _name = "SaToSHItcoin.com";
-    string private _symbol = "SATO";
+    string private _name = "NFTEA.app";
+    string private _symbol = "NFTEA";
     uint8 private _decimals = 9;
 
     address payable public marketingWalletAddress = payable(0xF499c646d3eC0dCAf44e543Ab0F64EeEac4586D6); // marketing

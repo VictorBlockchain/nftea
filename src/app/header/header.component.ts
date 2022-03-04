@@ -39,7 +39,7 @@ export class HeaderComponent implements OnInit {
 
   address:any
   auth:any
-  satoBalance:any
+  teaBalance:any
   isMobile:boolean
   friend:any
   constructor(private deviceService: DeviceDetectorService,private zone: NgZone,private cd: ChangeDetectorRef,public _service: SERVICE,private route: ActivatedRoute,private router: Router) {
@@ -116,13 +116,13 @@ export class HeaderComponent implements OnInit {
   async start(){
     // alert('working' + this.user)
     this.session.emit(this.user);
-    // this.service.GET_SHIT_BALANCE(this.user)
-    // .then((res:any)=>{
-    //   this.satoBalance = res/1000000000;
-    //   this.listener();
-    //   this.GET_PROFILE1();
-    //   //console.log(res);
-    // })
+    this.service.GET_TEA_BALANCE(this.user)
+    .then((res:any)=>{
+      this.teaBalance = res/1000000000;
+      //this.listener();
+      //this.GET_PROFILE1();
+      //console.log(res);
+    })
   }
 
   private pop(type,message){

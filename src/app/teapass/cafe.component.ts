@@ -10,10 +10,10 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-cafe',
-  templateUrl: './cafe.component.html',
-  styleUrls: ['./cafe.component.css']
+  templateUrl: './teapass.component.html',
+  styleUrls: ['./teapass.component.css']
 })
-export class CafeComponent implements OnInit {
+export class TeapassComponent implements OnInit {
 
   userIsConnected:any;
   user:any;

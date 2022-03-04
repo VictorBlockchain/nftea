@@ -292,13 +292,23 @@ using SafeMath for uint256;
     function disValue(address _vault, uint256 _value, address _token) public returns(bool){
 
         require(isC[msg.sender], 'you are not cool enough');
-        require(IERC20(_token).balanceOf(address(this))>_value, 'teapot empty');
+        require(IERC20(_token).balanceOf(address(this))>=_value, 'teapot empty');
         require(_V2_N[_vault]>0, 'this vault does not exist');
         uint256 _nft = _V2_N[_vault];
 
-        IERC20(_token).transferFrom(address(this),_N2_S[_nft]._contract,_value);
+        IERC20(_token).transfer(_N2_S[_nft]._contract,_value);
         require(checkSuccess(), "add brew failed");
         return true;
+    }
+
+    function disValueTeaPass(address _host, uint256 _value, address _token) public returns(bool){
+
+        require(isC[msg.sender], 'you are not cool enough');
+        require(IERC20(_token).balanceOf(address(this))>=_value, 'teapot empty');
+        IERC20(_token).transfer(_host,_value);
+        require(checkSuccess(), "distribute tea pass failed");
+        return true;
+
     }
 
     function rT(address _token, uint256 _type) public {

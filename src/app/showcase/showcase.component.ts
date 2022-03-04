@@ -107,27 +107,23 @@ export class ShowcaseComponent implements OnInit {
     // let wrappedTo = await this.service.GET_WRAP(this.nft_id);
     let quantityIown;
     let redeemsLeft;
-    // if(wrappedTo>0){
-    //
-    //   this.wrap_id = this.nft_id;
-    //   quantityIown = await this.service.GET_NFT_BALANCE(this.user,this.wrap_id);
-    //   redeemsLeft = await this.service.GET_REDEEM(this.wrap_id);
-    //   this.nft_id = wrappedTo;
-    //
-    // }else{
-    //
-    //   quantityIown = await this.service.GET_NFT_BALANCE(this.user,this.nft_id);
-    //
-    // }
+    let burned = 0;
+    let quantity;
     this.service.GET_NFT(this.nft_id,0)
     .then(async(jordi:any)=>{
 
       let ipfs = await axios.get(jordi.ipfs);
-      if(ipfs.data.wrappedTo<1){
+      if(jordi.wrappedTo<1){
 
         ipfs.data.isCoupon = await this.service.GET_IS_COUPON(this.nft_id);
+        burned = await this.service.GET_NFT_BALANCE('0x000000000000000000000000000000000000dEaD',this.nft_id);
+        quantity = jordi.quantity - burned;
+      }else{
+        burned = await this.service.GET_NFT_BALANCE('0x000000000000000000000000000000000000dEaD',jordi.wrappedTo);
+        quantity = jordi.quantity;
 
       }
+
       quantityIown = await this.service.GET_NFT_BALANCE(this.user,this.nft_id);
       redeemsLeft = await this.service.GET_REDEEM(this.nft_id);
 
@@ -139,12 +135,14 @@ export class ShowcaseComponent implements OnInit {
       ipfs.data.market = jordi.market || 0;
       this.market = jordi.market || 0;
       ipfs.data.quantityIown = quantityIown;
+      ipfs.data.quantity = quantity;
+      ipfs.data.burned = burned;
       // ipfs.data.nftIsWraped = wrappedTo;
       ipfs.data.redeemsLeft = redeemsLeft || 0;
       this.NFT = ipfs.data;
       this.NFT.auction = await this.service.GET_AUCTION(this.nft_owner,this.nft_id);
       this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-      console.log(this.NFT);
+      // console.log(this.NFT);
 
       //get seller
       let s:any = await this.service.GET_PROFILE1(this.nft_owner);

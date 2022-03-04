@@ -46,6 +46,7 @@ export class ProfileComponent implements OnInit {
   ALBUMCOUNT = 0;
   NFTCOUNT = 0;
   AUCTIONCOUNT = 0;
+  POWER:any;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -80,6 +81,8 @@ export class ProfileComponent implements OnInit {
 
   async start(){
 
+    let power:any = await this.service.GET_PROFILE1(this.user);
+    this.POWER = power[3];
     const _uProfile = Moralis.Object.extend("profile");
     const _query = new Moralis.Query(_uProfile);
     _query.equalTo('user',this.user);

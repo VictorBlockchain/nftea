@@ -16,6 +16,9 @@ import { environment } from '../../environments/environment';
 import {writeJsonFile} from 'write-json-file';
 import Big from 'big.js';
 const BN = require('bn.js');
+import moment from 'moment';
+import Swal from 'sweetalert2'
+
 const TOKEN = environment.TOKEN;
 const NFTEA = environment.NFTEA;
 const TEASHOP = environment.TEASHOP;
@@ -56,6 +59,253 @@ async GET_WEB3(): Promise<any>{
         return res;
 
   }
+  private pop(type,message){
+    let title;
+    if(type=='error'){
+      title = 'Error!'
+    }else{
+      title = 'Success!'
+    }
+
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: type,
+      confirmButtonText: 'Close'
+    })
+  }
+  public TEAPASS_ALLOW_CONNECTSION(_user: any,_cohosts:any,_sips:any, _type:any, _embed:any, power:any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "allowConnections",
+          type: "function",
+          inputs: [{
+            type: 'uint256',
+            name: '_nft'
+          },{
+            type: 'address[]',
+            name: '_cohosts'
+          },{
+            type: 'uint256[]',
+            name: '_sips'
+          }]
+        }, [0,_cohosts,_sips])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to: TEAPASS,
+          gas: 1000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg: hash });
+              // console.log(hash)
+          })
+          .on('receipt',(receipt)=>{
+             //console.log(receipt)
+             const _uCafe = Moralis.Object.extend("cafe");
+             const _c = new _uCafe(_user);
+             let start = new Date();
+             //let end = moment(start).add(4, 'hours').format('X');
+             _c.save({
+
+               type:_type,
+               embed:_embed,
+               user:_user,
+               start:start,
+               power:power,
+               connected:0,
+               earnings:0,
+               active:1
+
+             }).then(()=>{
+
+               this.pop('success', 'tea pass connections allowed');
+
+             })
+          })
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+      } catch (error) {
+        resolve({success:false,msg:error});
+      }
+    })
+  }
+
+  public TEAPASS_CLOSE_CONNECTSION(_user: any, _host:any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "stopConnections",
+          type: "function",
+          inputs: []
+        }, [])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to: TEAPASS,
+          gas: 1000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg:'closing connections'});
+              // console.log(hash)
+          })
+          .on('receipt',async(receipt)=>{
+             // console.log(receipt)
+             // console.log(_user, _host)
+             const _cafe = Moralis.Object.extend("cafe");
+             const _query = new Moralis.Query(_cafe);
+             _query.equalTo('user',_host);
+             _query.equalTo('active', 1);
+             const results = await _query.first();
+             if(results){
+               // console.log(results);
+               results.set('active',0);
+               results.save()
+               .then((res:any)=>{
+                  this.pop('success','connecting now not allowed');
+               })
+
+             }else{
+               this.pop('success','connecting now not allowed');
+
+             }
+})
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+      } catch (error) {
+        resolve({success:false,msg:error});
+      }
+    })
+  }
+  public TEAPASS_CONNECT(_user: any,_connectTo:any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "connectPass",
+          type: "function",
+          inputs: [{
+            type: 'address',
+            name: '_connectTo'
+          },{
+            type: 'address',
+            name: '_token'
+          }]
+        }, [_connectTo,TOKEN])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to: TEAPASS,
+          gas: 1000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg: hash });
+              // console.log(hash)
+          })
+          .on('receipt',(receipt)=>{
+             //console.log(receipt)
+             this.pop('success', 'you are connected');
+
+          })
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+      } catch (error) {
+        resolve({success:false,msg:error});
+      }
+    })
+  }
+  public TEAPASS_DISCONNECT(_user: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "disconnectTeaPass",
+          type: "function",
+          inputs: []
+        }, [])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to: TEAPASS,
+          gas: 1000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg: hash });
+              // console.log(hash)
+          })
+          .on('receipt',(receipt)=>{
+             //console.log(receipt)
+             this.pop('success', 'you are disconnected');
+
+          })
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+      } catch (error) {
+        resolve({success:false,msg:error});
+      }
+    })
+  }
+  public GET_TEAPASS_CREATOR(_user:any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // console.log("in the back getting profile 1 " + NFT);
+        await this.GET_WEB3();
+        const contract = new this.web3.eth.Contract(ABITEAPASS, TEAPASS);
+        let result = await contract.methods._H2_allowConnections(_user).call();
+        // console.log(result);
+        resolve(result);
+
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  }
+
+  public GET_TEAPASS_CONNECTION_COUNT(_host:any,_user:any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // console.log("in the back getting profile 1 " + NFT);
+        await this.GET_WEB3();
+        const contract = new this.web3.eth.Contract(ABITEAPASS, TEAPASS);
+        let count = await contract.methods._H2_connected(_host).call();
+        let imconnected = await contract.methods._C2_H(_user).call();
+        let res = {count:count,imconnectTo:imconnected}
+        // console.log(result);
+        resolve(res);
+
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  }
+
 
   public GET_PROFILE1(_user:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
@@ -240,7 +490,7 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
-  public GET_SHIT_BALANCE(_address:any): Promise<string> {
+  public GET_TEA_BALANCE(_address:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         // console.log("in the back " + user);
@@ -255,37 +505,18 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
-  public GET_VAULT_BALANCE(_token:any): Promise<string> {
+  public GET_TEAPOT_BALANCE(_token:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
         // console.log("in the back " + user);
         await this.GET_WEB3();
-
-            let contract;
-            let contract1;
-            let brew;
-            let result;
-            if(_token==1){
-
-              contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
-              brew = await contract.methods.brewPot(TOKEN).call();
-              result = await contract.methods.GET_HONEYPOT_VALUE(TOKEN).call();
-
-            }else{
-
-              // contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
-              // brew = await contract.methods.brewPot(WALLTOKEN).call();
-              // result = await contract.methods.GET_HONEYPOT_VALUE(WALLTOKEN).call();
-            }
-
-            // console.log(result);
-            let res:any = {success:true,brew:brew,vault:result};
-            resolve(res);
-
+        const contract = new this.web3.eth.Contract(ABITOKEN, TOKEN);
+        let result = await contract.methods.balanceOf(TEAPOT).call();
+        // console.log(result);
+        resolve(result);
 
       } catch (error) {
-        //alert(error)
-        console.log(error);
+
       }
     })
   }
@@ -1595,8 +1826,8 @@ async GET_WEB3(): Promise<any>{
 
         }else if(_contract==4){
 
-          // let contract = new this.web3.eth.Contract(ABIWALLTOKEN, WALLTOKEN);
-          // result = await contract.methods.allowance(_user,NFT).call();
+          let contract = new this.web3.eth.Contract(ABITOKEN, TOKEN);
+          result = await contract.methods.allowance(_user,TEAPASS).call();
           console.log("4 works");
 
         }else if(_contract==5){
@@ -1703,7 +1934,7 @@ async GET_WEB3(): Promise<any>{
             /// approves the teashop to spend tea tokens on users behalf
             console.log("enabling auction")
             _operator = TEASHOP;
-            let m:any = new Big(30000000000000);
+            let m:any = new Big(90000000000000000000000);
             m = m.toFixed(0);
             _value = this.web3.utils.toWei(m.toString(), 'nanoether');
 
@@ -1802,57 +2033,42 @@ async GET_WEB3(): Promise<any>{
           //   resolve({ success: true, msg: res });
           // });
         }if(_value==4){
-            /// approves the teashop to spend tea tokens on users behalf
-            // _operator = NFT;
-            // let m:any = new Big(1*10000000);
-            // m = m.toFixed(0);
-            // _value = this.web3.utils.toWei(m.toString(), 'ether');
-            //
-            // const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
-            //   name: "approve",
-            //   type: "function",
-            //   inputs: [{
-            //     type:'address',
-            //     name:'_token'
-            //   },{
-            //     type:'uint256',
-            //     name:'_value'
-            //   }]
-            // }, [_operator,_value])
-            // const txt = await this.web3.eth.sendTransaction({
-            //   from:_user,
-            //   to:WALLTOKEN,
-            //   gas: 1000000,
-            //   data:encodedFunction
-            // }).on('transactionHash',(hash)=>{
-            //
-            //   console.log(hash)
-            //
-            //       resolve({ success: true, msg: hash });
-            //       // console.log(hash)
-            //   })
-            //   .on('receipt',(receipt)=>{
-            //      console.log(receipt)
-            //   })
-            //   .on('confirmation',(confirmationNumber, receipt)=>
-            //   {
-            //   //console.log(confirmationNumber, receipt)
-            //   }).on('error', console.error);
-            // const transactionHash = await ethereum.request({
-            //   method: 'eth_sendTransaction',
-            //   gas: 1000000,
-            //   params: [
-            //     {
-            //       from: _user,
-            //       to: WALLTOKEN,
-            //       data: encodedFunction
-            //     },
-            //   ],
-            // }).then(async (res) => {
-            //   resolve({ success: true, msg: res });
-            // },(error)=>{
-            //   console.log(error);
-            // });
+
+          let m:any = new Big(900000000000000000000000000000);
+          m = m.toFixed(0);
+          _value = this.web3.utils.toWei(m.toString(), 'nanoether');
+
+          _operator = TEAPOT;
+          const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+            name: "approve",
+            type: "function",
+            inputs: [{
+              type:'address',
+              name:'_token'
+            },{
+              type:'uint256',
+              name:'_value'
+            }]
+          }, [_operator,_value])
+            const txt = await this.web3.eth.sendTransaction({
+              from:_user,
+              to:TOKEN,
+              gas: 100000,
+              data:encodedFunction
+            }).on('transactionHash',(hash)=>{
+
+              console.log(hash)
+
+                  resolve({ success: true, msg: hash });
+                  // console.log(hash)
+              })
+              .on('receipt',(receipt)=>{
+                 console.log(receipt)
+              })
+              .on('confirmation',(confirmationNumber, receipt)=>
+              {
+              //console.log(confirmationNumber, receipt)
+              }).on('error', console.error);
 
           }if(_value==5){
               /// approves the teashop to spend wall tokens on users behalf

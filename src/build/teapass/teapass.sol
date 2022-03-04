@@ -85,6 +85,7 @@ interface IERC20 {
 interface i1155 is IERC1155{
 
     function disValue(address _contract, uint256 _value, address _token) external returns (bool);
+    function disValueTeaPass(address _host, uint256 _value, address _token) external returns (bool);
     function BURN(uint256 _nft, address _collector) external returns (bool);
 
 }
@@ -220,7 +221,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     address public TEAPOT = 0x62cfC9b4C09dA06967418345a1f4bb43EDA54bF0;
     address public burn = 0x000000000000000000000000000000000000dEaD;
     uint256 public powerMul = 2;
-    uint256 public upgradePowerNFT = 1000000;
+    uint256 public upgradePowerNFT = 10000;
     uint256 public upgradePower = 0;
 
     constructor() ERC1155("https://nftea.app/nft/{id}.json") {
@@ -235,8 +236,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     }
     function allowConnections(uint256 _nft, address[] memory _cohosts, uint256[] memory _sips) public {
 
-      require(_C[msg.sender]._power>=1000000, 'your power is too low');
-      require(IERC20(TOKEN).balanceOf(msg.sender)>0, 'your tea balance is too low');
+      require(_C[msg.sender]._power>=10000, 'your power is too low');
       _H2_allowConnections[msg.sender] = true;
       _H2_nftToConnect[msg.sender] = _nft;
       _H2_coHosts[msg.sender] = _cohosts;
@@ -363,8 +363,11 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         address _host = _C2_H[msg.sender];
 
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
-
-          _C[msg.sender]._power = _C[msg.sender]._power.sub(1000000);
+            if(_C[msg.sender]._power.sub(1000)>0){
+              _C[msg.sender]._power = _C[msg.sender]._power.sub(1000);
+            }else{
+              _C[msg.sender]._power = 0;
+            }
           _H2_connected[_host] = _H2_connected[_host].sub(1);
 
         }else{
@@ -372,6 +375,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
           uint256 time = _C2_H_end[msg.sender][_host].sub(_C2_H_start[msg.sender][_host]);
           time = time.div(60);
           uint256 _value = _C[msg.sender]._power.mul(powerMul).mul(time);
+          _value = _value * 10**9;
           uint256 royalty = 0;
           uint256 sip = 0;
           for (uint256 i = 0; i<_H2_coHosts[_host].length; i++){
@@ -389,15 +393,16 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
           }
            _C2_H[msg.sender] = _to;
            _C2_H_start[msg.sender][_to] = block.timestamp;
-           _C2_H_end[msg.sender][_to] = block.timestamp + 2 hours;
+           _C2_H_end[msg.sender][_to] = block.timestamp + 4 hours;
            _H2_connected[_to] = _H2_connected[_to].add(1);
         }
       }else{
 
         _C2_H[msg.sender] = _to;
         _C2_H_start[msg.sender][_to] = block.timestamp;
-        _C2_H_end[msg.sender][_to] = block.timestamp + 2 hours;
+        _C2_H_end[msg.sender][_to] = block.timestamp + 4 hours;
         _H2_connected[_to] = _H2_connected[_to].add(1);
+        _C2_connected[msg.sender] = true;
 
       }
       emit passConnected(msg.sender,_to);
@@ -408,7 +413,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       require(_C2_connected[msg.sender], 'you tea pass is not connected');
 
       address _host = _C2_H[msg.sender];
-      if(_C2_H_end[msg.sender][_host]>block.timestamp){
+      if(block.timestamp > _C2_H_end[msg.sender][_host]){
 
         _C[msg.sender]._power = _C[msg.sender]._power.sub(1000000);
         _H2_connected[_host] = _H2_connected[_host].sub(1);
@@ -418,22 +423,37 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         uint256 time = _C2_H_end[msg.sender][_host].sub(_C2_H_start[msg.sender][_host]);
         time = time.div(60);
         uint256 _value = _C[msg.sender]._power.mul(powerMul).mul(time);
-        bool success =  i1155(TEAPOT).disValue(_C2_H[msg.sender],_value,TOKEN);
-        _C2_Hosts[msg.sender][_C2_H[msg.sender]] = _C2_Hosts[msg.sender][_C2_H[msg.sender]].add(_value);
+        uint256 bal = IERC20(TOKEN).balanceOf(TEAPOT);
+        _value = _value * 10**9;
+        if(bal>_value){
 
-         if(success){
+          bool success =  i1155(TEAPOT).disValueTeaPass(_C2_H[msg.sender],_value,TOKEN);
+          _C2_Hosts[msg.sender][_C2_H[msg.sender]] = _C2_Hosts[msg.sender][_C2_H[msg.sender]].add(_value);
 
-           _C2_H[msg.sender] = burn;
-           _C2_H_start[msg.sender][burn] = block.timestamp;
-           _C2_H_end[msg.sender][burn] = block.timestamp - 2 hours;
-           _H2_connected[_host] = _H2_connected[_host].sub(1);
-           _C2_connected[msg.sender] = false;
+           if(success){
 
-         }
+             _C2_H[msg.sender] = burn;
+             _C2_H_start[msg.sender][burn] = block.timestamp;
+             _C2_H_end[msg.sender][burn] = block.timestamp - 3 hours;
+             _H2_connected[_host] = _H2_connected[_host].sub(1);
+             _C2_connected[msg.sender] = false;
+
+           }
+        }else{
+
+          _C2_H[msg.sender] = burn;
+          _C2_H_start[msg.sender][burn] = block.timestamp;
+          _C2_H_end[msg.sender][burn] = block.timestamp - 3 hours;
+          _H2_connected[_host] = _H2_connected[_host].sub(1);
+          _C2_connected[msg.sender] = false;
+
+        }
+
       }
       emit passDissConnected(msg.sender,_host);
 
     }
+
     function setURI(string memory newuri) public onlyOwner {
         _setURI(newuri);
     }

@@ -42,7 +42,7 @@ export class CreateComponent implements OnInit {
   showEnableToken:boolean;
   showEnableNFT:boolean;
   showEnableShop:boolean;
-  showEnableWallToken:boolean;
+  showEnableTeaPass:boolean;
   showEnableHANDTEA:boolean;
   showEnableHANDNFT:boolean;
   ALBUMID:any;
@@ -127,11 +127,11 @@ export class CreateComponent implements OnInit {
     // console.log("wall token approve for " + approve4);
     // if(approve4==0){
     //   this.showApproval = true
-    //   this.showEnableWallToken = true;
+    //   this.showEnableTeaPass = true;
     //
     // }else{
-    //   console.log(approve4)
-    //   this.showEnableWallToken = false;
+    //   //console.log(approve4)
+    //   this.showEnableTeaPass = false;
     //
     // }
     ///approve HANDS to manage TEA
@@ -531,7 +531,7 @@ SET_APPROVE(_value:any){
       }
       if(_value==4){
 
-        this.pop('success','SATO enabled')
+        this.pop('success','TEA\'s enabled')
 
       }
 

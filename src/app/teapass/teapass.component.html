@@ -1,21 +1,147 @@
 <app-header (session)="getSession($event)"></app-header>
+<div class="modal fade popup" id="connect_to" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+						<form [formGroup]="_connect">
+							<h3 class="mt-10 text-center">Connect Your Teapass</h3>
+							<p class="mt-10 mb-10 text-center dashed_box bg_white"><b>Connect to a content provider, listen to their podcast, watch their live stream, while they earn $$ from the teapot<br><br>the amount they earn is based on your power level.</b></p>
+
+							<div class="space-y-10 pt-3">
+									<span class="nameInput">Connect To</span>
+									<input type="text" class="form-control" placeholder="0x.." formControlName="to">
+							</div>
+
+							<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="CONNECT()"> Connect</a>
+						</form>
+					</div>
+				</div>
+		</div>
+</div>
+<div class="modal fade popup" id="allow_connections" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+						<form [formGroup]="_allow">
+							<h3 class="mt-10 text-center">Allow Connections</h3>
+							<p class="mt-10 mb-10 text-center dashed_box bg_white"><b>Allow community members to connect to your tea pass to reward your content.<br>You earn their power level from the teapot<br><br>max 4 hours </b></p>
+							<span class="nameInput mt-3">Content Type</span>
+							<select class="form-select custom-select" aria-label="market" formControlName="type">
+								<option value="Live audio">Live Audio Stream</option>
+								<option value="Live video">Live Video Stream</option>
+								<option value="audio">Audio Content</option>
+								<option value="video">Video Content</option>
+							</select>
+							<div class="space-y-10 pt-3">
+									<span class="nameInput">Embed Code (youtube, spotify, etc)</span>
+									<textarea class="form-control" rows="8" cols="80" formControlName="embed"></textarea>
+							</div>
+
+							<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="ALLOW()"> Allow Connections</a>
+						</form>
+					</div>
+				</div>
+		</div>
+</div>
+
+<div class="modal fade popup" id="close_connections" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+							<h3 class="mt-10 text-center">Close Connections</h3>
+							<p class="mt-10 mb-10 text-center dashed_box bg_white"><b>Stop accepting connections<br>connected audience members will still have to disconnect from you</b></p>
+							<a href="javascript: void(0)" class="btn btn-danger w-full mt-30" (click)="CLOSE()"> Close Connections</a>
+					</div>
+				</div>
+		</div>
+</div>
+
+<div class="modal fade popup" id="disconnect_from" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+						<form [formGroup]="_disconnect">
+							<h3 class="mt-10 text-center">Dissconnect Your Teapass</h3>
+							<p class="mt-10 mb-10 text-center dashed_box bg_white"><b>Disconnect your teapass to send the host their Teapot rewards. You pay nothing, they will earn your power level x how long you were connected to their teapass. </b></p>
+
+							<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="DISCONNECT()"> Disconnect</a>
+						</form>
+					</div>
+				</div>
+		</div>
+</div>
+
 <div class="hero_ranking bg_white">
 			    <div class="container" style="padding-top:100px; padding-bottom:100px">
-			        <h1 class="text-center"><span style="font-family: 'Potta One'">NFTea Cafe</span></h1>
-              <h4 class="text-center pt-5" style="color:#000; font-family: 'Poiret One'; padding-top:20px">host clubhouse twitter spaces style rooms and earn Tea Tokens</h4>
+			        <h1 class="text-center"><span style="font-family: 'Potta One'">Tea Pass</span></h1>
+							<h4 class="text-center p-4">TEAPOT: {{TEAPOT | number:'1.0-9'}}</h4>
+
+							<p class="mt-10 mb-10 text-center dashed_box bg_white col-6"><b>Content Providers<br>EARN TEA TOKENS FROM THE TEAPOT</b><br>you are paid the power level of your content consumer<br>up to 4 hours<br><br>
+								<b>Content Consumers<br>ENJOY AWESOME CONTENT WITHOUT PAYING OUT OF POCKET</b>
+							</p>
+							<p class="text-center pt-5">
+								<a href="javascript: void(0)" class="btn btn-danger btn-lg mr-2" data-toggle="modal" data-target="#close_connections" *ngIf="CREATORisLIVE"> Close Connections</a>
+							<a href="javascript: void(0)" class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#allow_connections" *ngIf="!CREATORisLIVE"> Allow Connections</a>
+						 	</p>
 			    </div>
 			</div>
 			<section class="section forum mt-100">
       			    <div class="container-md">
       			        <div class="row sm:space-y-30">
       			            <div class="col-lg-12 text-center">
-													<h3 class="text-center p5 mb-3">coming soon</h3>
-													<iframe width="560" height="315" src="https://www.youtube.com/embed/lowXP1yxQ1c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 												</div>
 										</div>
 								</div>
 			</section>
+			<div class="container" *ngIf="showContent">
+				<div id="content">
+            <div class="article_wrap mt-0" [innerHTML]="EMBED">
+        		</div>
+						<div class="p3 text-center">
+							<a href="javascript: void(0)" class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#disconnect_from"> DISCONNECT</a>
 
+						</div>
+        </div>
+			</div>
+
+			<div class="container" *ngIf="!showContent">
+						        <div class="space-x-10 d-flex align-items-center mb-20">
+						            <div class="calendar_icon"><i class="ri-calendar-event-line"></i></div>
+						            <h3>Content Providers</h3>
+						        </div>
+						        <div class="box d-flex table-responsive">
+						            <table class="table upcoming_projects">
+						                <thead>
+						                    <tr>
+						                        <th scope="col"><span>Creator</span></th>
+																		<th class="space-x-5" scope="col"><span>Type</span></th>
+						                        <th class="space-x-5" scope="col"><span>Start</span></th>
+						                        <th class="space-x-5" scope="col"><span>Connected</span></th>
+						                        <th class="space-x-5" scope="col"><span>Earnings</span></th>
+																		<th class="space-x-5" scope="col"></th>
+
+						                    </tr>
+						                </thead>
+														<tbody *ngIf="CREATORS && CREATORS.length<1">
+																<tr>
+																	<td colspan="8" class="text-center"><span class="color_black">no creators open to connect</span></td>
+																</tr>
+														</tbody>
+						                <tbody *ngIf="CREATORS && CREATORS.length>0">
+						                    <tr *ngFor="let data of CREATORS">
+																	<td><span class="color_black">{{data.user}}</span></td>
+																	<td><span class="color_black">{{data.type}}</span></td>
+						                        <td><span class="color_black">{{data.start | date: 'short'}}</span></td>
+						                        <td>{{data.connections}}</td>
+						                        <td><span class="color_red">{{data.earnings}}</span></td>
+																		<td *ngIf="!data.connected"><a href="javascript: void(0)" class="btn btn-sm btn-primary" (click)="CONNECT(data.user,data.embed)"><span class="color_white">Connect</span></a></td>
+						                        <td *ngIf="data.connected"><a href="javascript: void(0)" class="btn btn-sm btn-primary" (click)="SHOW(data.user,data.embed)"><span class="color_white">View/Listen</span></a></td>
+						                    </tr>
+						                </tbody>
+						            </table>
+						        </div>
+						    </div>
 
       <section class="section forum mt-100" style="display:none">
       			    <div class="container-md">

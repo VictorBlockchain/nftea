@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from "@angular/forms";
 
-import { CafeComponent } from './cafe.component';
-import { CafeRoutingModule } from './cafe-routing.module';
+import { TeapassComponent } from './teapass.component';
+import { TeapassRoutingModule } from './teapass-routing.module';
 import { NgxSummernoteModule } from 'ngx-summernote';
 import { HomeModule } from '../home/home.module';
 import { HeaderModule } from '../header/header.module';
@@ -12,19 +12,19 @@ import { HeaderModule } from '../header/header.module';
 @NgModule({
   imports: [
     CommonModule,
-    CafeRoutingModule,
+    TeapassRoutingModule,
     ReactiveFormsModule,
     NgxSummernoteModule,
     HeaderModule,
     HomeModule
   ],
   exports: [
-    CafeComponent
+    TeapassComponent
   ],
   declarations: [
-    CafeComponent
+    TeapassComponent
   ],
   providers: [
   ],
 })
-export class CafeModule { }
+export class TeapassModule { }
