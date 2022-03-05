@@ -1349,7 +1349,7 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
-  public SET_ALBUM(_user:any,_name:any): Promise<any>{
+  public SET_ALBUM(_user:any,_name:any, _media:any): Promise<any>{
     return new Promise(async(resolve,reject)=>{
       try {
 
@@ -1360,8 +1360,11 @@ async GET_WEB3(): Promise<any>{
           inputs: [{
             type:'string',
             name:'name'
+          },{
+            type:'string',
+            name:'media'
           }]
-        }, [_name])
+        }, [_name, _media])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:NFTEA,

@@ -357,8 +357,22 @@
 				<div class="item_details mt-40">
 					<div class="row sm:space-y-20">
 						<div class="col-lg-6">
-							<img class="item_img" src="{{NFT.image}}" alt="">
+							<div class="row">
+								<img class="item_img" src="{{NFT.image}}" alt="">
+							</div>
+							<div class="row mt-20" *ngIf="NFT.collection._media">
+								<div class="col">
+									<div class="form_cc_four text-center space-y-40 md:mb-20 upload_file">
+										<audio controls autoplay muted>
+											<source src="{{NFT.collection._media}}" type="audio/mpeg">
+										Your browser does not support the audio element.
+										</audio>
+									</div>
+								</div>
+							</div>
+
 						</div>
+
 						<div class="col-lg-6">
 							<div class="space-y-20">
 								<h3>{{NFT.title}}</h3>
@@ -626,7 +640,7 @@
 								</div>
 								<div class="d-flex space-x-20 text-center" *ngIf="user==nft_owner">
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#delete_auction" *ngIf="NFT.auction && NFT.auction.id>0 && NFT.auction.highestBidder==NFT.auction.seller && NFT.auction.active==1"> Cancel Auction</a>
-									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active!=2 && NFT.isCoupon<1"> Make Coupon</a>
+									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active!=2 && NFT.isCoupon<1 && NFT.quantity>1"> Make Coupon</a>
 									<a href="javascript: void(0)" class="btn btn-success btn-lg" data-toggle="modal" data-target="#set_more_brew" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active!=2 && NFT.quantity==1"> Add To Brew</a>
 
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT.auction && NFT.auction.id>0 && NFT.auction.highestBidder!=NFT.auction.seller && NFT.auction.active==1"> Accept Bid</a>

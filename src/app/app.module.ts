@@ -15,7 +15,7 @@ import { SideComponent } from './side/side.component';
 import { ReactiveFormsModule } from "@angular/forms";
 import { NgxSummernoteModule } from 'ngx-summernote';
 import { DeviceDetectorService } from 'ngx-device-detector';
-
+import { AngMusicPlayerModule } from  'ang-music-player';
 
 @NgModule({
   declarations: [
@@ -26,6 +26,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
     //AboutComponent
   ],
   imports: [
+    AngMusicPlayerModule,
     BrowserModule,
     FormsModule,
     AppRoutingModule,

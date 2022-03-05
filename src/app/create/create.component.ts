@@ -31,6 +31,8 @@ export class CreateComponent implements OnInit {
   imageURI:any;
   imageName:any;
   imageURL:any;
+  mediaName:any;
+  mediaURL:any;
   connected:boolean;
   createType:string;
   service:any;
@@ -52,6 +54,7 @@ export class CreateComponent implements OnInit {
   lng:any;
   useThisId = 0;
   mintPass = 0
+  fileUploading:boolean;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -172,7 +175,7 @@ export class CreateComponent implements OnInit {
 
          await this.service.GET_ALBUMS(this.user)
           .then((res:any)=>{
-
+            console.log(res);
             this.ALBUMCOUNT = res.length;
             if(this.ALBUMCOUNT>0){
               // console.log(res);
@@ -194,16 +197,30 @@ export class CreateComponent implements OnInit {
       }
     }
   }
-  async upload(event:any){
+  async upload(event:any, type:any){
 
-
+    this.fileUploading = true;
     this.toFile = event.target.files[0]
     const imageFile = new Moralis.File(this.toFile.name,this.toFile)
     await imageFile.saveIPFS();
     this.imageURI= await imageFile.ipfs();
     this.zone.run(()=>{
-    this.imageURL = this.imageURI
-    this.imageName = this.toFile.name
+      if(type==1){
+        this.imageURL = this.imageURI
+        this.imageName = this.toFile.name
+        this.mediaURL = 'https:/null'
+        this.mediaName = 'null'
+        this.fileUploading = false;
+      }else{
+        this.mediaURL = this.imageURI
+        this.mediaName = this.toFile.name
+        if(this.mediaURL){
+          this.fileUploading = false;
+          this.pop('success', 'file uploaded');
+          console.log(this.mediaURL)
+        }
+
+      }
     // console.log(this.imageURI)
   })
 
@@ -229,7 +246,7 @@ if(!this.user){
 
 }else {
 
-  this.service.SET_ALBUM(this.user,this._createCollection.controls.name.value)
+  this.service.SET_ALBUM(this.user,this._createCollection.controls.name.value,this.mediaURL)
   .then((res:any)=>{
     if(res.success){
 
@@ -240,6 +257,7 @@ if(!this.user){
           name:this._createCollection.controls.name.value,
           story:this._createCollection.controls.story.value,
           category:this._createCollection.controls.category.value,
+          media:this.mediaURL,
           user:this.user
 
         }).then(async(res:any)=>{
@@ -478,6 +496,7 @@ Swal.fire({
       metaData.created = this.curday('/')
       metaData.album = this.ALBUMID;
       metaData.wrappedTo = 0;
+      metaData.media = this.mediaURL;
       let p = [];
       p.push(this.user);
       p.push(this._createNFT.controls.split1.value || '0x000000000000000000000000000000000000dEaD');

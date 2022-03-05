@@ -63,6 +63,7 @@ export class ShowcaseComponent implements OnInit {
   PRICES:any;
   COLLECTOR:any;
   SELLER:any;
+  COLLECTION:any;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -79,7 +80,7 @@ export class ShowcaseComponent implements OnInit {
     // Moralis.start({ serverUrl, appId });
     this.user = localStorage.getItem('user');
     this.nft_id = this.route.snapshot.params.nftea;
-    console.log(this.nft_id);
+    // console.log(this.nft_id);
     this.nft_owner = this.route.snapshot.params.owner;
     this.COLLECTOR = this.user;
 
@@ -111,7 +112,7 @@ export class ShowcaseComponent implements OnInit {
     let quantity;
     this.service.GET_NFT(this.nft_id,0)
     .then(async(jordi:any)=>{
-
+      console.log(jordi)
       let ipfs = await axios.get(jordi.ipfs);
       if(jordi.wrappedTo<1){
 
@@ -140,9 +141,12 @@ export class ShowcaseComponent implements OnInit {
       // ipfs.data.nftIsWraped = wrappedTo;
       ipfs.data.redeemsLeft = redeemsLeft || 0;
       this.NFT = ipfs.data;
+      // this.COLLECTION = await this.service.GET_ALBUM(jordi.album);
+      // console.log(this.COLLECTION);
+      this.NFT.collection = await this.service.GET_ALBUM(jordi.album);
       this.NFT.auction = await this.service.GET_AUCTION(this.nft_owner,this.nft_id);
       this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-      // console.log(this.NFT);
+      console.log(this.NFT);
 
       //get seller
       let s:any = await this.service.GET_PROFILE1(this.nft_owner);
@@ -152,9 +156,9 @@ export class ShowcaseComponent implements OnInit {
 
       }else{
 
-        let s_info:any = this.service.GET_NFT(s[0],0);
-        let s_ipfs = await axios.get(s_info.ipfs);
-        this.SELLER.avatar = s_ipfs.data.image;
+        // let s_info:any = this.service.GET_NFT(s[0],0);
+        // let s_ipfs = await axios.get(s_info.ipfs);
+        // this.SELLER.avatar = s_ipfs.data.image;
       }
 
       this.SELLER.heritage = s[2];

@@ -133,8 +133,8 @@
 					<div class="box text-center">
 						<img class="icon" src="assets/img/logos/collection128.png" alt="">
 						<div class="space-y-10">
-							<h5> Create Album</h5>
-							<p class="color_text">a photo album of nft's</p>
+							<h5> Create Collection</h5>
+							<p class="color_text">a collection of nft's</p>
 							<div class="hr"></div>
 							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="showCreateCollection=true">
 								create
@@ -204,7 +204,7 @@
 						<p class="color_text">PNG, GIF, WEBP, MP4 or MP3. Max
 							100mb.</p>
 					</div>
-					<div class="space-y-20">
+					<div class="space-y-20" style="height:300px">
 						<p class="color_text">or choose a file</p>
 						<a href="#" class="btn btn-white"> Browse files </a>
 						<input type="file" (change)="upload($event)">
@@ -262,7 +262,7 @@
 											33.376L22.512
 											27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
 			</svg>
-			Create An Album
+			Create A Collection
 			<a href="javascript: void(0)" (click)="showCreateCollection=false" class="btn btn-white btn-sm my-40">
 					Back
 				</a>
@@ -273,8 +273,8 @@
 			<div class="col-lg-6">
 				<div class="left__part space-y-40 md:mb-20 upload_file">
 					<div class="space-y-20">
-						<p>Create an album for cat NFT's and store all the NFT's you create about cats in it.<br /><br />
-						NFT's in this album will serve as the cover image.</p>
+						<p>Create an collection for your cat NFT's or your music single and store all the NFT's you create about cats, or your music in it.<br /><br />
+						NFT's in this collection will serve as the cover image.</p>
 
 					</div>
 
@@ -285,7 +285,7 @@
 					<form [formGroup]="_createCollection">
 						<div class="space-y-20">
 							<div class="space-y-10">
-								<span class="nameInput">Album Name</span>
+								<span class="nameInput">Collection Name</span>
 								<input type="text" class="form-control" placeholder="e. g. `my awesome collection`" formControlName="name">
 							</div>
 							<div class="space-y-10">
@@ -311,9 +311,39 @@
 						</div>
 					</form>
 				</div>
+				<div class="row space-y-20 mt-4 box in__upload mb-20 form_cc_four" *ngIf="mediaURL">
+					<div class="col">
+						<div class="form_cc_four text-center space-y-40 md:mb-20 upload_file">
+							<audio controls autoplay muted>
+								<source src="{{mediaURL}}" type="audio/mpeg">
+							Your browser does not support the audio element.
+							</audio>
+						</div>
+					</div>
+				</div>
+
+				<div class="row space-y-20 mt-4 box in__upload mb-20 form_cc_four" *ngIf="!mediaURL">
+					<div class="col">
+						<div class="form_cc_four text-center space-y-40 md:mb-20 upload_file">
+							<div class="space-y-20" *ngIf="fileUploading">
+								uploading...
+							</div>
+							<div class="space-y-20" *ngIf="!fileUploading">
+								<h3 class="text-center">Add Media</h3>
+								<p class="text-center">Add your music or video to this collection<br>
+									MP4 or MP3. Max 10mb. </p>
+
+								<p class="color_text">or choose a file</p>
+								<a href="javascript: void(0)" class="btn btn-white"> Browse files </a>
+								<input type="file" (change)="upload($event,2)">
+
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="row space-y-20">
 					<div class="col text-center">
-						<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="createAlbum()">create Album</a>
+						<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="createAlbum()">create collection</a>
 
 					</div>
 				</div>
@@ -348,12 +378,12 @@
 						<img class="icon" src="assets/img/logos/cup128.png" alt="">
 						<h5>Drag and drop your file</h5>
 						<p class="color_text">PNG, GIF, WEBP, MP4 or MP3. Max
-							100mb.</p>
+							10mb.</p>
 					</div>
 					<div class="space-y-20">
 						<p class="color_text">or choose a file</p>
 						<a href="#" class="btn btn-white"> Browse files </a>
-						<input type="file" (change)="upload($event)">
+						<input type="file" (change)="upload($event,1)">
 
 					</div>
 				</div>
@@ -535,7 +565,7 @@
 		</div>
 	</div>
 </div>
-<div class="container" *ngIf="imageURL">
+<div class="container" *ngIf="imageURL && showCreateNFT">
 	<div class="mt-0">
 		<h3 class="mb-40">
 			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">

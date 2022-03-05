@@ -1481,6 +1481,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       address _creator;
       uint256 _volume;
       uint256 _floor;
+      string _media;
     }
     ALBUM[] public album;
 
@@ -1541,12 +1542,13 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setAlBUM(string memory name) public {
+    function setAlBUM(string memory name, string memory media) public {
 
       _Aid = _Aid.add(1);
       ALBUM storage save = _A[_Aid];
       save._id = _Aid;
       save._name = name;
+      save._media = media;
       save._creator = msg.sender;
       _allAlbums[address(this)].push(_Aid);
       _C2_As[msg.sender].push(_Aid);
@@ -1794,17 +1796,6 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         emit nftWrapped(_nft, _Nid);
 
     }
-    function unwrap(uint256 _wnft) public {
-
-        require(balanceOf(msg.sender,_wnft)>0, 'you do not own this nft');
-        uint256 _nft = _WN2_N[_wnft];
-        safeTransferFrom(msg.sender,burn,_wnft,1,'');
-        require(checkSuccess(), 'error unwrapping');
-        safeTransferFrom(address(this),msg.sender,_nft,1,'');
-        require(checkSuccess(), 'error unwrapping main nft');
-        emit nftUnWrapped(_nft, _wnft);
-    }
-
     function setVOLUME(uint256 _nft, uint256 _value) public returns(bool){
 
       require(isC[msg.sender], 'you are not that cool');
@@ -1835,15 +1826,6 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
               }
       }
       emit gift(msg.sender,_nft);
-    }
-
-    function BURN(uint256 _nft, address _collector ) public returns(bool){
-
-      require(balanceOf(_collector,_nft) >0, 'collector does not own this nft');
-      require(isC[msg.sender], 'you are not that cool');
-      safeTransferFrom(msg.sender,burn,_nft,1,'');
-      require(checkSuccess(), 'error burning');
-      return true;
     }
 
     function EDITNFT(uint _nft,string memory _story, uint256 _album) public{

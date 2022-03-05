@@ -55,30 +55,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_nft",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_collector",
-				"type": "address"
-			}
-		],
-		"name": "BURN",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "account",
 				"type": "address"
@@ -740,6 +716,11 @@
 				"internalType": "string",
 				"name": "name",
 				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "media",
+				"type": "string"
 			}
 		],
 		"name": "setAlBUM",
@@ -892,19 +873,6 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_wnft",
-				"type": "uint256"
-			}
-		],
-		"name": "unwrap",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
 				"name": "_nft",
 				"type": "uint256"
 			},
@@ -958,6 +926,11 @@
 				"internalType": "uint256",
 				"name": "_floor",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_media",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -1292,6 +1265,11 @@
 				"internalType": "uint256",
 				"name": "_floor",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_media",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -1575,6 +1553,11 @@
 						"internalType": "uint256",
 						"name": "_floor",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_media",
+						"type": "string"
 					}
 				],
 				"internalType": "struct NFTEA.ALBUM",
