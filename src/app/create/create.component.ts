@@ -246,7 +246,7 @@ if(!this.user){
 
 }else {
 
-  this.service.SET_ALBUM(this.user,this._createCollection.controls.name.value,this.mediaURL)
+  this.service.SET_ALBUM(this.user,this._createCollection.controls.name.value,this.mediaURL,this._createCollection.controls.category)
   .then((res:any)=>{
     if(res.success){
 
