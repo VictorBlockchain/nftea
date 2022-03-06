@@ -14,8 +14,8 @@
 							<div class="avatar_wrap">
 								<img class="avatar avatar-lg" src="https://raroin.creabik.com/assets/img/avatars/avatar_4.png" alt="avatar">
 							</div>
-							<h5 *ngIf="!PROFILE2">@{{this._profile.controls.name.value || 'enter cool name'}}</h5>
-							<h5 *ngIf="PROFILE2 && PROFILE2.id">@{{PROFILE2.get('name')}}</h5>
+							<h5 *ngIf="!COLLECTOR">@{{this._profile.controls.name.value || 'enter cool name'}}</h5>
+							<h5 *ngIf="COLLECTOR">@{{COLLECTOR.get('name')}}</h5>
 						</div>
 					</div>
 					<div class="col-md-auto">
@@ -33,6 +33,30 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div class="container" style="margin-bottom: 30px" *ngIf="showGoBuyAvatar && !showEditProfile">
+
+	<div class="row mt-30">
+		<div class="mt-10 col-lg-8 offset-lg-2 mt-30">
+			<h3 class="text-center mb-20">Complete Your Profile</h3>
+			<div class="box in__upload mb-20 form_cc_four mb-20">
+				<div class="row form_cc_four mb-20 text-center">
+					<div class="col-12">
+							<h5 class="text-center">
+								Next, you should set your avatar and cover NFT's. These must be NFT's you own... head over to the avatar market to find an NFT suited for you.
+							</h5>
+
+					</div>
+					<div class="col-12 mt-5">
+						<a class="btn btn-primary btn-lg" href="javascript: void(0)" routerLink="/market/avatar">Get Avatar</a>&nbsp;
+						<a class="btn btn-dark btn-lg mr-2" href="javascript: void(0)" (click)="showProfile =true; skip=true; showGoBuyAvatar=false; start()">Skip</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>
 <div class="container" style="margin-bottom: 30px" *ngIf="showCreateProfile && !showEditProfile">
 	<div class="mt-20">
@@ -54,10 +78,10 @@
 			<div class="box in__upload mb-20 form_cc_four mb-20">
 				<div class="row form_cc_four mb-20 text-center">
 					<div class="col-12">
-						Your profile avatar and cover should be NFT's you own. <br /><br />You can find avatars and profile covers in the marketplace.<br />
-						create your profile before buying NFT's.<br /><br />Adding your gender and Heritage allow us to highlight women artist or Jewish artists, or South East Asian artists and so on.
-						<br /><br />
-						Your power level increases when you buy NFT's cross heritage and gender.
+							<h5 class="text-center">
+								Adding your gender and Heritage allow us to highlight women artist or Jewish artists, or South East Asian artists and so on.
+							</h5>
+
 					</div>
 				</div>
 			</div>
@@ -118,7 +142,7 @@
 	</div>
 
 </div>
-<div class="container" *ngIf="showCreateProfile && !showEditBlockchain">
+<div class="container" *ngIf="showCreateProfile && !showEditBlockchain && !showGoBuyAvatar">
 	<div class="row">
 		<div class="mt-10 col-lg-8 offset-lg-2">
 			<div class="box in__upload mb-120 form_cc_four mb-20">
@@ -234,7 +258,7 @@
 
 </div>
 
-			<div class="container" *ngIf="showProfile">
+			<div class="container" *ngIf="showProfile && !showGoBuyAvatar">
 				<div class="row justify-content-center">
 					<div class="col-lg-3 col-md-7 order-md-0 order-1">
 						<div class="profile__sidebar">

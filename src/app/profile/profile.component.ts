@@ -47,6 +47,8 @@ export class ProfileComponent implements OnInit {
   NFTCOUNT = 0;
   AUCTIONCOUNT = 0;
   POWER:any;
+  showGoBuyAvatar:boolean;
+  skip:boolean;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -91,16 +93,40 @@ export class ProfileComponent implements OnInit {
     if(!this.COLLECTOR){
 
       this.showCreateProfile = true;
+      //console.log(this.COLLECTOR)
 
     }else{
 
-      //console.log(this.COLLECTOR);
-      this.showProfile = true;
-      await this.service.GET_ALBUMS(this.user)
-      .then((res:any)=>{
-        this.ALBUMCOUNT = res.length;
-        this.getNFTSIOWN();
-      })
+      let avatar = this.COLLECTOR.get('avatar');
+
+      if(avatar>0){
+
+        this.showProfile = true;
+        await this.service.GET_ALBUMS(this.user)
+        .then((res:any)=>{
+          this.ALBUMCOUNT = res.length;
+          this.getNFTSIOWN();
+        })
+
+
+      }else{
+        if(this.skip){
+
+          this.showProfile = true;
+          await this.service.GET_ALBUMS(this.user)
+          .then((res:any)=>{
+            this.ALBUMCOUNT = res.length;
+            this.getNFTSIOWN();
+          })
+
+        }else{
+
+          this.showGoBuyAvatar = true;
+          this.showProfile = false;
+
+        }
+
+      }
 
     }
 
@@ -214,13 +240,17 @@ export class ProfileComponent implements OnInit {
         preference:this._profile.controls.preference.value,
         story:this._profile.controls.story.value,
         heritage:this._profile.controls.heritage.value,
+        avatar:0,
+        cover:0,
         user:this.user
 
       }).then(()=>{
 
-        this.pop('success', 'profile created');
-        this.showProfile = true;
-        this.start();
+        this.pop('success', 'profile created, buy an avatar or cover nft next');
+        this.showEditProfile = false;
+        this.showCreateProfile = false;
+        this.showGoBuyAvatar = true;
+        //this.start();
       })
     }
 

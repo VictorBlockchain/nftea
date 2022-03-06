@@ -187,8 +187,8 @@ export class CreateComponent implements OnInit {
                 this.service.GET_ALBUM(element)
                 .then((res:any)=>{
 
-                  this.ALBUM.push({id:element,name:res._name});
-                  console.log(this.ALBUM);
+                  this.ALBUM.push({id:element,name:res._name, category:res._category, media:res._media});
+                  //console.log(this.ALBUM);
                 })
               });
             }
@@ -226,7 +226,7 @@ export class CreateComponent implements OnInit {
 
   }
 async createAlbum(type:any){
-
+  // console.log("working")
 if(!this.user){
 
     Swal.fire({
@@ -244,9 +244,29 @@ if(!this.user){
     confirmButtonText: 'Close'
   })
 
+}else if (!this._createCollection.controls.category.value) {
+Swal.fire({
+  title: 'Error!',
+  text: 'Whats the category of the album?',
+  icon: 'error',
+  confirmButtonText: 'Close'
+})
+
+}else if (this._createCollection.controls.category.value==11 && !this.lat && !this.lon){
+
+  this.pop('error', 'we\'ll need your location for this coupon');
+  this.getGeo();
+
 }else {
 
-  this.service.SET_ALBUM(this.user,this._createCollection.controls.name.value,this.mediaURL,this._createCollection.controls.category)
+  if(!this.mediaURL){
+    this.mediaURL = 'https://null'
+  }
+  if(this._createCollection.controls.category.value!=11){
+    this.lat = 0;
+    this.lng = 0;
+  }
+  this.service.SET_ALBUM(this.user,this._createCollection.controls.name.value,this.mediaURL,this._createCollection.controls.category.value)
   .then((res:any)=>{
     if(res.success){
 
@@ -258,18 +278,22 @@ if(!this.user){
           story:this._createCollection.controls.story.value,
           category:this._createCollection.controls.category.value,
           media:this.mediaURL,
+          lat:this.lat,
+          long:this.lon,
           user:this.user
 
         }).then(async(res:any)=>{
 
-          this.pop('success', 'album created');
+          this.pop('success', 'collection creation in progress');
           this.start();
 
 
         })
 
     }else{
+
       this.pop('error', res.msg);
+
     }
   })
 

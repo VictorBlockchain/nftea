@@ -1352,7 +1352,7 @@ async GET_WEB3(): Promise<any>{
   public SET_ALBUM(_user:any,_name:any, _media:any, _category:any): Promise<any>{
     return new Promise(async(resolve,reject)=>{
       try {
-
+        console.log('got it ' + _media, _category)
         await this.GET_WEB3();
         const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
           name: "setAlBUM",
@@ -1381,6 +1381,8 @@ async GET_WEB3(): Promise<any>{
               // console.log(hash)
           })
           .on('receipt',(receipt)=>{
+            this.pop('success', 'collection created');
+
              console.log(receipt)
           })
           .on('confirmation',(confirmationNumber, receipt)=>
@@ -1476,6 +1478,8 @@ async GET_WEB3(): Promise<any>{
               // console.log(hash)
           })
           .on('receipt',(receipt)=>{
+            this.pop('success', 'nft minted, head to your profile to view');
+
              console.log(receipt)
           })
           .on('confirmation',(confirmationNumber, receipt)=>

@@ -360,9 +360,11 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       }
 
       if(_C2_connected[msg.sender]){
+
         address _host = _C2_H[msg.sender];
 
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
+
             if(_C[msg.sender]._power.sub(1000)>0){
               _C[msg.sender]._power = _C[msg.sender]._power.sub(1000);
             }else{

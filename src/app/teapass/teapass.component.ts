@@ -16,6 +16,10 @@ import { environment } from '../../environments/environment';
 })
 export class TeapassComponent implements OnInit {
 
+  _allow: FormGroup;
+  _connect: FormGroup;
+  _disconnect: FormGroup;
+
   user:any;
   connected:boolean;
   CREATORS:any;

@@ -721,6 +721,11 @@
 				"internalType": "string",
 				"name": "media",
 				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "category",
+				"type": "uint256"
 			}
 		],
 		"name": "setAlBUM",
@@ -931,6 +936,11 @@
 				"internalType": "string",
 				"name": "_media",
 				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_category",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -1270,6 +1280,11 @@
 				"internalType": "string",
 				"name": "_media",
 				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_category",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -1558,6 +1573,11 @@
 						"internalType": "string",
 						"name": "_media",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_category",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct NFTEA.ALBUM",

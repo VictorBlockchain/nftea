@@ -1,55 +1,85 @@
+<app-header (session)="getSession($event)"></app-header>
 
 <div class="hero_marketplace bg_white">
 			    <div class="container">
-			        <h1 class="text-center">NFTea Market</h1>
+			        <h1 class="text-center" style="font-family:'Concert One'">NFTea Market</h1>
 			    </div>
 			</div>
 			<div class="bg_white border-b py-20">
 			    <div class="container">
 			        <div class="d-flex justify-content-center">
-			            <ul class="menu_categories space-x-20">
-			                <li>
-			                    <a href="#" class="color_brand">
+								<ul class="menu_categories space-x-20">
+		              <li> <a href="javascript: void(0)" (click)="start(1)">
+		                      <i class="ri-emotion-laugh-line orange" *ngIf="ACTIVE_TAB==1"></i>
+		                      <i class="ri-emotion-laugh-fill" *ngIf="ACTIVE_TAB!=1"></i> <span> Avatars </span>
+		                  </a>
 
-			                        <span> All </span>
-			                    </a>
-			                </li>
-			                <li> <a href="#">
-			                        <i class="ri-brush-fill"></i> <span> Art </span>
-			                    </a>
+		              </li>
+		              <li> <a href="javascript: void(0)" (click)="start(2)">
+		                      <i class="ri-layout-4-line orange" *ngIf="ACTIVE_TAB==2"></i>
+		                      <i class="ri-layout-4-fill" *ngIf="ACTIVE_TAB!=2"></i> <span> Covers </span>
+		                  </a>
 
-			                </li>
-			                <li> <a href="#">
-			                        <i class="ri-music-2-fill"></i> <span> Music </span>
-			                    </a>
+		              </li>
+		                <li> <a href="javascript: void(0)" (click)="start(7)">
+		                  <i class="ri-music-2-line" *ngIf="ACTIVE_TAB==7"></i>
+		                        <i class="ri-music-2-fill" *ngIf="ACTIVE_TAB!=7"></i> <span> Music </span>
+		                    </a>
 
-			                </li>
-			                <li> <a href="#">
-			                        <i class="ri-film-fill"></i> <span> Film / Video </span>
-			                    </a>
+		                </li>
+		                <li> <a href="javascript: void(0)" (click)="start(5)">
+		                  <i class="ri-film-line" *ngIf="ACTIVE_TAB==5"></i>
+		                        <i class="ri-film-fill" *ngIf="ACTIVE_TAB!=5"></i> <span> Film / Video </span>
+		                    </a>
 
-			                </li>
-			                <li> <a href="#">
-			                        <i class="ri-group-fill"></i> <span> Heritage </span>
-			                    </a>
+		                </li>
+		                <li>
+		                  <a href="javascript: void(0)" (click)="start(3)">
+		                    <i class="ri-flag-line" *ngIf="ACTIVE_TAB==3"></i>
+		                        <i class="ri-flag-fill" *ngIf="ACTIVE_TAB!=3"></i> <span> Heritage </span>
+		                    </a>
 
-			                </li>
-			                <li> <a href="#">
-			                        <i class="ri-book-fill"></i> <span> Stories </span>
-			                    </a>
+		                </li>
+		                <li> <a href="javascript: void(0)" (click)="start(6)">
+		                  <i class="ri-brush-line" *ngIf="ACTIVE_TAB==6"></i>
+		                        <i class="ri-brush-fill" *ngIf="ACTIVE_TAB!=6"></i> <span> Arts </span>
+		                    </a>
 
-			                </li>
-			                <li> <a href="#">
-			                        <i class="ri-emotion-laugh-fill"></i> <span> Avatars </span>
-			                    </a>
+		                </li>
+		                <li> <a href="javascript: void(0)" (click)="start(9)">
+		                  <i class="ri-women-line" *ngIf="ACTIVE_TAB==9"></i>
+		                        <i class="ri-women-fill" *ngIf="ACTIVE_TAB!=9"></i> <span> Sexy Women </span>
+		                    </a>
 
-			                </li>
-			                <li> <a href="#">
-			                        <i class="ri-layout-4-fill"></i> <span> Covers </span>
-			                    </a>
+		                </li>
+		                <li> <a href="javascript: void(0)" (click)="start(10)">
+		                  <i class="ri-men-line" *ngIf="ACTIVE_TAB==10"></i>
+		                        <i class="ri-men-fill" *ngIf="ACTIVE_TAB!=10"></i> <span> Sexy Men </span>
+		                    </a>
 
-			                </li>
-			            </ul>        </div>
+		                </li>
+		                <li> <a href="javascript: void(0)" (click)="start(8)">
+		                  <i class="ri-building-line" *ngIf="ACTIVE_TAB==8"></i>
+		                        <i class="ri-building-fill" *ngIf="ACTIVE_TAB!=8"></i> <span> Prison </span>
+		                    </a>
+
+		                </li>
+										<li> <a href="javascript: void(0)" (click)="start(11)">
+											<i class="ri-map-pin-line" *ngIf="ACTIVE_TAB==11"></i>
+														<i class="ri-map-pin-fill" *ngIf="ACTIVE_TAB!=11"></i> <span> Coupons </span>
+												</a>
+
+										</li>
+		                <li> <a href="javascript: void(0)" (click)="start(4)">
+		                  <i class="ri-book-line" *ngIf="ACTIVE_TAB==4"></i>
+		                        <i class="ri-book-fill" *ngIf="ACTIVE_TAB!=4"></i> <span> Cafe Wall </span>
+		                    </a>
+
+		                </li>
+
+
+		            </ul>
+								</div>
 			    </div>
 			</div>
 			<div class="container">

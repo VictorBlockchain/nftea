@@ -149,7 +149,7 @@
 							<h5>Create NFT's</h5>
 							<p class="color_text">nft's with added value</p>
 							<div class="hr"></div>
-							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="showCreateNFT=true;">
+							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="showCreateNFT=true; start()">
 								create
 							</a>
 
@@ -311,7 +311,7 @@
 						</div>
 					</form>
 				</div>
-				<div class="row space-y-20 mt-4 box in__upload mb-20 form_cc_four" *ngIf="mediaURL">
+				<div class="row space-y-20 mt-4 box in__upload mb-20 form_cc_four" *ngIf="mediaURL && _createCollection.controls.category.value==7">
 					<div class="col">
 						<div class="form_cc_four text-center space-y-40 md:mb-20 upload_file">
 							<audio controls autoplay muted>
@@ -322,7 +322,7 @@
 					</div>
 				</div>
 
-				<div class="row space-y-20 mt-4 box in__upload mb-20 form_cc_four" *ngIf="!mediaURL">
+				<div class="row space-y-20 mt-4 box in__upload mb-20 form_cc_four" *ngIf="!mediaURL && _createCollection.controls.category.value==7">
 					<div class="col">
 						<div class="form_cc_four text-center space-y-40 md:mb-20 upload_file">
 							<div class="space-y-20" *ngIf="fileUploading">
@@ -330,7 +330,7 @@
 							</div>
 							<div class="space-y-20" *ngIf="!fileUploading">
 								<h3 class="text-center">Add Media</h3>
-								<p class="text-center">Add your music or video to this collection<br>
+								<p class="text-center"><b>is this a collection for your <br>hot new music single?</b><br>If so upload the music track<br>
 									MP4 or MP3. Max 10mb. </p>
 
 								<p class="color_text">or choose a file</p>

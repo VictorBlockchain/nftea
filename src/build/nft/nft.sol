@@ -1482,6 +1482,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       uint256 _volume;
       uint256 _floor;
       string _media;
+      uint256 _category;
     }
     ALBUM[] public album;
 
@@ -1542,13 +1543,14 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setAlBUM(string memory name, string memory media) public {
+    function setAlBUM(string memory name, string memory media, uint256 category) public {
 
       _Aid = _Aid.add(1);
       ALBUM storage save = _A[_Aid];
       save._id = _Aid;
       save._name = name;
       save._media = media;
+      save._category = category;
       save._creator = msg.sender;
       _allAlbums[address(this)].push(_Aid);
       _C2_As[msg.sender].push(_Aid);

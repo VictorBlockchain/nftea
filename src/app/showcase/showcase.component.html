@@ -360,7 +360,7 @@
 							<div class="row">
 								<img class="item_img" src="{{NFT.image}}" alt="">
 							</div>
-							<div class="row mt-20" *ngIf="NFT.collection._media">
+							<div class="row mt-20" *ngIf="NFT.collection && NFT.collection._media">
 								<div class="col">
 									<div class="form_cc_four text-center space-y-40 md:mb-20 upload_file">
 										<audio controls autoplay muted>

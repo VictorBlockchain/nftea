@@ -5,6 +5,8 @@ import { SERVICE } from '../service/web3.service';
 import Swal from 'sweetalert2'
 import { NgxSummernoteModule } from 'ngx-summernote';
 const Moralis = require('moralis');
+import { environment } from '../../environments/environment';
+
 declare var $: any;
 
 
@@ -37,6 +39,10 @@ export class MarketComponent implements OnInit {
   async ngOnInit() {
 
     this.type = this.route.snapshot.params.type
+    const appId = environment.moralisKey;
+    const serverUrl = environment.moralisSerer;
+    Moralis.start({ serverUrl, appId });
+
     this.userIsConnected = Moralis.User.current();
     if(this.userIsConnected){
       this.connected = true;
@@ -83,6 +89,10 @@ export class MarketComponent implements OnInit {
     })
 
   }
+
+  async getSession(event){
+
+    }
 
 createForm(){
 
