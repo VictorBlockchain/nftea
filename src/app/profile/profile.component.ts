@@ -173,10 +173,11 @@ export class ProfileComponent implements OnInit {
       if(res.length>0){
         for (let i = 0; i < res.length; i++) {
           const element = res[i];
-          // console.log(element)
+          console.log(element)
 
           DATA.auction = await this.service.GET_AUCTION_ID(element);
-          if(DATA.auction.active>0){
+        //  console.log(DATA.auction)
+          if(DATA.auction.active==true){
             this.AUCTIONCOUNT+=1;
             let r:any = await this.service.GET_NFT(DATA.auction.nft,'null');
             let ipfs = await axios.get(r.ipfs);

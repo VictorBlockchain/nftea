@@ -80,6 +80,7 @@ interface IERC20 {
      * a call to {approve}. `value` is the new allowance.
      */
     event Approval(address indexed owner, address indexed spender, uint256 value);
+    function setIsWalletLimitExempt(address _holder, bool exempt ) external;
 }
 
 // File: @openzeppelin/contracts/utils/introspection/IERC165.sol
@@ -397,6 +398,12 @@ contract TEA_SHOP {
         address _buyer,
         uint256 _nft
     );
+    event auctionPaid(
+
+        address _seller,
+        address _buyer,
+        uint256 _nft
+    );
     event royaltyPaid(
 
         address _creator,
@@ -455,7 +462,7 @@ contract TEA_SHOP {
     address nftCreator;
     address[] partners;
     uint256[] sips;
-    uint32 active;
+    bool active;
     address[] taxPartners;
     uint256[] taxSips;
     uint256 nft;
@@ -561,7 +568,7 @@ contract TEA_SHOP {
       seller:msg.sender,
       partners: _partners,
       sips: _sips,
-      active: 1,
+      active: true,
       royalty: _royalty,
       taxPartners: _taxPartners,
       taxSips: _taxSips,
@@ -636,14 +643,14 @@ contract TEA_SHOP {
 
   function SET_BID(uint256 _nft, address _host, uint256 _value, uint256 _quantity) public{
 
-    uint256 _valueOG = _value;
+    uint256 _valueOG = _value.mul(_quantity);
 
-    require(nftToHostToAuction[_nft][_host].active>0, 'this auction is not active');
+    require(nftToHostToAuction[_nft][_host].active, 'this auction is not active');
     require(nftToHostToAuction[_nft][_host].highestBidder!=msg.sender,'You are already the highest bidder');
     require(msg.sender!=nftToHostToAuction[_nft][_host].seller,'cannot bid on your own auction');
     require(nftToHostToAuction[_nft][_host].minPrice<_value,'bid too low');
     require(nftToHostToAuction[_nft][_host].highestBid<_value, 'bid too low');
-    require(nftToHostToAuction[_nft][_host].quantity>0, 'no more left');
+    require(nftToHostToAuction[_nft][_host].quantity.sub(_quantity)>=0, 'no more left');
 
     uint256 _fee = _value.mul(BIDFEE).div(100);
     _value = _value.sub(_fee);
@@ -708,6 +715,7 @@ contract TEA_SHOP {
     IERC20(TOKEN).transfer(nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
     require(checkSuccess(), "bid refund transfer failed");
     nftToHostToAuction[_nft][_host].highestBidder = msg.sender;
+    nftToHostToAuction[_nft][_host].highestBid = nftToHostToAuction[_nft][_host].minPrice;
     emit bidDeny(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
 
   }
@@ -730,7 +738,8 @@ contract TEA_SHOP {
 
       IERC1155(NFTEA).safeTransferFrom(address(this),msg.sender,_nft,nftToHostToAuction[_nft][_host].quantity,'');
       require(checkSuccess(), "End auction transfer failed");
-      nftToHostToAuction[_nft][_host].active = 0;
+      nftToHostToAuction[_nft][_host].active = false;
+      auction[nftToHostToAuction[_nft][_host].id].active = false;
       emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
 
      }
@@ -808,12 +817,16 @@ contract TEA_SHOP {
       IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder,_nft,quantity,'');
       IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].highestBidder,powerUp,1);
       IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,powerUp,1);
+      IERC20(TOKEN).setIsWalletLimitExempt(nftToHostToAuction[_nft][_host].highestBidder,true);
       if(nftToHostToAuction[_nft][_host].quantity<1){
-         nftToHostToAuction[_nft][_host].active = 2;
-      }
+        nftToHostToAuction[_nft][_host].active = false;
+        auction[nftToHostToAuction[_nft][_host].id].active = false;
+        nftToHostToAuction[_nft][_host].auctionEnd = block.timestamp;
+        emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
 
-      nftToHostToAuction[_nft][_host].auctionEnd = block.timestamp;
-      emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
+      }else{
+        emit auctionPaid(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
+      }
       return true;
   }
 

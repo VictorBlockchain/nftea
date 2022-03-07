@@ -76,6 +76,31 @@
 				"type": "uint256"
 			}
 		],
+		"name": "auctionPaid",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_seller",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_buyer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			}
+		],
 		"name": "bidAccepted",
 		"type": "event"
 	},
@@ -570,9 +595,9 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint32",
+				"internalType": "bool",
 				"name": "active",
-				"type": "uint32"
+				"type": "bool"
 			},
 			{
 				"internalType": "uint256",
@@ -654,9 +679,9 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint32",
+				"internalType": "bool",
 				"name": "active",
-				"type": "uint32"
+				"type": "bool"
 			},
 			{
 				"internalType": "uint256",
@@ -859,9 +884,9 @@
 						"type": "uint256[]"
 					},
 					{
-						"internalType": "uint32",
+						"internalType": "bool",
 						"name": "active",
-						"type": "uint32"
+						"type": "bool"
 					},
 					{
 						"internalType": "address[]",
@@ -1186,9 +1211,9 @@
 				"type": "address"
 			},
 			{
-				"internalType": "uint32",
+				"internalType": "bool",
 				"name": "active",
-				"type": "uint32"
+				"type": "bool"
 			},
 			{
 				"internalType": "uint256",

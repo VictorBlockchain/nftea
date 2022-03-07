@@ -1557,8 +1557,8 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       album.push(save);
       (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
       if(_a>0){
-
-        i1155(TEAPASS).setPower(msg.sender,5000,1);
+        uint256 _p = 500*10**9;
+        i1155(TEAPASS).setPower(msg.sender,_p,1);
 
       }
       emit newAlbum(msg.sender,_Aid);
@@ -1579,9 +1579,9 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     function SET_POINTS(uint256 _mint, uint256 _reserve, uint256 _gift) public {
 
       require(isA[msg.sender],'you are not an admin');
-      mintPoints = _mint;
-      reservePoints = _reserve;
-      giftPoints = _gift;
+      mintPoints = _mint*10**9;
+      reservePoints = _reserve*10**9;
+      giftPoints = _gift*10**9;
     }
 
     function getAlBUM(uint256 _album) public view returns(ALBUM memory){

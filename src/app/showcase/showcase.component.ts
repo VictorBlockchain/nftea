@@ -149,7 +149,7 @@ export class ShowcaseComponent implements OnInit {
       this.NFT.collection = await this.service.GET_ALBUM(jordi.album);
       this.NFT.auction = await this.service.GET_AUCTION(this.nft_owner,this.nft_id);
       this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-      console.log(this.NFT.auction.highestBidder, this.NFT.auction.seller);
+      console.log(this.NFT.auction);
 
       //get seller
       let s:any = await this.service.GET_PROFILE1(this.nft_owner);
@@ -720,8 +720,11 @@ export class ShowcaseComponent implements OnInit {
   }
 
   private DATE(_value){
-    //console.log(_value);
-    return moment(_value*1000).fromNow();
+    let now = moment();
+    console.log(now.isAfter(_value * 1000));
+
+    // console.log(moment(_value*1000).fromNow());
+    return now.isAfter(_value * 1000);
     //return new Date(_value * 1000);
   }
   private BREW(_value){
