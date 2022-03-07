@@ -461,13 +461,13 @@
 														<div class="creators space-x-10">
 																<div class="avatars space-x-3">
 																		<a href="javascript: void(0)">
-																				<p class="avatars_name txt_xs">ID: #{{data.nft_id}}</p>
+																				<p class="avatars_name txt_xs">ID: #{{data.auction.nft}}</p>
 																		</a>
 																</div>
 														</div>
 														<!-- =============== -->
 														<div class="card_head">
-															<img src="{{data.image}}" alt="">
+															<img src="{{data.nft.image}}" alt="">
 															<a href="javascript: void(0)" class="likes
 																space-x-3">
 																<i class="ri-cup-fill"></i>
@@ -476,7 +476,7 @@
 															<div class="action">
 																<a href="javascript: void(0)" class="btn
 																	btn-primary btn-sm
-																	btn_auction" routerLink="/showcase/{{data.nft_id}}/{{user}}">
+																	btn_auction" routerLink="/showcase/{{data.auction.nft}}/{{user}}">
 																	<i class="ri-auction-line
 																		color_white"></i>
 																	View Showcase
@@ -485,8 +485,8 @@
 														</div>
 														<!-- =============== -->
 														<h6 class="card_title">
-															<a class="color_black" href="Item-details.html">
-																{{data.title}}
+															<a class="color_black">
+																{{data.nft.title}}
 															</a>
 														</h6>
 
@@ -508,7 +508,7 @@
 																<a href="javascript: void(0)" class="space-x-3">
 																	<p class="color_green
 																		txt_sm">
-																		{{data.quantity}}</p>
+																		{{data.nft.quantity}}</p>
 																</a>
 															</div>
 															<div class="hr"></div>
@@ -522,7 +522,7 @@
 																</p>
 																<span class="color_black
 																	txt_sm">{{data.auction.highestBid/1000000000}}
-																	SATO</span>
+																	TEA</span>
 															</div>
 														</div>
 													</div>

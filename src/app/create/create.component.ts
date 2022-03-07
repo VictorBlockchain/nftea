@@ -41,7 +41,8 @@ export class CreateComponent implements OnInit {
   showCreateNFT:boolean;
   showCreateBrew:boolean;
   showApproval:boolean;
-  showEnableToken:boolean;
+  showEnableTokenShop:boolean;
+  showEnableTokenNFT:boolean;
   showEnableNFT:boolean;
   showEnableShop:boolean;
   showEnableTeaPass:boolean;
@@ -99,21 +100,23 @@ export class CreateComponent implements OnInit {
       console.log(approve1 + ' 1')
 
       this.showApproval = true
-      this.showEnableToken = true;
+      this.showEnableTokenNFT = true;
     }else{
       console.log(approve1 + ' 1')
-      this.showEnableToken = false;
+      this.showEnableTokenNFT = false;
 
 
     }
+    //teashop to spend tea tokens
     let approve2 = await this.service.GET_APPROVAL(this.user,2)
-    if(!approve2){
+    console.log('approve 2 is ' + approve2)
+    if(approve2<1){
       this.showApproval = true
-      this.showEnableNFT = true;
+      this.showEnableTokenShop = true;
 
     }else{
 
-      this.showEnableNFT = false;
+      this.showEnableTokenShop = false;
 
     }
     let approve3 = await this.service.GET_APPROVAL(this.user,3)

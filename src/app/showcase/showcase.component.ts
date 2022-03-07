@@ -112,14 +112,16 @@ export class ShowcaseComponent implements OnInit {
     let quantity;
     this.service.GET_NFT(this.nft_id,0)
     .then(async(jordi:any)=>{
-      console.log(jordi)
+      // console.log(jordi)
       let ipfs = await axios.get(jordi.ipfs);
       if(jordi.wrappedTo<1){
 
         ipfs.data.isCoupon = await this.service.GET_IS_COUPON(this.nft_id);
         burned = await this.service.GET_NFT_BALANCE('0x000000000000000000000000000000000000dEaD',this.nft_id);
         quantity = jordi.quantity - burned;
+
       }else{
+
         burned = await this.service.GET_NFT_BALANCE('0x000000000000000000000000000000000000dEaD',jordi.wrappedTo);
         quantity = jordi.quantity;
 
@@ -138,6 +140,7 @@ export class ShowcaseComponent implements OnInit {
       ipfs.data.quantityIown = quantityIown;
       ipfs.data.quantity = quantity;
       ipfs.data.burned = burned;
+      ipfs.data.teapot = await this.service.GET_TEAPOT(this.nft_id);
       // ipfs.data.nftIsWraped = wrappedTo;
       ipfs.data.redeemsLeft = redeemsLeft || 0;
       this.NFT = ipfs.data;
@@ -146,7 +149,7 @@ export class ShowcaseComponent implements OnInit {
       this.NFT.collection = await this.service.GET_ALBUM(jordi.album);
       this.NFT.auction = await this.service.GET_AUCTION(this.nft_owner,this.nft_id);
       this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-      console.log(this.NFT);
+      console.log(this.NFT.auction.highestBidder, this.NFT.auction.seller);
 
       //get seller
       let s:any = await this.service.GET_PROFILE1(this.nft_owner);

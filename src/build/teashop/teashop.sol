@@ -407,7 +407,12 @@ contract TEA_SHOP {
         address _buyer,
         uint256 _nft
         );
-
+        event bidDeny(
+            address _seller,
+            address _buyer,
+            uint256 _nft
+            );
+  mapping(uint256=>AUCTION) public auction;
   mapping(uint256=>mapping(address=>AUCTION)) public nftToHostToAuction;
   mapping(uint256=>SHOP) public idToShop;
   mapping(address=>uint256) public bidderToOwedCredit;
@@ -417,6 +422,7 @@ contract TEA_SHOP {
   mapping(uint256=>address) public shopToOwner;
   mapping(address=>uint256[]) public buyerToNFTsBought;
   mapping(address=>uint256[]) public sellerTONFTsSold;
+  mapping(address=>uint256[]) public sellerToAuctions;
   mapping(address=>bool) public isAdmin;
   mapping(address=>bool) public BANNED;
   mapping(address=>mapping(uint256=>uint256)) public userToShopToRating;
@@ -567,6 +573,8 @@ contract TEA_SHOP {
 
     nftToHostToAuction[_nft][msg.sender] = save;
     auctions.push(save);
+    auction[auctionId] = save;
+    sellerToAuctions[msg.sender].push(auctionId);
     IERC1155(NFTEA).safeTransferFrom(msg.sender,address(this),_nft,_quantity,'');
     IERC1155Receiver(address(this)).onERC1155Received(NFTEA,msg.sender,_nft,_quantity,'');
     if(_quantity==1){
@@ -579,6 +587,11 @@ contract TEA_SHOP {
   function GET_AUCTION(uint256 _nft,address _host) public view returns(AUCTION memory){
 
     return nftToHostToAuction[_nft][_host];
+
+  }
+    function GET_AUCTIONS(address _seller) public view returns(uint256[] memory){
+
+    return sellerToAuctions[_seller];
 
   }
 
@@ -657,7 +670,7 @@ contract TEA_SHOP {
 
       if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
         //refund previous bidder
-        IERC20(TOKEN).transferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
+        IERC20(TOKEN).transfer(nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
         require(checkSuccess(), "bid refund transfer failed");
       }
 
@@ -675,7 +688,7 @@ contract TEA_SHOP {
 
         if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
 
-            IERC20(TOKEN).transferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
+            IERC20(TOKEN).transfer(nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
             require(checkSuccess(), "bid refund transfer failed");
         }
         nftToHostToAuction[_nft][_host].highestBidder = msg.sender;
@@ -687,6 +700,16 @@ contract TEA_SHOP {
         nftToHostToAuction[_nft][_host].quantity = nftToHostToAuction[_nft][_host].quantity.sub(_quantity);
         emit bidPlaced(nftToHostToAuction[_nft][_host].seller,msg.sender,_nft);
     }
+  }
+
+  function DENYBID(uint256 _nft, address _host) public {
+
+    require(nftToHostToAuction[_nft][_host].seller==msg.sender, 'you are not the auction host');
+    IERC20(TOKEN).transfer(nftToHostToAuction[_nft][_host].highestBidder, nftToHostToAuction[_nft][_host].highestBid);
+    require(checkSuccess(), "bid refund transfer failed");
+    nftToHostToAuction[_nft][_host].highestBidder = msg.sender;
+    emit bidDeny(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
+
   }
 
   function END_AUCTION(uint256 _nft,uint256 _type, address _host) public {

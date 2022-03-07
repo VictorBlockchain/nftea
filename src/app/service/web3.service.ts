@@ -605,7 +605,7 @@ async GET_WEB3(): Promise<any>{
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:environment.TEASHOP,
-          gas: 1000000,
+          gas: 3000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
 
@@ -840,7 +840,7 @@ async GET_WEB3(): Promise<any>{
       const txt = await this.web3.eth.sendTransaction({
         from:user,
         to:environment.TEASHOP,
-        gas: 1000000,
+        gas: 2000000,
         data:encodedFunction
       }).on('transactionHash',(hash)=>{
 
@@ -855,7 +855,7 @@ async GET_WEB3(): Promise<any>{
         .on('confirmation',(confirmationNumber, receipt)=>
         {
         //console.log(confirmationNumber, receipt)
-        }).on('error', console.error);
+      }).on('error', this.pop('error', 'error creating..'));
         // const transactionHash = await ethereum.request({
         //   method: 'eth_sendTransaction',
         //   gas: 1000000,
@@ -1240,7 +1240,7 @@ async GET_WEB3(): Promise<any>{
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:environment.TEASHOP,
-          gas: 1000000,
+          gas: 3000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
 
@@ -1601,7 +1601,7 @@ async GET_WEB3(): Promise<any>{
       const txt = await this.web3.eth.sendTransaction({
         from:user,
         to:environment.TEASHOP,
-        gas: 1000000,
+        gas: 8000000,
         data:encodedFunction
       }).on('transactionHash',(hash)=>{
 
@@ -1635,7 +1635,7 @@ async GET_WEB3(): Promise<any>{
         .on('confirmation',(confirmationNumber, receipt)=>
         {
         //console.log(confirmationNumber, receipt)
-        }).on('error', console.error);
+      }).on('error', this.pop('error', 'error creating auction'));
       // const transactionHash = await ethereum.request({
       //   method: 'eth_sendTransaction',
       //   gas: 1000000,
@@ -1750,7 +1750,7 @@ async GET_WEB3(): Promise<any>{
         await this.GET_WEB3();
         const options = { chain: environment.CHAIN, address:_user, token_address: NFTEA };
         const NFTS = await Moralis.Web3API.account.getNFTs(options);
-        console.log(NFTS);
+        //console.log(NFTS);
         let result = {success:true,msg:NFTS.result};
         resolve(result);
 
@@ -1784,6 +1784,40 @@ async GET_WEB3(): Promise<any>{
     })
   }
 
+  public GET_MY_AUCTIONS(_user:any): Promise<any>{
+    return new Promise(async (resolve, reject)=>{
+      try {
+
+        await this.GET_WEB3();
+        let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
+        let result = await contract.methods.GET_AUCTIONS(_user).call();
+
+        resolve(result);
+
+      } catch (error) {
+        console.log(error);
+      }
+
+
+    })
+  }
+  public GET_AUCTION_ID(_id:any): Promise<any>{
+    return new Promise(async (resolve, reject)=>{
+      try {
+
+        await this.GET_WEB3();
+        let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
+        let result = await contract.methods.auction(_id).call();
+
+        resolve(result);
+
+      } catch (error) {
+        console.log(error);
+      }
+
+
+    })
+  }
   public GET_STIR(_nft: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
 
@@ -1826,9 +1860,10 @@ async GET_WEB3(): Promise<any>{
           console.log("one works");
 
         }else if(_contract==2){
+          ///te shop to spend tea token
           let contract = new this.web3.eth.Contract(ABITOKEN, TOKEN);
           result = await contract.methods.allowance(_user, TEASHOP).call();
-
+          console.log(result);
         }else if(_contract==3){
           let contract = new this.web3.eth.Contract(ABINFTEA, NFTEA);
           result = await contract.methods.isApprovedForAll(_user,TEASHOP).call();

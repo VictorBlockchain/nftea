@@ -110,6 +110,7 @@ export class ProfileComponent implements OnInit {
 
 
       }else{
+
         if(this.skip){
 
           this.showProfile = true;
@@ -139,6 +140,10 @@ export class ProfileComponent implements OnInit {
       this.NFTCOUNT = res.msg.length;
       let loop:any = res.msg;
       this.NFTEAS = [];
+      if(loop.length<1){
+        this.loading = false;
+
+      }
       for (let i = 0; i < loop.length; i++) {
         const element = loop[i];
 
@@ -153,6 +158,37 @@ export class ProfileComponent implements OnInit {
           this.loading = false;
           //console.log(this.NFTEAS);
       }
+      this.getMyAuctions()
+    })
+
+  }
+
+  async getMyAuctions(){
+
+    this.AUCTIONS = [];
+    let NFTEA =[];
+    let DATA= [];
+    this.service.GET_MY_AUCTIONS(this.user)
+    .then(async(res:any)=>{
+      if(res.length>0){
+        for (let i = 0; i < res.length; i++) {
+          const element = res[i];
+          // console.log(element)
+
+          DATA.auction = await this.service.GET_AUCTION_ID(element);
+          if(DATA.auction.active>0){
+            this.AUCTIONCOUNT+=1;
+            let r:any = await this.service.GET_NFT(DATA.auction.nft,'null');
+            let ipfs = await axios.get(r.ipfs);
+            DATA.nft = ipfs.data
+            this.AUCTIONS.push(DATA);
+          }
+        }
+
+      }else{
+
+      }
+
     })
   }
 
@@ -394,11 +430,12 @@ async GET_USER_NFTS(){
                 //console.log(this.COLLECTION);
 
                 let auction = await this.service.GET_AUCTION(this.user,object.get('token_id'));
-                if(auction.market!=4){
-                  koin = 1;
-                }else{
-                  koin = 2;
-                }
+                console.log(auction)
+                // if(auction.market!=4){
+                //   koin = 1;
+                // }else{
+                //   koin = 2;
+                // }
                 let brewTea = await this.service.GET_BREW_VALUE(object.get('token_id'));
                 let brewDate = await this.service.GET_BREW_DATE(object.get('token_id'),koin);
                 brewDate = moment(brewDate*1000).fromNow();
