@@ -414,11 +414,11 @@ contract TEA_SHOP {
         address _buyer,
         uint256 _nft
         );
-        event bidDeny(
-            address _seller,
-            address _buyer,
-            uint256 _nft
-            );
+    event bidDeny(
+        address _seller,
+        address _buyer,
+        uint256 _nft
+        );
   mapping(uint256=>AUCTION) public auction;
   mapping(uint256=>mapping(address=>AUCTION)) public nftToHostToAuction;
   mapping(uint256=>SHOP) public idToShop;
@@ -436,6 +436,8 @@ contract TEA_SHOP {
   mapping(uint256=>uint256[]) public shopToRatings;
   mapping(uint256=>mapping(address=>uint256)) public nftToBidTime;
   mapping(uint256=>bool) public payBidBonus;
+  mapping(uint256=>mapping(address=>mapping(address=>bool))) public nftToHostToBidderAccepted;
+
   uint256 auctionId;
   uint256 shopId;
   uint BIDFEE =3;
@@ -708,6 +710,11 @@ contract TEA_SHOP {
         emit bidPlaced(nftToHostToAuction[_nft][_host].seller,msg.sender,_nft);
     }
   }
+  function GET_BID_ACCEPTED(uint256 _nft, address _host, address _bidder) public view returns(bool){
+
+    return nftToHostToBidderAccepted[_nft][_host][_bidder];
+
+  }
 
   function DENYBID(uint256 _nft, address _host) public {
 
@@ -818,6 +825,7 @@ contract TEA_SHOP {
       IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].highestBidder,powerUp,1);
       IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,powerUp,1);
       IERC20(TOKEN).setIsWalletLimitExempt(nftToHostToAuction[_nft][_host].highestBidder,true);
+      nftToHostToBidderAccepted[_nft][_host][nftToHostToAuction[_nft][_host].highestBidder] = true;
       if(nftToHostToAuction[_nft][_host].quantity<1){
         nftToHostToAuction[_nft][_host].active = false;
         auction[nftToHostToAuction[_nft][_host].id].active = false;
@@ -825,6 +833,7 @@ contract TEA_SHOP {
         emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
 
       }else{
+
         emit auctionPaid(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
       }
       return true;

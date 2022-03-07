@@ -143,58 +143,120 @@ export class ShowcaseComponent implements OnInit {
       ipfs.data.teapot = await this.service.GET_TEAPOT(this.nft_id);
       // ipfs.data.nftIsWraped = wrappedTo;
       ipfs.data.redeemsLeft = redeemsLeft || 0;
-      this.NFT = ipfs.data;
       // this.COLLECTION = await this.service.GET_ALBUM(jordi.album);
       // console.log(this.COLLECTION);
       this.NFT.collection = await this.service.GET_ALBUM(jordi.album);
-      this.NFT.auction = await this.service.GET_AUCTION(this.nft_owner,this.nft_id);
-      this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-      console.log(this.NFT.auction);
+      this.service.GET_AUCTION(this.nft_owner,this.nft_id)
+      .then(async(res:any)=>{
+        if(res){
+          ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
+          this.NFT = ipfs.data;
+          this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
+          this.NFT.auction = res;
 
-      //get seller
-      let s:any = await this.service.GET_PROFILE1(this.nft_owner);
-      if(s[0]==0){
+          ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
+          this.NFT = ipfs.data;
+          this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
+          // console.log(this.NFT);
 
-        this.SELLER.avatar = 'assets/img/avatars/avatar.png';
+          //get seller
+          let s:any = await this.service.GET_PROFILE1(this.nft_owner);
+          if(s[0]==0){
 
-      }else{
+            this.SELLER.avatar = 'assets/img/avatars/avatar.png';
 
-        // let s_info:any = this.service.GET_NFT(s[0],0);
-        // let s_ipfs = await axios.get(s_info.ipfs);
-        // this.SELLER.avatar = s_ipfs.data.image;
-      }
+          }else{
 
-      this.SELLER.heritage = s[2];
-      this.SELLER.power = s[3];
-      this.SELLER.gender = s[4];
+            let s_info:any = this.service.GET_NFT(s[0],0);
+            let s_ipfs = await axios.get(s_info.ipfs);
+            this.SELLER.avatar = s_ipfs.data.image;
 
-      //get collector
-      let c:any = await this.service.GET_PROFILE1(this.user);
-      if(s[0]==0){
+          }
+          this.SELLER.power = s[3];
+          this.SELLER.heritage = s[2];
+          this.SELLER.gender = s[4];
 
-        this.COLLECTOR.avatar = 'assets/img/avatars/avatar.png';
+          let c:any = await this.service.GET_PROFILE1(this.user);
+          if(s[0]==0){
 
-      }else{
-        let c_info:any = this.service.GET_NFT(s[0],0);
-        let c_ipfs = await axios.get(c_info.ipfs);
-        this.COLLECTOR.avatar = c_ipfs.data.image;
-      }
-      this.COLLECTOR.heritage = c[2];
-      this.COLLECTOR.power = c[3];
-      this.COLLECTOR.gender = c[4];
+            this.COLLECTOR.avatar = 'assets/img/avatars/avatar.png';
+
+          }else{
+            let c_info:any = this.service.GET_NFT(s[0],0);
+            let c_ipfs = await axios.get(c_info.ipfs);
+            this.COLLECTOR.avatar = c_ipfs.data.image;
+          }
+          this.COLLECTOR.heritage = c[2];
+          this.COLLECTOR.power = c[3];
+          this.COLLECTOR.gender = c[4];
+
+          let b:any = await this.service.GET_PROFILE1(res.highestBidder);
+          if(b[0]==0){
+
+            this.BIDDER.avatar = 'assets/img/avatars/avatar.png';
+
+          }else{
+
+            let b_info:any = this.service.GET_NFT(s[0],0);
+            let b_ipfs = await axios.get(c_info.ipfs);
+            this.BIDDER.avatar = c_ipfs.data.image;
+            this.BIDDER.collector = res.highestBidder;
+          }
+        }else{
+          console.log('no response');
+        }
+        // console.log(this.NFT);
+      })
+      //console.log(this.NFT.auction);
+      // ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
+      // this.NFT = ipfs.data;
+      // this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
+      // // console.log(this.NFT);
+      //
+      // //get seller
+      // let s:any = await this.service.GET_PROFILE1(this.nft_owner);
+      // if(s[0]==0){
+      //
+      //   this.SELLER.avatar = 'assets/img/avatars/avatar.png';
+      //
+      // }else{
+      //
+      //   // let s_info:any = this.service.GET_NFT(s[0],0);
+      //   // let s_ipfs = await axios.get(s_info.ipfs);
+      //   // this.SELLER.avatar = s_ipfs.data.image;
+      // }
+      //
+      // this.SELLER.heritage = s[2];
+      // this.SELLER.power = s[3];
+      // this.SELLER.gender = s[4];
+      //
+      // //get collector
+      // let c:any = await this.service.GET_PROFILE1(this.user);
+      // if(s[0]==0){
+      //
+      //   this.COLLECTOR.avatar = 'assets/img/avatars/avatar.png';
+      //
+      // }else{
+      //   let c_info:any = this.service.GET_NFT(s[0],0);
+      //   let c_ipfs = await axios.get(c_info.ipfs);
+      //   this.COLLECTOR.avatar = c_ipfs.data.image;
+      // }
+      // this.COLLECTOR.heritage = c[2];
+      // this.COLLECTOR.power = c[3];
+      // this.COLLECTOR.gender = c[4];
 
       ///get bidder
-      let b:any = await this.service.GET_PROFILE1(this.NFT.auction.highestBidder);
-      if(b[0]==0){
-
-        this.BIDDER.avatar = 'assets/img/avatars/avatar.png';
-
-      }else{
-
-        let b_info:any = this.service.GET_NFT(s[0],0);
-        let b_ipfs = await axios.get(c_info.ipfs);
-        this.BIDDER.avatar = c_ipfs.data.image;
-      }
+      // let b:any = await this.service.GET_PROFILE1(this.NFT.auction.highestBidder);
+      // if(b[0]==0){
+      //
+      //   this.BIDDER.avatar = 'assets/img/avatars/avatar.png';
+      //
+      // }else{
+      //
+      //   let b_info:any = this.service.GET_NFT(s[0],0);
+      //   let b_ipfs = await axios.get(c_info.ipfs);
+      //   this.BIDDER.avatar = c_ipfs.data.image;
+      // }
 
       //await this.PRICE();
 

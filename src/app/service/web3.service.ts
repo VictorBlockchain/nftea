@@ -701,6 +701,21 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
+  public GET_BID_ACCEPTED(_nft:any,_owner:any,_bidder:any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // console.log("gettting bid time");
+        await this.GET_WEB3();
+        const contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
+        let result = await contract.methods.GET_BID_ACCEPTED(_nft,_owner,_bidder).call();
+        // console.log(result);
+        resolve(result);
+
+      } catch (error) {
+
+      }
+    })
+  }
   public GET_BID_TIME(_nft:any,_owner:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {

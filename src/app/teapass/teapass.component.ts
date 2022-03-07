@@ -24,11 +24,12 @@ export class TeapassComponent implements OnInit {
   connected:boolean;
   CREATORS:any;
   CREATORisLIVE:any;
-  CONNECTION:any
+  CONNECTION:any;
   showContent:boolean;
   EMBED:any;
   myHost:any;
   TEAPOT:any;
+  service:any;
   constructor(protected sanitizer: DomSanitizer,private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
     this.service = _service;

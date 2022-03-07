@@ -440,15 +440,15 @@
 											mb-30_reset">
 											<ul class="nav nav-tabs d-flex space-x-10 mb-30" role="tablist">
 												<li class="nav-item">
-													<a class="btn btn-white btn-sm active" data-toggle="tab" href="#tabs-1" role="tab">
+													<a class="btn btn-grad btn-sm active" data-toggle="tab" href="#tabs-1" role="tab">
 														Story</a>
 												</li>
 												<li class="nav-item">
-													<a class="btn btn-grad btn-sm" data-toggle="tab" href="#tabs-2" role="tab">
-														Stirs</a>
+													<a class="btn btn-warning btn-sm" data-toggle="tab" href="#tabs-2" role="tab">
+														Honey</a>
 												</li>
 												<li class="nav-item">
-													<a class="btn btn-white btn-sm" data-toggle="tab" href="#tabs-3" role="tab">
+													<a class="btn btn-info btn-sm" data-toggle="tab" href="#tabs-3" role="tab">
 														Bid</a>
 												</li>
 											</ul>
@@ -472,7 +472,7 @@
 											<div class="tab-pane active" id="tabs-1" role="tabpanel">
 												<div class="creator_item creator_card
 													space-x-10" >
-													<div class="avatars space-x-10" *ngIf="SELLER">
+													<div class="avatars space-x-10" *ngIf="NFT && NFT.auction && SELLER">
 														<div class="media">
 															<div class="badge">
 																<img src="assets/img/icons/Badge.svg" alt="">
@@ -485,7 +485,7 @@
 														<div>
 															<p class="color_black"><span class="small">
 																	created by </span><a class="color_black txt
-																	_bold" href="javascript: void(0)">name coming</a></p>
+																	_bold" href="javascript: void(0)">{{NFT.auction.seller.slice(0,10)}}...</a></p>
 															<span class="color_brand ">Power: {{SELLER.power/1000000000}}</span><br>
 															<i class="ri-star-smile-fill" *ngIf="SELLER.heritage!=COLLECTOR.heritage"></i>
 															<i class="ri-star-smile-fill" *ngIf="SELLER.gender!=COLLECTOR.gender"></i>
@@ -552,7 +552,7 @@
 											</div>
 											<div class="tab-pane space-y-20" id="tabs-3" role="tabpanel">
 												<div class="creator_item creator_card
-													space-x-10" *ngIf="BIDDER && auction">
+													space-x-10" *ngIf="NFT && NFT.auction && NFT.auction.id>0 && BIDDER">
 													<div class="avatars space-x-10">
 														<div class="media">
 															<div class="badge">
@@ -566,8 +566,8 @@
 														<div>
 															<p class="color_black"><span class="color_brand"> {{NFT.auction.highestBid/1000000000}}
 																	TEA</span> by <a class="color_black txt
-																	_bold" href="javascript: void(0)">bidder name</a></p>
-															<span class="date color_text" *ngIf="BID_TIME>0">{{DATE(BID_TIME)}}</span>
+																	_bold" href="javascript: void(0)">bidder</a></p>
+															<span class="date color_text">{{NFT.auction.highestBidder.slice(0,10)}}...</span>
 														</div>
 
 													</div>
@@ -612,28 +612,24 @@
 									</div>
 								</div>
 								<div class="hr2"></div>
-								<div class="creators" *ngIf="NFT.auction && NFT.auction.id>0 && BIDDER && STIR">
+								<div class="creators" *ngIf="NFT.auction && NFT.auction.id>0 && BIDDER">
 									<div class="row">
 										<div class="col-lg-6">
 											<div class="avatars space-x-5">
 												<div class="media">
 													<a href="javascript: void(0)">
-														<img src="assets/img/avatar/avatar.png" alt="Avatar" class="avatar
-															avatar-sm" *ngIf="NFT.auction.highestBidder==user.toLowerCase()">
-															<img src="assets/img/avatars/avatar.png" alt="Avatar" class="avatar
-																avatar-sm" *ngIf="NFT.auction.highestBidder!=user.toLowerCase()">
-
+														<img src="assets/img/avatars/avatar.png" alt="Avatar" class="avatar
+															avatar-sm">
 													</a>
 												</div>
 												<div>
 													<a href="javascript: void(0)">
-														<p class="avatars_name color_black" *ngIf="NFT.auction.highestBidder!=user.toLowerCase()">@{{BIDDER.get('name')}}</p>
-														<p class="avatars_name color_black" *ngIf="NFT.auction.highestBidder==user.toLowerCase()">@no one yet</p>
+														<p class="avatars_name color_black">@{{NFT.auction.highestBidder.slice(0,10)}}...</p>
 													</a>
 												</div>
 											</div>
 										</div>
-										<div class="col-lg-6" *ngIf="STIR_PROFILE">
+										<div class="col-lg-6">
 											<div class="avatars space-x-5">
 												<div class="media">
 
@@ -646,7 +642,7 @@
 												</div>
 												<div>
 													<a href="javascript: void(0)">
-														<p class="avatars_name color_black">@{{STIR_PROFILE.get('name')}}</p>
+														<p class="avatars_name color_black">@no honey added</p>
 													</a>
 												</div>
 											</div>
@@ -670,10 +666,10 @@
 								</div>
 								<div class="d-flex space-x-20 text-center" *ngIf="user==nft_owner && NFT && NFT.auction">
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#delete_auction" *ngIf="NFT.auction && NFT.auction.highestBidder==NFT.auction.seller && NFT.auction.active==true"> Cancel Auction</a>
-									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active==true && NFT.isCoupon<1 && NFT.quantity>1"> Make Coupon</a>
+									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active==false && NFT.isCoupon<1 && NFT.quantity>1"> Make Coupon</a>
 									<a href="javascript: void(0)" class="btn btn-success btn-lg" data-toggle="modal" data-target="#set_more_brew" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.quantity==1 && NFT.quantityIown>0"> Add To Brew</a>
 
-									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT && NFT.auction && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase() && NFT.auction.active==1"> Accept Bid</a>
+									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT && NFT.auction && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase() && NFT.auction.active==1 && NFT.bidAccepted==false"> Accept Bid</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase()"> Auction Closed</a>
 									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.id<1 && NFT.auction.active==false && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
 										<a href="javascript: void(0)" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#wrap_nft" *ngIf="NFT.quantityIown>0 && NFT.isCoupon>0 && NFT.wrappedTo<1 && NFT.creator!=user"> Wrap NFT</a>
