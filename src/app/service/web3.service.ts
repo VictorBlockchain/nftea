@@ -870,7 +870,7 @@ async GET_WEB3(): Promise<any>{
         .on('confirmation',(confirmationNumber, receipt)=>
         {
         //console.log(confirmationNumber, receipt)
-      }).on('error', this.pop('error', 'error creating..'));
+      }).on('error', console.error);
         // const transactionHash = await ethereum.request({
         //   method: 'eth_sendTransaction',
         //   gas: 1000000,
@@ -1650,7 +1650,7 @@ async GET_WEB3(): Promise<any>{
         .on('confirmation',(confirmationNumber, receipt)=>
         {
         //console.log(confirmationNumber, receipt)
-      }).on('error', this.pop('error', 'error creating auction'));
+      }).on('error', console.error);
       // const transactionHash = await ethereum.request({
       //   method: 'eth_sendTransaction',
       //   gas: 1000000,

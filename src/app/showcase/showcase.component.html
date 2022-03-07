@@ -484,7 +484,7 @@
 														</div>
 														<div>
 															<p class="color_black"><span class="small">
-																	created by </span><a class="color_black txt
+																	auction by </span><a class="color_black txt
 																	_bold" href="javascript: void(0)">{{NFT.auction.seller.slice(0,10)}}...</a></p>
 															<span class="color_brand ">Power: {{SELLER.power/1000000000}}</span><br>
 															<i class="ri-star-smile-fill" *ngIf="SELLER.heritage!=COLLECTOR.heritage"></i>
@@ -565,9 +565,9 @@
 														</div>
 														<div>
 															<p class="color_black"><span class="color_brand"> {{NFT.auction.highestBid/1000000000}}
-																	TEA</span> by <a class="color_black txt
-																	_bold" href="javascript: void(0)">bidder</a></p>
-															<span class="date color_text">{{NFT.auction.highestBidder.slice(0,10)}}...</span>
+																	TEA</span> by</p>
+																	<a class="color_black txt
+																	_bold" href="javascript: void(0)"><span class="date color_text">{{NFT.auction.highestBidder.slice(0,10)}}...</span></a>
 														</div>
 
 													</div>
@@ -666,13 +666,13 @@
 								</div>
 								<div class="d-flex space-x-20 text-center" *ngIf="user==nft_owner && NFT && NFT.auction">
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#delete_auction" *ngIf="NFT.auction && NFT.auction.highestBidder==NFT.auction.seller && NFT.auction.active==true"> Cancel Auction</a>
-									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active==false && NFT.isCoupon<1 && NFT.quantity>1"> Make Coupon</a>
+									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active==false && NFT.isCoupon<1 && NFT.quantity>1 && NFT.quantity == NFT.quantityIown"> Make Coupon</a>
 									<a href="javascript: void(0)" class="btn btn-success btn-lg" data-toggle="modal" data-target="#set_more_brew" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.quantity==1 && NFT.quantityIown>0"> Add To Brew</a>
 
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT && NFT.auction && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase() && NFT.auction.active==1 && NFT.bidAccepted==false"> Accept Bid</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase()"> Auction Closed</a>
 									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.id<1 && NFT.auction.active==false && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
-										<a href="javascript: void(0)" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#wrap_nft" *ngIf="NFT.quantityIown>0 && NFT.isCoupon>0 && NFT.wrappedTo<1 && NFT.creator!=user"> Wrap NFT</a>
+										<a href="javascript: void(0)" class="btn btn-grad btn-lg" data-toggle="modal" data-target="#wrap_nft" *ngIf="NFT.quantityIown>0 && NFT.quantity>1 && NFT.wrappedTo<1 && NFT.creator!=user"> Wrap NFT</a>
 
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create_shop" *ngIf="NFT.shop && NFT.shop.id==0"> Create Your Teashop</a>
 									<a href="javascript: void(0)" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#redeem_coupon" *ngIf="NFT.quantityIown>0 && NFT.redeemsLeft>0 && NFT.wrappedTo>0"> Redeem Coupon</a>
