@@ -288,7 +288,7 @@ interface IERC1155 is IERC165 {
         bytes calldata data
     ) external;
 
-    function setPower(address _user,uint256 _power) external returns (bool);
+    function setPower(address _user,uint256 _power, uint256 _type) external returns (bool);
     function getTEAPOT(uint256 _nft) external returns(address);
     function setVOLUME(uint256 _nft, uint256 _value) external returns(bool);
     function setFLOOR(uint256 _nft, uint256 _value) external returns(bool);
@@ -754,15 +754,10 @@ contract TEA_SHOP {
 
   }
 
-  function SET_PAYOUT(uint256 _nft, uint256 _value, address _host) internal returns(bool){
+  function SET_PAYOUT(uint256 _nft, uint256 _amount, address _host) internal returns(bool){
 
-    uint256 auctionFee = _value.mul(AUCTIONFEE).div(100);
     uint256 quantity = nftToHostToAuction[_nft][_host].bidQuantity;
-
-    IERC20(TOKEN).transfer(FEEADDRESS, auctionFee);
-    require(checkSuccess(), "auction fee payout failed");
-
-    _value = _value.sub(auctionFee);
+    uint256 _value = _amount;
     uint royalty;
 
     ///pay taxes
@@ -809,11 +804,10 @@ contract TEA_SHOP {
 
     }
 
-      uint256 powerUp = 3000;
-
+      uint256 powerUp = 3000*10**9;
       IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder,_nft,quantity,'');
-      IERC1155(TEAPOT).setPower(nftToHostToAuction[_nft][_host].highestBidder,powerUp);
-      IERC1155(TEAPOT).setPower(nftToHostToAuction[_nft][_host].seller,750);
+      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].highestBidder,powerUp,1);
+      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,powerUp,1);
       if(nftToHostToAuction[_nft][_host].quantity<1){
          nftToHostToAuction[_nft][_host].active = 2;
       }

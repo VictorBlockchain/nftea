@@ -316,7 +316,6 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     function setPower(address _collector, uint256 _value, uint256 _type) public returns(bool){
 
       require(isC[msg.sender] || isA[msg.sender], ' you are not that cool');
-      require(_C[_collector]._avatar>0, 'profile not set');
       if(_type==1){
 
         _C[_collector]._power = _C[_collector]._power.add(_value);
