@@ -250,7 +250,6 @@ using SafeMath for uint256;
     mapping(uint256=>address) public _N2_V;
     mapping(address=>uint256) public _V2_N;
     mapping(uint256=>SAFE) public _N2_S;
-    mapping(address=>uint256) public _T2Bal;
     mapping(address=>address[]) public _allVaults;
     mapping(address=>string) public _V2_IPFS;
     mapping(address=>uint256) public specialToken;
@@ -362,6 +361,13 @@ using SafeMath for uint256;
         return _allVaults[address(this)];
 
     }
+    function getVault(uint256 _nft) public view returns(address,uint256){
+
+      address _contract = _N2_V[_nft];
+      uint256 _brew = _N2_S[_nft]._brew;
+      return(_contract,_brew);
+
+    }
     function SET_ADDRESSES(address _token, address _nftea, address _teapass, address _teashop, address _fees ) public {
       require(isA[msg.sender],'you are not an admin');
 
@@ -387,91 +393,58 @@ using SafeMath for uint256;
 
     function setBrewToken(uint256 _nft, uint256 _value,address _token, uint256 _brewDate) public{
 
-      if(_N2_S[_nft]._wnft>0){
-
-        _nft = _N2_S[_nft]._wnft;
-        require(i1155(address(this)).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-
-      }else{
 
         require(i1155(NFTEA).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
 
-      }
-        require(_N2_S[_nft]._brew>_brewDate, 'cannot change your brew date');
+        require(_N2_S[_nft]._brew<_brewDate, 'cannot change your brew date');
         IERC20(_token).transferFrom(msg.sender,_N2_S[_nft]._contract, _value);
         require(checkSuccess(), "add brew failed");
         _N2_S[_nft]._brew = _brewDate;
-
-      _T2Bal[_token] = _T2Bal[_token].add(_value);
-      emit addBrew(_nft,_value);
+        emit addBrew(_nft,_value);
 
     }
 
     function setSubBrew(uint256 _nft, address _token, uint256 _othernft) public{
 
-      if(_N2_S[_nft]._wnft>0){
-
-        _nft = _N2_S[_nft]._wnft;
-        require(i1155(address(this)).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-
-      }else{
-
-        require(i1155(NFTEA).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-
-      }
-
-      require(_N2_S[_nft]._brew>block.timestamp, 'not time to brew');
+      require(i1155(NFTEA).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
+      require(block.timestamp>_N2_S[_nft]._brew, 'not time to brew');
 
         if(_othernft<1){
 
           address _contract = _N2_S[_nft]._contract;
           uint256 bal= IERC20(_token).balanceOf(_contract);
-          uint256 artistfee = bal.mul(4).div(100);
-          uint256 platformfee = bal.mul(2).div(100);
-          uint256 cheers = bal.mul(2).div(100);
-          uint256 value = bal.sub(artistfee).sub(platformfee).sub(cheers);
+          uint256 save = bal.mul(1).div(100);
+          bal = bal.sub(save);
+          uint256 artistfee = bal.mul(6).div(100);
+          uint256 value = bal.sub(artistfee);
 
           IERC20(_token).transferFrom(_contract,msg.sender, value);
           require(checkSuccess(), "set sub brew failed");
-          IERC20(_token).transferFrom(_contract,FEEADDRESS, platformfee);
-          require(checkSuccess(), "set sub brew failed");
-          IERC20(_token).transferFrom(_contract,address(this), cheers);
-          require(checkSuccess(), "set sub brew failed");
 
           (address[] memory artists, uint256[] memory sips) = i1155(NFTEA).GET_SIPS(_nft);
-          uint256 royalty;
+
           uint256 sip;
 
           for (uint256 i = 0; i<artists.length; i++){
 
             if(sips[i]>0){
 
-            royalty = artistfee.mul(sips[i]).div(100);
-            sip = artistfee.sub(royalty);
-            address artist = artists[i];
-            IERC20(_token).transferFrom(_contract,artist, sip);
+            sip = artistfee.mul(sips[i]).div(100);
+
+            IERC20(_token).transferFrom(_contract,artists[i], sip);
             require(checkSuccess(), "vault royalty failed");
 
             }
           }
-          _T2Bal[_token] = _T2Bal[_token].sub(bal);
+
            emit subBrew(_nft,bal);
 
         }else{
 
-          uint256 nftBal = i1155(address(this)).balanceOf(_N2_S[_nft]._contract,_othernft);
+          uint256 nftBal = i1155(NFTEA).balanceOf(_N2_S[_nft]._contract,_othernft);
           require(nftBal>0,'this vault does not hold this nft');
-          if(_N2_S[_nft]._wnft>0){
-
-            i1155(address(this)).safeTransferFrom(_N2_S[_nft]._contract,msg.sender,_nft,nftBal,'');
-            require(checkSuccess(), "add wrapped brew failed");
-
-          }else{
-
-            i1155(_token).safeTransferFrom(_N2_S[_nft]._contract,msg.sender,_nft,nftBal,'');
-            require(checkSuccess(), "add wrapped brew failed");
-
-          }
+          i1155(_token).safeTransferFrom(_N2_S[_nft]._contract,msg.sender,_nft,nftBal,'');
+          require(checkSuccess(), "add wrapped brew failed");
           emit subBrew(_nft,nftBal);
 
         }
@@ -487,15 +460,15 @@ using SafeMath for uint256;
       }
       if(_type==1){
 
-        require(i1155(address(this)).balanceOf(burn,_nft)>0,'this vault is active');
+        require(i1155(NFTEA).balanceOf(burn,_nft)>0,'this vault is active');
 
       }else{
 
         uint time = block.timestamp + 7 * 1095 days;
-        require(time>block.timestamp,'this is not expired');
+        require(block.timestamp>time,'this is not expired');
 
       }
-      require(i1155(address(this)).balanceOf(msg.sender,_toNFT)>0, ' you do not own this nft');
+      require(i1155(NFTEA).balanceOf(msg.sender,_toNFT)>0, ' you do not own this nft');
 
       _N2_S[_toNFT] = _N2_S[_nft];
       _V2_N[_contract] = _toNFT;

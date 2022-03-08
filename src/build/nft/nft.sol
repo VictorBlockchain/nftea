@@ -1543,25 +1543,35 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setAlBUM(string memory name, string memory media, uint256 category) public {
+    function setAlBUM(string memory name, string memory media, uint256 category, uint256 _album) public {
 
-      _Aid = _Aid.add(1);
-      ALBUM storage save = _A[_Aid];
-      save._id = _Aid;
-      save._name = name;
-      save._media = media;
-      save._category = category;
-      save._creator = msg.sender;
-      _allAlbums[address(this)].push(_Aid);
-      _C2_As[msg.sender].push(_Aid);
-      album.push(save);
-      (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
-      if(_a>0){
-        uint256 _p = 500*10**9;
-        i1155(TEAPASS).setPower(msg.sender,_p,1);
+      if(_album<1){
 
+        _Aid = _Aid.add(1);
+        ALBUM storage save = _A[_Aid];
+        save._id = _Aid;
+        save._name = name;
+        save._media = media;
+        save._category = category;
+        save._creator = msg.sender;
+        _allAlbums[address(this)].push(_Aid);
+        _C2_As[msg.sender].push(_Aid);
+        album.push(save);
+        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+        if(_a>0){
+          uint256 _p = 500*10**9;
+          i1155(TEAPASS).setPower(msg.sender,_p,1);
+
+        }
+        emit newAlbum(msg.sender,_Aid);
+
+      }else{
+
+        require(_A[_album]._creator==msg.sender,'you are not the owner of this album');
+        _A[_album]._category = category;
+        _A[_album]._name = name;
       }
-      emit newAlbum(msg.sender,_Aid);
+
     }
 
     function SET_ADDRESSES(address _token, address _teapot, address _teapass, address _teashop ) public {
@@ -1594,11 +1604,11 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       return _C2_As[_collector];
 
     }
-    function getCollectorNfts(address _collector) public view returns(uint256[] memory){
+    // function getCollectorNfts(address _collector) public view returns(uint256[] memory){
 
-      return _C2_Ns[_collector];
+    //   return _C2_Ns[_collector];
 
-    }
+    // }
 
     function getAlBUMS(address _contract) public view returns(uint256[] memory){
 

@@ -46,6 +46,7 @@ export class CreateComponent implements OnInit {
   showEnableNFT:boolean;
   showEnableShop:boolean;
   showEnableTeaPass:boolean;
+  showEnableTeaPot:boolean;
   showEnableHANDTEA:boolean;
   showEnableHANDNFT:boolean;
   ALBUMID:any;
@@ -129,28 +130,28 @@ export class CreateComponent implements OnInit {
       this.showEnableShop = false;
 
     }
-    // let approve4 = await this.service.GET_APPROVAL(this.user,4)
-    // console.log("wall token approve for " + approve4);
-    // if(approve4==0){
-    //   this.showApproval = true
-    //   this.showEnableTeaPass = true;
-    //
-    // }else{
-    //   //console.log(approve4)
-    //   this.showEnableTeaPass = false;
-    //
-    // }
-    ///approve HANDS to manage TEA
-    // let approve5 = await this.service.GET_APPROVAL(this.user,5)
-    // if(approve5==0){
-    //   this.showApproval = true
-    //   this.showEnableHANDTEA = true;
-    //
-    // }else{
-    //   console.log(approve5)
-    //   this.showEnableHANDTEA = false;
-    //
-    // }
+    let approve4 = await this.service.GET_APPROVAL(this.user,4)
+    console.log("teapass to spend tea tokens " + approve4);
+    if(approve4==0){
+      this.showApproval = true
+      this.showEnableTeaPass = true;
+
+    }else{
+      //console.log(approve4)
+      this.showEnableTeaPass = false;
+
+    }
+    //approve TEAPOT to manage tea tokens
+    let approve5 = await this.service.GET_APPROVAL(this.user,5)
+    if(approve5<1){
+      this.showApproval = true
+      this.showEnableTeaPot = true;
+
+    }else{
+      console.log(approve5)
+      this.showEnableTeaPot = false;
+
+    }
     // ///approve HANDS to manage NFT
     // let approve6 = await this.service.GET_APPROVAL(this.user,6)
     // if(approve6==0){
@@ -577,7 +578,12 @@ SET_APPROVE(_value:any){
       }
       if(_value==4){
 
-        this.pop('success','TEA\'s enabled')
+        this.pop('success','TEAPASS\'s enabled')
+
+      }
+      if(_value==5){
+
+        this.pop('success','TEAPOT\'s enabled')
 
       }
 

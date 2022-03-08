@@ -10,6 +10,7 @@ declare var $: any;
 const ABISHOP = require('../../build/teashop/artifacts/abi.json');
 const TEASHOP = "0xF29BFeF0122a67616FA64e3D49752067d2367df7";
 const axios = require('axios');
+import { environment } from '../../environments/environment';
 import Big from 'big.js';
 
 @Component({
@@ -140,24 +141,19 @@ export class ShowcaseComponent implements OnInit {
       ipfs.data.quantityIown = quantityIown;
       ipfs.data.quantity = quantity;
       ipfs.data.burned = burned;
-      ipfs.data.teapot = await this.service.GET_TEAPOT(this.nft_id);
-      // ipfs.data.nftIsWraped = wrappedTo;
       ipfs.data.redeemsLeft = redeemsLeft || 0;
-      // this.COLLECTION = await this.service.GET_ALBUM(jordi.album);
-      // console.log(this.COLLECTION);
       this.NFT.collection = await this.service.GET_ALBUM(jordi.album);
+      console.log(this.NFT.collection);
       this.service.GET_AUCTION(this.nft_owner,this.nft_id)
       .then(async(res:any)=>{
         if(res){
-          ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
+          console.log(res);
+          ipfs.data.teapot = res[3];
+          ipfs.data.brewDate = res[4];
+          ipfs.data.bidAccepted = res[2];
           this.NFT = ipfs.data;
           this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-          this.NFT.auction = res;
-
-          ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
-          this.NFT = ipfs.data;
-          this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-          // console.log(this.NFT);
+          this.NFT.auction = res[0];
 
           //get seller
           let s:any = await this.service.GET_PROFILE1(this.nft_owner);
@@ -190,7 +186,7 @@ export class ShowcaseComponent implements OnInit {
           this.COLLECTOR.power = c[3];
           this.COLLECTOR.gender = c[4];
 
-          let b:any = await this.service.GET_PROFILE1(res.highestBidder);
+          let b:any = await this.service.GET_PROFILE1(res[0].highestBidder);
           if(b[0]==0){
 
             this.BIDDER.avatar = 'assets/img/avatars/avatar.png';
@@ -205,7 +201,7 @@ export class ShowcaseComponent implements OnInit {
         }else{
           console.log('no response');
         }
-        // console.log(this.NFT);
+        console.log(this.NFT);
       })
       //console.log(this.NFT.auction);
       // ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
@@ -761,10 +757,20 @@ export class ShowcaseComponent implements OnInit {
     }
 
   }
-  private GET_BREW_OUT(_token:any){
-    if(this.auction.active==1){
+  private GET_BREW_OUT(){
+    let _token;
+    if(this.NFT.auction.active==true){
       this.pop('error', 'close auction 1st, before withdrawing the brew');
     }else{
+
+      if(!this._withdraw.controls.token.value){
+
+        _token = environment.TOKEN;
+
+      }else{
+
+        _token = this._withdraw.controls.token.value;
+      }
 
       this.service.GET_BREW_OUT(this.user,this.nft_id,_token)
       .then((res:any)=>{
@@ -789,6 +795,11 @@ export class ShowcaseComponent implements OnInit {
     return now.isAfter(_value * 1000);
     //return new Date(_value * 1000);
   }
+  private BREWDATE(_value){
+
+    return new Date(_value * 1000);
+
+  }
   private BREW(_value){
 
     if(new Date(_value * 1000) > new Date()){
@@ -804,11 +815,11 @@ export class ShowcaseComponent implements OnInit {
   private SET_MORE_BREW(){
     let now = moment();
     let time = this._sugar.controls.brewDate.value;
-    let _brewDate = moment().add(time, 'months').format('X');
+    let _brewDate = moment().add(time, 'minutes').format('X');
     let _value = this._sugar.controls.value.value;
     // console.log(_brewDate,_value);
 
-    this.service.SET_MORE_BREW(this.user,this.nft_id,this._sugar.controls.type.value,_value,_brewDate)
+    this.service.SET_MORE_BREW(this.user,this.nft_id,environment.TOKEN,_value,_brewDate)
     .then((res:any)=>{
       if(res.success){
         this.pop('success', 'more tea added to brew');
@@ -980,8 +991,6 @@ createForm(){
   });
   this._sugar = this.formBuilder.group({
 
-    type:[''],
-    nft: [''],
     value:[''],
     brewDate:['']
 
@@ -989,6 +998,11 @@ createForm(){
   this._coupon = this.formBuilder.group({
 
     redeemCount:['']
+
+  });
+  this._withdraw = this.formBuilder.group({
+
+    token:['']
 
   });
   this._redeem = this.formBuilder.group({

@@ -53,6 +53,25 @@
 																</div>
 														</div>
 												</div>
+												<div class="modal fade popup" id="redeem_brew" tabindex="-1" role="dialog" aria-hidden="true">
+
+																	<div class="modal-dialog modal-dialog-centered" role="document">
+																			<div class="modal-content">
+																				<div class="modal-body space-y-20 p-40">
+																					<form [formGroup]="_withdraw">
+																						<h3 class="mt-10 text-center">Withdraw Brew</h3>
+																						<p class="mt-10 mb-10 text-center dashed_box bg_white">Withdraw the brew from this vault</p>
+																						<div class="space-y-10 mt-30">
+																								<span class="nameInput text-center">Token Address (leave blank for tea tokens)</span>
+																								<input type="text" class="form-control" placeholder="0x.." formControlName="token">
+																						</div>
+
+																						<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="GET_BREW_OUT()"> Withdraw</a>
+																					</form>
+																				</div>
+																			</div>
+																	</div>
+															</div>
 									<div class="modal fade popup" id="wrap_nft" tabindex="-1" role="dialog" aria-hidden="true">
 
 														<div class="modal-dialog modal-dialog-centered" role="document">
@@ -98,11 +117,7 @@
 														<div class="modal-body space-y-20 p-40">
 															<form [formGroup]="_sugar">
 								                <h3 class="mt-10 text-center">Add TEA Tokens To Brew</h3>
-								                <p class="mt-10 mb-10 text-center">Add more TEA to the pot of your brew. 3% of the TEA you add goes into the honey pot "cheers", 2% collected as a fee.</p>
-																<select class="form-select custom-select" aria-label="market" formControlName="type">
-																	<option>Choose One</option>
-																	<option value="1">TEA TOKENS</option>
-																</select>
+								                <p class="mt-10 mb-10 text-center">Add more TEA to the pot of your brew. 3% of the TEA you add goes into the Tea Pot "cheers", 2% collected as a fee.</p>
 																<p class="mt-10">Value <span class="text-success">${{_sugar.controls.value.value*PRICES}}</span> (max 420 billion)</p>
 																<input type="text" class="form-control" placeholder="1000000000" formControlName="value">
 																<div class="space-y-10">
@@ -377,7 +392,8 @@
 										<a href="https://bscscan.com/address/{{NFT.teapot}}" target="_blank"><span>{{NFT.teapot || 'no brew pot'}}</span></a>
 									</div>
 									<p class="text-center mt-3">on brew date</p>
-									<h4 class="text-center">11/3/2022</h4>
+									<h4 class="text-center">{{BREWDATE(NFT.brewDate) | date:'short'}}</h4>
+									<p class="text-center mt-10"><a href="javascript: void(0)" data-toggle="modal" data-target="#redeem_brew">withdraw brew</a></p>
 								</div>
 						<!-- <div class="row">
 
@@ -669,7 +685,7 @@
 									<a href="javascript: void(0)" class="btn btn-info btn-lg" data-toggle="modal" data-target="#set_coupon" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction.active==false && NFT.isCoupon<1 && NFT.quantity>1 && NFT.quantity == NFT.quantityIown"> Make Coupon</a>
 									<a href="javascript: void(0)" class="btn btn-success btn-lg" data-toggle="modal" data-target="#set_more_brew" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.quantity==1 && NFT.quantityIown>0"> Add To Brew</a>
 
-									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT && NFT.auction && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase() && NFT.auction.active==1 && NFT.bidAccepted==false"> Accept Bid</a>
+									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT && NFT.auction && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase() && NFT.auction.active==1 && NFT.bidAccepted==false && NFT.highestBid<NFT.buyNowPrice"> Accept Bid</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase()"> Auction Closed</a>
 									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.id<1 && NFT.auction.active==false && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
 										<a href="javascript: void(0)" class="btn btn-grad btn-lg" data-toggle="modal" data-target="#wrap_nft" *ngIf="NFT.quantityIown>0 && NFT.quantity>1 && NFT.wrappedTo<1 && NFT.creator!=user"> Wrap NFT</a>

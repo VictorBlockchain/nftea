@@ -310,6 +310,7 @@ async GET_WEB3(): Promise<any>{
   public GET_PROFILE1(_user:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log('getting profile for ' + _user)
         // console.log("in the back getting profile 1 " + NFT);
         await this.GET_WEB3();
         const contract = new this.web3.eth.Contract(ABITEAPASS, TEAPASS);
@@ -605,7 +606,7 @@ async GET_WEB3(): Promise<any>{
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:environment.TEASHOP,
-          gas: 3000000,
+          gas: 2000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
 
@@ -635,7 +636,7 @@ async GET_WEB3(): Promise<any>{
 
         await this.GET_WEB3();
         const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
-          name: "WITHDRAW",
+          name: "setSubBrew",
           type: "function",
           inputs: [{
             type: 'uint256',
@@ -643,9 +644,12 @@ async GET_WEB3(): Promise<any>{
           }, {
             type: 'address',
             name: '_token'
+          },{
+            type:'uint256',
+            name:'_othernft'
           }
           ]
-        }, [_nft, _token])
+        }, [_nft, _token,0])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:TEAPOT,
@@ -1255,7 +1259,7 @@ async GET_WEB3(): Promise<any>{
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:environment.TEASHOP,
-          gas: 3000000,
+          gas: 2000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
 
@@ -1309,7 +1313,7 @@ async GET_WEB3(): Promise<any>{
 
         console.log(_value);
         const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
-          name: "SET_MORE_BREW",
+          name: "setBrewToken",
           type: "function",
           inputs: [{
             type:'uint256',
@@ -1325,10 +1329,10 @@ async GET_WEB3(): Promise<any>{
             name:'_time'
           }
         ]
-      }, [_nft,_value,_token,_brewDate])
+      }, [_nft,_value,TOKEN,_brewDate])
       const txt = await this.web3.eth.sendTransaction({
         from:_user,
-        to:NFTEA,
+        to:TEAPOT,
         gas: 1000000,
         data:encodedFunction
       }).on('transactionHash',(hash)=>{
@@ -1893,7 +1897,7 @@ async GET_WEB3(): Promise<any>{
         }else if(_contract==5){
 
           let contract = new this.web3.eth.Contract(ABITOKEN, TOKEN);
-          result = await contract.methods.allowance(_user,HANDS).call();
+          result = await contract.methods.allowance(_user,TEAPOT).call();
           console.log("5 works");
 
         }else if(_contract==6){
@@ -2098,7 +2102,7 @@ async GET_WEB3(): Promise<any>{
           m = m.toFixed(0);
           _value = this.web3.utils.toWei(m.toString(), 'nanoether');
 
-          _operator = TEAPOT;
+          _operator = TEAPASS;
           const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
             name: "approve",
             type: "function",
@@ -2133,8 +2137,8 @@ async GET_WEB3(): Promise<any>{
           }if(_value==5){
               /// approves the teashop to spend wall tokens on users behalf
               console.log("enabling hands game")
-              _operator = HANDS;
-              let m:any = new Big(30000000000000);
+              _operator = TEAPOT;
+              let m:any = new Big(900000000000000000000000000000);
               m = m.toFixed(0);
               _value = this.web3.utils.toWei(m.toString(), 'nanoether');
 
@@ -2185,39 +2189,43 @@ async GET_WEB3(): Promise<any>{
               // });
 
             }if(_value==6){
-                /// approves the teashop to spend wall tokens on users behalf
-                _operator = HANDS;
-                ///teashop and hold/move nfts
+
+                /// approves the teapot to spend tea tokens
+                let m:any = new Big(900000000000000000000000000000);
+                m = m.toFixed(0);
+                _value = this.web3.utils.toWei(m.toString(), 'nanoether');
+
+                _operator = TEAPOT;
                 const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
-                  name: "setApprovalForAll",
+                  name: "approve",
                   type: "function",
                   inputs: [{
                     type:'address',
-                    name:'operator'
+                    name:'_token'
                   },{
-                    type:'bool',
-                    name:'approved'
+                    type:'uint256',
+                    name:'_value'
                   }]
-                }, [_operator,true])
-                const txt = await this.web3.eth.sendTransaction({
-                  from:_user,
-                  to:NFTEA,
-                  gas: 50000,
-                  data:encodedFunction
-                }).on('transactionHash',(hash)=>{
+                }, [_operator,_value])
+                  const txt = await this.web3.eth.sendTransaction({
+                    from:_user,
+                    to:TOKEN,
+                    gas: 100000,
+                    data:encodedFunction
+                  }).on('transactionHash',(hash)=>{
 
-                  console.log(hash)
+                    console.log(hash)
 
-                      resolve({ success: true, msg: hash });
-                      // console.log(hash)
-                  })
-                  .on('receipt',(receipt)=>{
-                     console.log(receipt)
-                  })
-                  .on('confirmation',(confirmationNumber, receipt)=>
-                  {
-                  //console.log(confirmationNumber, receipt)
-                  }).on('error', console.error);
+                        resolve({ success: true, msg: hash });
+                        // console.log(hash)
+                    })
+                    .on('receipt',(receipt)=>{
+                       console.log(receipt)
+                    })
+                    .on('confirmation',(confirmationNumber, receipt)=>
+                    {
+                    //console.log(confirmationNumber, receipt)
+                    }).on('error', console.error);
 
               }
 

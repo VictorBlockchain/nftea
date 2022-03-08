@@ -146,16 +146,19 @@ export class ProfileComponent implements OnInit {
       }
       for (let i = 0; i < loop.length; i++) {
         const element = loop[i];
-
-          let ipfs:any = await axios.get(element.token_uri);
-          let isWrapped = await this.service.GET_WRAP(element.token_id);
-          let q;
-          if(isWrapped>0){
-            ipfs.data.quantity = 1;
+          if(element.token_uri){
+            
+            let ipfs:any = await axios.get(element.token_uri);
+            let isWrapped = await this.service.GET_WRAP(element.token_id);
+            let q;
+            if(isWrapped>0){
+              ipfs.data.quantity = 1;
+            }
+            let _vault = await this.service.GET_TEAPOT(element.token_id);
+            this.NFTEAS.push({ipfs:ipfs.data,teapot:_vault,id:element.token_id,wrappedTo:isWrapped});
+            this.loading = false;
           }
-          let _vault = await this.service.GET_TEAPOT(element.token_id);
-          this.NFTEAS.push({ipfs:ipfs.data,teapot:_vault,id:element.token_id,wrappedTo:isWrapped});
-          this.loading = false;
+
           //console.log(this.NFTEAS);
       }
       this.getMyAuctions()

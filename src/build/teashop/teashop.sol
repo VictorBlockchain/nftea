@@ -294,6 +294,8 @@ interface IERC1155 is IERC165 {
     function setVOLUME(uint256 _nft, uint256 _value) external returns(bool);
     function setFLOOR(uint256 _nft, uint256 _value) external returns(bool);
     function _N2_V(uint256 _nft) external returns(address);
+    function getIPFS(uint256 _nft) external returns(string memory);
+    function getVault(uint256 _nft) external returns(address, uint256);
 }
 
 // File: contracts/TeaShop.sol
@@ -582,7 +584,7 @@ contract TEA_SHOP {
 
     nftToHostToAuction[_nft][msg.sender] = save;
     auctions.push(save);
-    auction[auctionId] = save;
+    auction[auctionId] = nftToHostToAuction[_nft][msg.sender];
     sellerToAuctions[msg.sender].push(auctionId);
     IERC1155(NFTEA).safeTransferFrom(msg.sender,address(this),_nft,_quantity,'');
     IERC1155Receiver(address(this)).onERC1155Received(NFTEA,msg.sender,_nft,_quantity,'');
@@ -593,9 +595,12 @@ contract TEA_SHOP {
 
   }
 
-  function GET_AUCTION(uint256 _nft,address _host) public view returns(AUCTION memory){
+  function GET_AUCTION(uint256 _nft,address _host) public returns(AUCTION memory, string memory, bool, address, uint256){
 
-    return nftToHostToAuction[_nft][_host];
+    string memory ipfs = IERC1155(NFTEA).getIPFS(_nft);
+    (address _vault, uint256 brewdate) = IERC1155(TEAPOT).getVault(_nft);
+    address highestBidder = nftToHostToAuction[_nft][_host].highestBidder;
+    return (nftToHostToAuction[_nft][_host],ipfs, nftToHostToBidderAccepted[_nft][_host][highestBidder],_vault,brewdate);
 
   }
     function GET_AUCTIONS(address _seller) public view returns(uint256[] memory){
@@ -685,6 +690,7 @@ contract TEA_SHOP {
 
       nftToHostToAuction[_nft][_host].highestBidder = msg.sender;
       nftToHostToAuction[_nft][_host].highestBid = _value;
+      nftToHostToAuction[_nft][_host].buyNowPrice = nftToHostToAuction[_nft][_host].buyNowPrice.mul(2);
       biddersToNFTtoBid[msg.sender][_nft][_host] = _value;
       nftToBidders[_nft].push(msg.sender);
       nftToBidTime[_nft][_host] = block.timestamp;
