@@ -299,7 +299,7 @@
 			                    <input type="number" class="form-control" placeholder="10000" formControlName="value">
 			                </div>
 			                <div class="space-y-10 mt-10">
-			                    <p>Buy Now Price <span class="color_green" *ngIf="_auction.controls.value.value>0">${{_auction.controls.buyNowValue.value*PRICES | number:'1.0-9'}}</span> <br><span class="color_green">enter 0 if auction only</span>
+			                    <p>Buy Now Price <span class="color_green" *ngIf="_auction.controls.buyNowValue.value>0">${{_auction.controls.buyNowValue.value*PRICES | number:'1.0-9'}}</span> <br><span class="color_green">enter 0 if auction only | 1 TEA = {{PRICES}}</span>
 			                    </p>
 			                    <input type="number" class="form-control" placeholder="10000" formControlName="buyNowValue">
 			                </div>

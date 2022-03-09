@@ -85,18 +85,19 @@ export class ProfileComponent implements OnInit {
 
     let power:any = await this.service.GET_PROFILE1(this.user);
     this.POWER = power[3];
+    console.log(power)
     const _uProfile = Moralis.Object.extend("profile");
     const _query = new Moralis.Query(_uProfile);
     _query.equalTo('user',this.user);
     const results = await _query.first();
     this.COLLECTOR = results;
     if(!this.COLLECTOR){
-
+      console.log('no collector')
       this.showCreateProfile = true;
       //console.log(this.COLLECTOR)
 
     }else{
-
+      //console.log(this.COLLECTOR)
       let avatar = this.COLLECTOR.get('avatar');
 
       if(avatar>0){
@@ -106,6 +107,7 @@ export class ProfileComponent implements OnInit {
         .then((res:any)=>{
           this.ALBUMCOUNT = res.length;
           this.getNFTSIOWN();
+          // console.log(res)
         })
 
 
@@ -136,7 +138,7 @@ export class ProfileComponent implements OnInit {
 
     this.service.GET_USER_NFTS(this.user)
     .then(async(res:any)=>{
-
+      console.log(this.user)
       this.NFTCOUNT = res.msg.length;
       let loop:any = res.msg;
       this.NFTEAS = [];
@@ -147,7 +149,7 @@ export class ProfileComponent implements OnInit {
       for (let i = 0; i < loop.length; i++) {
         const element = loop[i];
           if(element.token_uri){
-            
+
             let ipfs:any = await axios.get(element.token_uri);
             let isWrapped = await this.service.GET_WRAP(element.token_id);
             let q;

@@ -1368,7 +1368,7 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
-  public SET_ALBUM(_user:any,_name:any, _media:any, _category:any): Promise<any>{
+  public SET_ALBUM(_user:any,_name:any, _media:any, _category:any, _album:any): Promise<any>{
     return new Promise(async(resolve,reject)=>{
       try {
         console.log('got it ' + _media, _category)
@@ -1385,8 +1385,11 @@ async GET_WEB3(): Promise<any>{
           },{
             type:'uint256',
             name:'category'
+          },{
+            type:'uint256',
+            name:'_album'
           }]
-        }, [_name, _media,_category])
+        }, [_name, _media,_category,0])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:NFTEA,
@@ -1620,7 +1623,7 @@ async GET_WEB3(): Promise<any>{
       const txt = await this.web3.eth.sendTransaction({
         from:user,
         to:environment.TEASHOP,
-        gas: 8000000,
+        gas: 3000000,
         data:encodedFunction
       }).on('transactionHash',(hash)=>{
 
@@ -2156,7 +2159,7 @@ async GET_WEB3(): Promise<any>{
               const txt = await this.web3.eth.sendTransaction({
                 from:_user,
                 to:TOKEN,
-                gas: 1000000,
+                gas: 100000,
                 data:encodedFunction
               }).on('transactionHash',(hash)=>{
 

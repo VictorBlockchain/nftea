@@ -424,7 +424,6 @@ contract TEA_SHOP {
   mapping(uint256=>AUCTION) public auction;
   mapping(uint256=>mapping(address=>AUCTION)) public nftToHostToAuction;
   mapping(uint256=>SHOP) public idToShop;
-  mapping(address=>uint256) public bidderToOwedCredit;
   mapping(address=>SHOP) public ownerToShop;
   mapping(uint256=>address[]) public nftToBidders;
   mapping(address=>mapping(uint256=>mapping(address=>uint256))) public biddersToNFTtoBid;
@@ -439,6 +438,9 @@ contract TEA_SHOP {
   mapping(uint256=>mapping(address=>uint256)) public nftToBidTime;
   mapping(uint256=>bool) public payBidBonus;
   mapping(uint256=>mapping(address=>mapping(address=>bool))) public nftToHostToBidderAccepted;
+  mapping(uint256=>uint256[]) public marketToAuctions;
+  mapping(uint256=>address) public auctionToHost;
+  mapping(uint256=>uint256) public auctionToNFT;
 
   uint256 auctionId;
   uint256 shopId;
@@ -583,6 +585,9 @@ contract TEA_SHOP {
     });
 
     nftToHostToAuction[_nft][msg.sender] = save;
+    marketToAuctions[_market].push(auctionId);
+    auctionToHost[auctionId] = msg.sender;
+    auctionToNFT[auctionId] = _nft;
     auctions.push(save);
     auction[auctionId] = nftToHostToAuction[_nft][msg.sender];
     sellerToAuctions[msg.sender].push(auctionId);
@@ -603,10 +608,39 @@ contract TEA_SHOP {
     return (nftToHostToAuction[_nft][_host],ipfs, nftToHostToBidderAccepted[_nft][_host][highestBidder],_vault,brewdate);
 
   }
-    function GET_AUCTIONS(address _seller) public view returns(uint256[] memory){
 
-    return sellerToAuctions[_seller];
+  function GET_AUCTIONS(address _seller, uint256 _market) public view returns(uint256[] memory,uint256[] memory, address[] memory, uint256[] memory){
 
+    uint256[] memory auc = marketToAuctions[_market];
+    uint256[] memory dataAuction;
+    address[] memory dataHost;
+    uint256[] memory dataNFT;
+    for (uint256 i = 0; i < auc.length; i++) {
+
+      address host = auctionToHost[auc[i]];
+      uint256 nft = auctionToNFT[auc[i]];
+      if(nftToHostToAuction[nft][host].active==true){
+        dataAuction[i] = auc[i];
+        dataHost[i] = host;
+        dataNFT[i] = nft;
+      }
+    }
+    return (sellerToAuctions[_seller], dataAuction,dataHost,dataNFT);
+
+  }
+
+  function CLEAR_AUCTIONS(uint256 _market) public {
+
+    require(isAdmin[msg.sender], 'you are not an admin');
+    uint256[] memory auc = marketToAuctions[_market];
+    for (uint256 i = 0; i < auc.length; i++) {
+
+      address host = auctionToHost[auc[i]];
+      uint256 nft = auctionToNFT[auc[i]];
+      if(nftToHostToAuction[nft][host].active==false){
+        delete marketToAuctions[_market][i];
+      }
+    }
   }
 
   function SET_SHOP(string memory name, address[] memory taxPartners, uint256[] memory taxSips) public{

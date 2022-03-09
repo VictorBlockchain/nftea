@@ -87,6 +87,7 @@ interface i1155 is IERC1155{
     function disValue(address _contract, uint256 _value, address _token) external returns (bool);
     function disValueTeaPass(address _host, uint256 _value, address _token) external returns (bool);
     function BURN(uint256 _nft, address _collector) external returns (bool);
+    function _WN2_N(uint256 _nft) external returns(uint256);
 
 }
 library SafeMath {
@@ -214,15 +215,16 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     mapping(address=>uint256) public _C2_powerUpgradeDate;
     mapping(address=>address[]) public _H2_coHosts;
     mapping(address=>uint256[]) public _H2_coHostSips;
+    mapping(address=>mapping(uint256=>bool)) public powerUpgraded;
 
-    address public TOKEN = 0x587725fE0EE1d2c8FAF289Bca546B4B54D6c46D6;
-    address public TEASHOP = 0x1A6508BB74f30c9239B8dB7A4576D7a65E7F0933;
-    address public NFTEA = 0x1A6508BB74f30c9239B8dB7A4576D7a65E7F0933;
-    address public TEAPOT = 0x62cfC9b4C09dA06967418345a1f4bb43EDA54bF0;
+    address public TOKEN;
+    address public TEASHOP;
+    address public NFTEA;
+    address public TEAPOT;
     address public burn = 0x000000000000000000000000000000000000dEaD;
     uint256 public powerMul = 2;
-    uint256 public upgradePowerNFT = 10000;
-    uint256 public upgradePower = 0;
+    uint256 public upgradePowerNFT = 0;
+    uint256 public upgradePower = 3000000*10**9;
 
     constructor() ERC1155("https://nftea.app/nft/{id}.json") {
 
@@ -236,7 +238,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     }
     function allowConnections(uint256 _nft, address[] memory _cohosts, uint256[] memory _sips) public {
 
-      require(_C[msg.sender]._power>=10000, 'your power is too low');
+      require(_C[msg.sender]._power>=1000000*10**9, 'your power is too low');
       _H2_allowConnections[msg.sender] = true;
       _H2_nftToConnect[msg.sender] = _nft;
       _H2_coHosts[msg.sender] = _cohosts;
@@ -265,7 +267,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         _avatar:_avatar,
         _cover:_cover,
         _heritage:_heritage,
-        _power:1000,
+        _power:3000,
         _gender:_gender
       });
       _C[msg.sender] = save;
@@ -310,25 +312,26 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         require(isA[msg.sender], 'you are not an admin');
         powerMul = _powermul;
         upgradePowerNFT = _upgradenft;
-        upgradePower = _upgradepower;
+        upgradePower = _upgradepower*10**9;
 
     }
     function setPower(address _collector, uint256 _value, uint256 _type) public returns(bool){
 
       require(isC[msg.sender] || isA[msg.sender], ' you are not that cool');
+      uint256 _pwr = _value*10**9;
       if(_type==1){
 
-        _C[_collector]._power = _C[_collector]._power.add(_value);
+        _C[_collector]._power = _C[_collector]._power.add(_pwr);
 
       }else{
 
-          if(_C[_collector]._power.sub(_value)<0){
+          if(_C[_collector]._power.sub(_pwr)<0){
 
             _C[_collector]._power = 0;
 
           }else{
 
-            _C[_collector]._power = _C[_collector]._power.sub(_value);
+            _C[_collector]._power = _C[_collector]._power.sub(_pwr);
 
           }
 
@@ -337,15 +340,24 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setUpgradePower() public{
+    function setUpgradePower(uint256 _nft) public{
 
-      require(i1155(NFTEA).balanceOf(msg.sender,upgradePowerNFT)>0, 'you do not own an upgrade nft');
-      bool success = i1155(NFTEA).BURN(upgradePowerNFT,msg.sender);
-      if(success){
+      uint256 _wrappedTo = i1155(NFTEA)._WN2_N(_nft);
+      if(_wrappedTo>0){
 
-        _C[msg.sender]._power = _C[msg.sender]._power.add(upgradePower);
+        require(_wrappedTo==upgradePowerNFT, 'this nft is not a power upgrader');
+        require(i1155(NFTEA).balanceOf(msg.sender,_nft)>0, 'you do not own this upgrade nft');
+
+      }else{
+
+        require(i1155(NFTEA).balanceOf(msg.sender,upgradePowerNFT)>0, 'you do not own an upgrade nft');
 
       }
+
+      require(!powerUpgraded[msg.sender][upgradePowerNFT], 'you already upgraded');
+
+      powerUpgraded[msg.sender][upgradePowerNFT] = true;
+      _C[msg.sender]._power = _C[msg.sender]._power.add(upgradePower);
 
     }
 
@@ -364,8 +376,9 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
 
-            if(_C[msg.sender]._power.sub(1000)>0){
-              _C[msg.sender]._power = _C[msg.sender]._power.sub(1000);
+              uint256 _pwr = 1000*10**9;
+            if(_C[msg.sender]._power.sub(_pwr)>0){
+              _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
             }else{
               _C[msg.sender]._power = 0;
             }
@@ -376,7 +389,6 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
           uint256 time = _C2_H_end[msg.sender][_host].sub(_C2_H_start[msg.sender][_host]);
           time = time.div(60);
           uint256 _value = _C[msg.sender]._power.mul(powerMul).mul(time);
-          _value = _value * 10**9;
           uint256 royalty = 0;
           uint256 sip = 0;
           for (uint256 i = 0; i<_H2_coHosts[_host].length; i++){
@@ -416,7 +428,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       address _host = _C2_H[msg.sender];
       if(block.timestamp > _C2_H_end[msg.sender][_host]){
 
-        _C[msg.sender]._power = _C[msg.sender]._power.sub(1000000);
+        _C[msg.sender]._power = _C[msg.sender]._power.sub(1000000*10**9);
         _H2_connected[_host] = _H2_connected[_host].sub(1);
 
       }else{
@@ -425,7 +437,6 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         time = time.div(60);
         uint256 _value = _C[msg.sender]._power.mul(powerMul).mul(time);
         uint256 bal = IERC20(TOKEN).balanceOf(TEAPOT);
-        _value = _value * 10**9;
         if(bal>_value){
 
           bool success =  i1155(TEAPOT).disValueTeaPass(_C2_H[msg.sender],_value,TOKEN);

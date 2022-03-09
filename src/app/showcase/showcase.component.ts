@@ -201,7 +201,8 @@ export class ShowcaseComponent implements OnInit {
         }else{
           console.log('no response');
         }
-        console.log(this.NFT);
+        this.PRICE();
+        // console.log(this.NFT);
       })
       //console.log(this.NFT.auction);
       // ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
@@ -297,7 +298,7 @@ export class ShowcaseComponent implements OnInit {
 
       price = await  this.service.GET_PRICE();
       this.PRICES = price.usdPrice.toFixed(18);
-      //console.log(this.PRICES);
+      // console.log(this.PRICES);
 
     },15000);
   }

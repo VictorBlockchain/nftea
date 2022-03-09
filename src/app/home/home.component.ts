@@ -24,11 +24,7 @@ export class HomeComponent implements OnInit {
   connected:boolean
   //user:string
   loading:boolean;
-  honeyBalance;
-  wallBalance;
-  cakeBalance;
-  honeyBrew;
-  wallBrew;
+  teaBalance;
   LOCAL:any;
   MUSIC:any;
   FILM:any;
@@ -113,7 +109,7 @@ export class HomeComponent implements OnInit {
 
   }
   async start(_market:any){
-    console.log("starting " + _market);
+    // console.log("starting " + _market);
     //get profile from database
     const _uProfile = Moralis.Object.extend("profile");
     const _query = new Moralis.Query(_uProfile);
@@ -125,6 +121,20 @@ export class HomeComponent implements OnInit {
         this.pop('error', 'lets set up your profile');
       }, 3000);
     }
+
+    this.service.GET_AUCTION_NFTS()
+    .then(async(res:any)=>{
+      console.log(res);
+      // this.NFT = [];
+      // for (let i = 0; i < res.length; i++) {
+      //   const element = res[i];
+      //   let ipfs = await axios.get(element.token_uri);
+      //   this.NFT.push(ipfs.data);
+      //   console.log(this.NFT);
+      //
+      // }
+    })
+
     //console.log(this.COLLECTOR);
 
     // this.service.GET_PROFILE1(this.user)
@@ -253,31 +263,24 @@ export class HomeComponent implements OnInit {
   // }
   async GET_HONEY_POT(){
     // alert("getting honey pot");
-    // this.service.GET_VAULT_BALANCE(1)
-    // .then(async(res:any)=>{
-    //   //alert(res);
-    //   this.honeyBalance = res.vault/1000000000;
-    //   this.honeyBrew = res.brew/1000000000;
-    //   // console.log(res);
-    //   // this.service.GET_VAULT_BALANCE(2)
-    //   // .then(async(resp:any)=>{
-    //   //   this.wallBalance = resp.vault/1000000000;
-    //   //   this.wallBrew = resp.brew/100000000;
-    //   //   // console.log(resp);
-    //   // })
-    // })
-    // this.PRICE();
+    this.service.GET_TEAPOT_BALANCE(1)
+    .then(async(res:any)=>{
+      // alert(res);
+        this.teaBalance = res/1000000000;
+      // console.log(this.teaBalance);
+    })
+    this.PRICE();
   }
   async PRICE(){
-    // let price:any = await  this.service.GET_PRICE();
-    // this.TEAVALUE = price.usdPrice.toFixed(18);
-    // setInterval(async()=>{
-    //
-    //   price = await  this.service.GET_PRICE();
-    //   this.TEAVALUE = price.usdPrice.toFixed(18);
-    //   //console.log(this.TEAVALUE);
-    //
-    // },15000);
+    let price:any = await  this.service.GET_PRICE();
+    this.TEAVALUE = price.usdPrice.toFixed(18);
+    setInterval(async()=>{
+
+      price = await  this.service.GET_PRICE();
+      this.TEAVALUE = price.usdPrice.toFixed(18);
+      // console.log(this.TEAVALUE);
+
+    },15000);
   }
   // private USERCHECK(){
   //   setInterval(()=>{

@@ -4,20 +4,20 @@
 
 export const environment = {
   production: false,
-  moralisKey: 'cXzN1P8lXDvdH0v9rgJ3NX3wwvmlebXEEX1qVW9l',
-  moralisSerer:'https://9mhfqaui6s3q.usemoralis.com:2053/server',
-  TOKEN:'0x724b4E72846B20cc40E829a347C4cB45ecB92589',
-  NFTEA:'0x5BF38d19c12cB4F307a41361E41a89D8062beA5B',
-  TEAPOT:'0xB01B444f443BBFb726dCE0f2f99D1667197E0Cd2',
-  TEASHOP:'0x6fEE0C0af882EDC2d0850FeD395B36A327c923F8',
-  TEAPASS:'0x1A3A50F713D0Ea1D2A6CEC04E1B10e68A76Fe2a9',
-  HONEY:'0x9436C091c6F44F49982e2A68335015FeF581BcAF',
+  moralisKey: 'TCcFGAARVl43nQb1DJueY7x2cet7HHg0iRWEqQET',
+  moralisSerer:'https://dhfyaqe3fhef.usemoralis.com:2053/server',
+  TOKEN:'0xb4668238Acf0314A7b4e153368e479fCd2E09831',
+  NFTEA:'0xFc3F896DC83999A66B302785Eaf44A738E70294d',
+  TEAPOT:'0x1C0c58f0e3005a5D19dB0783F65772BAc541B62a',
+  TEASHOP:'0x915e78B4d745009Eb2589E38F1b7B88596d7FD81',
+  TEAPASS:'0x7832714FCAC74fA7245d9866Aaa64275e50C0337',
+  HONEY:'',
   HANDS:'',
   ESPORTS:'',
-  CHAIN:'0x61',
-  CHAINID: 97
+  CHAIN:'0x38',
+  CHAINID: 56
 };
-
+//0x61 test
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
