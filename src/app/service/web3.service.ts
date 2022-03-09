@@ -1787,16 +1787,36 @@ async GET_WEB3(): Promise<any>{
     })
   }
 
-  public GET_AUCTION_NFTS(): Promise<any>{
+  public GET_AUCTION_NFTS(_user:any, _market:any): Promise<any>{
     return new Promise(async (resolve, reject)=>{
       try {
 
         await this.GET_WEB3();
-        const options = { chain: environment.CHAIN, address:environment.TEASHOP, token_address: NFTEA };
-        const NFTS = await Moralis.Web3API.account.getNFTsForContract(options);
-        // console.log(NFTS);
+        let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
+        let result = await contract.methods.GET_AUCTIONS(_user, _market).call();
 
-        resolve(NFTS.result);
+        resolve(result);
+
+      } catch (error) {
+        console.log(error);
+      }
+
+
+    })
+  }
+
+  public GET_AUCTION_HOST(_auction:any): Promise<any>{
+    return new Promise(async (resolve, reject)=>{
+      try {
+
+        await this.GET_WEB3();
+        let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
+        let host = await contract.methods.auctionToHost(_auction).call();
+        let nft = await contract.methods.auctionToNFT(_auction).call();
+
+        let resp = {host:host,nft:nft};
+        // console.log(host,nft);
+        resolve(resp);
 
       } catch (error) {
         console.log(error);
@@ -1831,6 +1851,23 @@ async GET_WEB3(): Promise<any>{
         let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
         let result = await contract.methods.auction(_id).call();
 
+        resolve(result);
+
+      } catch (error) {
+        console.log(error);
+      }
+
+
+    })
+  }
+  public GET_AUCTION(_host:any, _nft:any): Promise<any>{
+    return new Promise(async (resolve, reject)=>{
+      try {
+
+        await this.GET_WEB3();
+        let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
+        let result = await contract.methods.GET_AUCTION(_nft,_host).call();
+        console.log(result)
         resolve(result);
 
       } catch (error) {

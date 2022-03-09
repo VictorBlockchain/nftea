@@ -611,16 +611,15 @@ contract TEA_SHOP {
 
   function GET_AUCTIONS(address _seller, uint256 _market) public view returns(uint256[] memory,uint256[] memory, address[] memory, uint256[] memory){
 
-    uint256[] memory auc = marketToAuctions[_market];
     uint256[] memory dataAuction;
     address[] memory dataHost;
     uint256[] memory dataNFT;
-    for (uint256 i = 0; i < auc.length; i++) {
+    for (uint256 i = 0; i < marketToAuctions[_market].length; i++) {
 
-      address host = auctionToHost[auc[i]];
-      uint256 nft = auctionToNFT[auc[i]];
-      if(nftToHostToAuction[nft][host].active==true){
-        dataAuction[i] = auc[i];
+      address host = auctionToHost[marketToAuctions[_market][i]];
+      uint256 nft = auctionToNFT[marketToAuctions[_market][i]];
+      if(nftToHostToAuction[nft][host].active){
+        dataAuction[i] = marketToAuctions[_market][i];
         dataHost[i] = host;
         dataNFT[i] = nft;
       }
@@ -632,12 +631,12 @@ contract TEA_SHOP {
   function CLEAR_AUCTIONS(uint256 _market) public {
 
     require(isAdmin[msg.sender], 'you are not an admin');
-    uint256[] memory auc = marketToAuctions[_market];
-    for (uint256 i = 0; i < auc.length; i++) {
 
-      address host = auctionToHost[auc[i]];
-      uint256 nft = auctionToNFT[auc[i]];
-      if(nftToHostToAuction[nft][host].active==false){
+    for (uint256 i = 0; i < marketToAuctions[_market].length; i++) {
+
+      address host = auctionToHost[marketToAuctions[_market][i]];
+      uint256 nft = auctionToNFT[marketToAuctions[_market][i]];
+      if(!nftToHostToAuction[nft][host].active){
         delete marketToAuctions[_market][i];
       }
     }
