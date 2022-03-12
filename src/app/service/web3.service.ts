@@ -1189,7 +1189,7 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
-  public SET_HONEY(_user: any,_nft:any,_market:any): Promise<any> {
+  public SET_HONEY(_user: any,_nft:any): Promise<any> {
 
     return new Promise(async (resolve, reject) => {
       try {
@@ -1202,14 +1202,11 @@ async GET_WEB3(): Promise<any>{
           inputs: [{
             type:'uint256',
             name:'_nft'
-          },{
-            type:'address',
-            name:'_token'
           }]
-        }, [_nft,_token])
+        }, [_nft])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
-          to:NFTEA,
+          to:HONEY,
           gas: 1000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
@@ -1623,7 +1620,7 @@ async GET_WEB3(): Promise<any>{
       const txt = await this.web3.eth.sendTransaction({
         from:user,
         to:environment.TEASHOP,
-        gas: 3000000,
+        gas: 2000000,
         data:encodedFunction
       }).on('transactionHash',(hash)=>{
 
@@ -1867,7 +1864,7 @@ async GET_WEB3(): Promise<any>{
         await this.GET_WEB3();
         let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
         let result = await contract.methods.GET_AUCTION(_nft,_host).call();
-        console.log(result)
+        // console.log(result)
         resolve(result);
 
       } catch (error) {

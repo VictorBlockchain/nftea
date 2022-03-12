@@ -374,7 +374,7 @@
 							<div class="row">
 								<img class="item_img" src="{{NFT.image}}" alt="">
 							</div>
-							<div class="row mt-20" *ngIf="NFT.collection && NFT.collection._media && NFT.collection._category==11">
+							<div class="row mt-20" *ngIf="NFT && NFT.collection && NFT.collection._category==7">
 								<div class="col">
 									<div class="text-center space-y-40 md:mb-20">
 										<audio controls autoplay muted>
@@ -696,6 +696,34 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="dashed_box bg_white mt-30" *ngIf="ALBUM">
+							<div class="row mt-20">
+								<p class="p-2 text-center" style="color:#000; font-family: 'Poiret One'; padding-top:20px; font-size:23px">
+										collection
+								</p>
+								<h4 class="text-center">{{ALBUM.get('name')}}</h4>
+								<p class="text-center mt-2 col-6">{{ALBUM.get('story')}}</p>
+							</div>
+					<!-- <div class="row">
+
+						<div class="col-lg-12">
+							<div class="space-y-20">
+								<p class="txt_md _bold color_black text-center" *ngIf="NFT && NFT.quantity==1">
+									This NFT gives you access to the assets below on <br>
+									brew date
+								</p>
+								<p class="txt_md _bold color_black text-center" *ngIf="NFT && NFT.quantity>1">
+									No TeaPot for limited edition NFT's. You can wrap this into it's own unique NFT to
+									create a TEAPOT for it.
+								</p>
+							</div>
+
+						</div>
+
+					</div> -->
+				</div>
+
 					</div>
 				</div>
 

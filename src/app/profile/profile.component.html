@@ -116,7 +116,7 @@
 					</div>
 				</div>
 
-				<div class="row form_cc_four mb-20 text-center" *ngIf="hasProfile1 && hasProfile2">
+				<div class="row form_cc_four mb-20 text-center">
 					<div class="col-12 mb-30">
 						<form [formGroup]="_editProfile">
 					 <h5>Set Your Avatar</h5>
@@ -295,7 +295,19 @@
 								</div>
 
 								<div class="space-y-10 text-center" *ngIf="user==profile">
-									<a class="btn btn-dark btn-lg" (click)="showEditProfile=true">Set Avatar/Cover</a>
+									<p class="p-2">
+										<a class="btn btn-dark btn-lg" (click)="showEditProfile=true">Set Avatar/Cover</a>
+
+									</p>
+									<p class="p-2" style="display:none">
+										<a class="btn btn-info btn-lg" (click)="showEditProfile=true">Edit Your Profile</a>
+
+									</p>
+									<p class="p-2" style="display:none">
+										<a class="btn btn-danger btn-lg" (click)="showEditProfile=true">Open Tea Pass</a>
+
+									</p>
+
 								</div>
 
 

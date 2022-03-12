@@ -85,7 +85,8 @@ export class CreateComponent implements OnInit {
   }
   async getGeo(){
 
-  navigator.geolocation.getCurrentPosition(function(position) {
+  navigator.geolocation.getCurrentPosition((position)=>{
+
   this.lat = position.coords.latitude;
   this.lng = position.coords.longitude;
   });
@@ -131,7 +132,7 @@ export class CreateComponent implements OnInit {
 
     }
     let approve4 = await this.service.GET_APPROVAL(this.user,4)
-    console.log("teapass to spend tea tokens " + approve4);
+  //  console.log("teapass to spend tea tokens " + approve4);
     if(approve4==0){
       this.showApproval = true
       this.showEnableTeaPass = true;
@@ -221,7 +222,7 @@ export class CreateComponent implements OnInit {
         if(this.mediaURL){
           this.fileUploading = false;
           this.pop('success', 'file uploaded');
-          console.log(this.mediaURL)
+        //  console.log(this.mediaURL)
         }
 
       }
@@ -256,7 +257,7 @@ Swal.fire({
   confirmButtonText: 'Close'
 })
 
-}else if (this._createCollection.controls.category.value==11 && !this.lat && !this.lon){
+}else if (this._createCollection.controls.category.value==11 && !this.lat && !this.lng){
 
   this.pop('error', 'we\'ll need your location for this coupon');
   this.getGeo();
@@ -270,6 +271,7 @@ Swal.fire({
     this.lat = 0;
     this.lng = 0;
   }
+  // console.log(this.lat,this.lng)
   this.service.SET_ALBUM(this.user,this._createCollection.controls.name.value,this.mediaURL,this._createCollection.controls.category.value)
   .then((res:any)=>{
     if(res.success){
@@ -283,7 +285,7 @@ Swal.fire({
           category:this._createCollection.controls.category.value,
           media:this.mediaURL,
           lat:this.lat,
-          long:this.lon,
+          long:this.lng,
           user:this.user
 
         }).then(async(res:any)=>{
