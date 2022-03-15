@@ -107,9 +107,9 @@
 	<div class="row">
 		<div class="mt-10 col-lg-8 offset-lg-2">
 			<div class="box in__upload mb-20 form_cc_four mb-20">
-				<div class="row form_cc_four mb-20 text-center" *ngIf="!hasProfile1">
+				<div class="row form_cc_four mb-20 text-center">
 					<div class="col-12 mb-30">
-						{{editMessage}}
+						Your Avatar must be an NFT that you own
 					</div>
 					<div class="col-12" *ngIf="showEditBlockchain">
 						<a class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="editBlockchainProfile()">Send To Blockchain</a>
@@ -123,10 +123,6 @@
 					 <div class="hr"></div>
 					 <div class="form-group space-y-10">
 						 <input type="number" class="form-control" formControlName="avatar" placeholder="enter nft id">
-					 </div>
-					 <div class="form-group space-y-10">
-						 <h5>Set Your Cover</h5>
-							 <input type="number" class="form-control" formControlName="cover" placeholder="enter nft id">
 					 </div>
 					 </form>
 					</div>

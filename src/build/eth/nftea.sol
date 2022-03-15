@@ -184,6 +184,8 @@ contract VAULT {
 
     require(_isC[msg.sender], 'you are not that cool');
     IERC20(_token).approve(_creator,100000000000000000000000000000000000000000);
+    i1155(address(this)).setApprovalForAll(_creator,true);
+
     return true;
   }
 
@@ -193,14 +195,38 @@ contract VAULT {
     return true;
   }
 
+  function withdrawNFT(address _to, uint256 _nft) public returns(bool){
+    require(_isC[msg.sender], 'you are not that cool');
+    safeTransferFrom(address(this),_nft, _to);
+    return true;
+  }
+
+  function approve1155(address _contract, address _creator) public returns(bool){
+
+    require(_isC[msg.sender], 'you are not that cool')
+    i1155(_contract).setApprovalForAll(_creator,true);
+
+  }
+
 }
 
 contract NFTEA is ERC1155 {
     using SafeMath for uint256;
 
+    struct CONTRACT{
+
+      uint256: _id;
+      address: _contract;
+      address:_vault;
+      uint256: _nft;
+      uint256: _brew;
+
+    }
+    CONTRACT[] public contracts;
     uint256 public _Rid = 0;
     uint256 public _Nid = 10000;
     uint256 public _Max = 10000;
+    uint256 public _Cid = 0;
     uint256 public mintFee = 0;
     address public artist;
     address public burn = 0x000000000000000000000000000000000000dEaD;
@@ -214,6 +240,8 @@ contract NFTEA is ERC1155 {
     mapping(uint256=>string) internal _N2_uri;
     mapping(uint256=>uint256) public _W2_N;
     mapping(uint256=>bool) public isLimited;
+    mapping(address=>mapping(uint256=>CONTRACT[])) public _C2_N2_V;
+
 
     constructor() ERC1155("https://nftea.app/nft/eth/{id}.json") {
 
@@ -221,7 +249,67 @@ contract NFTEA is ERC1155 {
         artist = payable(msg.sender);
 
     }
+    ////external nfts
+    function createEXTvault(address _contract, uint256 _nft) public {
 
+      require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
+      _Rid = _Rid.add(1);
+      address vault = address(new VAULT(_Rid,'https://null',address(this)));
+
+      CONTRACT memory save = CONTRACT({
+        _id:_Cid,
+        _contract:_contract,
+        _vault:_vault,
+        _nft:_nft,
+        _brew: block.timestamp;
+      });
+
+      _C2_N2_V[_contract][_nft] = save;
+
+    }
+
+    function getEXTvault(address _contract, uint256 _nft) public returns(CONTRACT[] memory){
+
+        return _C2_N2_V[_contract][_nft];
+    }
+
+    function emptyEXTvault(address _contract, uint256 _nft) public {
+
+      require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, ' you do not own this nft')
+      require(block.timestamp> _C2_N2_V[_contract][_nft]._brew, 'not time to brew');
+      EXT(_C2_N2_V[_contract][_nft]._vault).withdrawETH(msg.sender);
+
+    }
+
+    function approveEXTtoken(address _contract, uint256 _nft, address _token) public {
+
+      require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
+      EXT(_C2_N2_V[_contract][_nft]._vault).approveTransfers(address(this),_token);
+
+    }
+    function approveEXTnft(address _contract, uint256 _nft,address _vault) public {
+      require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, ' you do not own this nft')
+      EXT(_C2_N2_V[_contract][_nft]._vault).approve1155(_contract,address(this));
+    }
+    function withdrawEXTasset(uint256 _nft, address _token, address _contract) public {
+
+      require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
+      address _contract = _C2_N2_V[_contract][_nft]._vault;
+      uint256 _bal = IERC20(_token).balanceOf(_contract);
+      require(_bal>0,'zero balance in contract');
+      require(block.timestamp> _C2_N2_V[_contract][_nft]._brew, 'not time to brew');
+      IERC20(_token).transferFrom(_contract,msg.sender,_bal);
+
+    }
+    function withdrawEXTnft(uint256 _nft, address _wnft, address _contract, uint256 _quantity) public {
+
+      require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
+      address _vault = _C2_N2_V[_contract][_nft]._vault;
+      require(block.timestamp> _C2_N2_V[_contract][_nft]._brew, 'not time to brew');
+      IERC1155(_contract).safeTransferFrom(_vault,msg.sender,_wnft,_quantity);
+
+    }
+    ///internal nfts
     function mint(string memory _ipfs) public payable {
 
       _Rid = _Rid.add(1);
