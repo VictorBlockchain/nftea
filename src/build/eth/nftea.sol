@@ -250,7 +250,7 @@ contract NFTEA is ERC1155 {
 
     }
     ////external nfts
-    function createEXTvault(address _contract, uint256 _nft) public {
+    function createEXTvault(address _contract, uint256 _nft) public payable {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
       _Rid = _Rid.add(1);
@@ -265,6 +265,7 @@ contract NFTEA is ERC1155 {
       });
 
       _C2_N2_V[_contract][_nft] = save;
+      payable(DEV).transfer(msg.value);
 
     }
 
@@ -318,7 +319,10 @@ contract NFTEA is ERC1155 {
 
         require(msg.value>=mintFee,'low balance');
         require(msg.sender.balance>=mintFee, 'low balance');
-        payable(msg.sender).transfer(msg.value);
+        uint256 bal = msg.value;
+        uint256 fee = bal.mul(2).div(100);
+        payable(msg.sender).transfer(bal);
+        payable(DEV).transfer(fee);
 
       }
       address vault = address(new VAULT(_Rid,_ipfs,address(this)));
