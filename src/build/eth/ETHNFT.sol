@@ -313,7 +313,12 @@ contract ETHNFT is ERC1155 {
       IERC20(_token).transferFrom(_contract,msg.sender,_bal);
 
     }
+
     //withdraw NFT from value
+    //_nft your nft
+    //_wnft nft in the vault
+    //contract of your nft
+
     function withdrawNFT(uint256 _nft, address _wnft, address _contract, uint256 _quantity) public {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
