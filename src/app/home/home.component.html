@@ -1,8 +1,13 @@
 <app-header (session)="getSession($event)"></app-header>
 <div class="hero_marketplace bg_white">
 			    <div class="container">
-			        <p class="text-center" style="color:#000; font-family: 'Concert One'; font-size:33px">Market Place</p>
-              <p *ngIf="user" class="text-center mt-15" style="color:#000; font-family: 'Concert One'; font-size:27px">TEA POT: {{teaBalance | number:'1.0-9'}} | <small>${{teaBalance*TEAVALUE | number:'1.0-2'}}</small></p>
+						<div class="d-flex justify-content-center">
+							<div class="row">
+								<div *ngIf="user" class="text-center mt-15 col-12" style="color:#000; font-family: 'Concert One'; font-size:27px">TEA POT: {{teaBalance | number:'1.0-9'}} | <small>${{teaBalance*TEAVALUE | number:'1.0-2'}}</small></div>
+								<div class="text-center form_cc_four col-12">community bank<br>Your NFT's & Tea Pass, earn value from here</div>
+
+							</div>
+							</div>
 			    </div>
 			</div>
 <div class="bg_white border-b py-20">
