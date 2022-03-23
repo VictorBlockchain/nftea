@@ -213,21 +213,9 @@ contract VAULT {
 contract ETHNFT is ERC1155 {
     using SafeMath for uint256;
 
-    struct CONTRACT{
-
-      uint256 _id;
-      address _contract;
-      address _vault;
-      uint256 _nft;
-      uint256 _brew;
-
-    }
-    CONTRACT[] public contracts;
-    uint256 public _Cid = 0;
-
     mapping(address=>bool) public _isA;
-    mapping(uint256=>uint256) public lockExpire;
-    mapping(address=>mapping(uint256=>CONTRACT)) public _C2_N2_V;
+    mapping(address=>mapping(uint256=>address)) public _C2_N2_V;
+    mapping(address=>mapping(uint256=>uint256)) public _C2_N2_B;
 
 
     constructor() ERC1155("https://nftea.app/nft/eth/{id}.json") {
@@ -247,20 +235,10 @@ contract ETHNFT is ERC1155 {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
 
-      //contract id
-      _Cid = _Cid.add(1);
-
       address vault = address(new VAULT(_nft,_ipfs,address(this)));
 
-      CONTRACT memory save = CONTRACT({
-        _id:_Cid,
-        _contract:_contract,
-        _vault:vault,
-        _nft:_nft,
-        _brew: _brew
-      });
-
-      _C2_N2_V[_contract][_nft] = save;
+      _C2_N2_V[_contract][_nft] = vault;
+      _C2_N2_B[_contract][_nft] = _brew;
 
     }
 
@@ -268,25 +246,25 @@ contract ETHNFT is ERC1155 {
     function setBrewDate(address _contract, uint256 _nft, uint256 _date) public {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-      require(_date > _C2_N2_V[_contract][_nft]._brew, 'cannot change the date to a lesser time');
+      require(_date > _C2_N2_B[_contract][_nft], 'cannot change the date to a lesser time');
 
-      _C2_N2_V[_contract][_nft]._brew = _date;
+      _C2_N2_B[_contract][_nft] = _date;
 
     }
 
     ///returns contract address of the vault of that nft
     //ie bored app contract, and nft id
-    function getVault(address _contract, uint256 _nft) public view returns(CONTRACT memory){
+    function getVault(address _contract, uint256 _nft) public view returns(address, uint256){
 
-        return _C2_N2_V[_contract][_nft];
+        return (_C2_N2_V[_contract][_nft],_C2_N2_B[_contract][_nft]);
     }
 
     // withdraw ETH from vault
     function emptyVault(address _contract, uint256 _nft) public {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, ' you do not own this nft');
-      require(block.timestamp> _C2_N2_V[_contract][_nft]._brew, 'not time to brew');
-      EXT(_C2_N2_V[_contract][_nft]._vault).withdrawETH(msg.sender);
+      require(block.timestamp> _C2_N2_B[_contract][_nft], 'not time to brew');
+      EXT(_C2_N2_V[_contract][_nft]).withdrawETH(msg.sender);
 
     }
 
@@ -294,24 +272,26 @@ contract ETHNFT is ERC1155 {
     function approveToken(address _contract, uint256 _nft, address _token) public {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-      EXT(_C2_N2_V[_contract][_nft]._vault).approveTransfers(address(this),_token);
+      EXT(_C2_N2_V[_contract][_nft]).approveTransfers(address(this),_token);
 
     }
+
     ///approve storing another nft in the value
     function approveNFT(address _contract, uint256 _nft) public {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, ' you do not own this nft');
 
-      EXT(_C2_N2_V[_contract][_nft]._vault).approve1155(_contract,address(this));
+      EXT(_C2_N2_V[_contract][_nft]).approve1155(_contract,address(this));
     }
+
     ///withdraw your ape coin from vault
     function withdrawAsset(uint256 _nft, address _token, address _contract) public {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-      address _vault = _C2_N2_V[_contract][_nft]._vault;
+      address _vault = _C2_N2_V[_contract][_nft];
       uint256 _bal = IERC20(_token).balanceOf(_vault);
       require(_bal>0,'zero balance in contract');
-      require(block.timestamp> _C2_N2_V[_contract][_nft]._brew, 'not time to brew');
+      require(block.timestamp> _C2_N2_B[_contract][_nft], 'not time to brew');
       IERC20(_token).transferFrom(_vault,msg.sender,_bal);
 
     }
@@ -324,8 +304,8 @@ contract ETHNFT is ERC1155 {
     function withdrawNFT(uint256 _nft, uint256 _wnft, address _contract, uint256 _quantity) public {
 
       require(IERC1155(_contract).balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-      address _vault = _C2_N2_V[_contract][_nft]._vault;
-      require(block.timestamp> _C2_N2_V[_contract][_nft]._brew, 'not time to brew');
+      address _vault = _C2_N2_V[_contract][_nft];
+      require(block.timestamp> _C2_N2_B[_contract][_nft], 'not time to brew');
       IERC1155(_contract).safeTransferFrom(_vault,msg.sender,_wnft,_quantity,'');
 
     }
