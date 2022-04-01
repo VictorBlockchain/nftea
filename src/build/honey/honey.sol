@@ -213,7 +213,7 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       address _contract = i1155(NFTEA)._N2_V(_nft);
       require(_Coll2_N2_H[msg.sender][_nft]<1, 'you already added honey');
              (,,,uint256 _power,) = i1155(TEAPASS).getProfile(msg.sender);
-      require(_power>1000000*10**9,'you do not have that much power');
+      require(_power>3000000*10**9,'you do not have that much power');
 
       uint256 bal = IERC20(TEATOKEN).balanceOf(TEAPOT);
       require(bal>=_power, 'teapot is low');

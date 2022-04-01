@@ -15,6 +15,22 @@
 						        </div>
 						    </div>
 						</div>
+						<div class="modal fade popup" id="power_up" tabindex="-1" role="dialog" aria-hidden="true">
+
+											<div class="modal-dialog modal-dialog-centered" role="document">
+													<div class="modal-content">
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																	<span aria-hidden="true">×</span>
+															</button>
+															<div class="modal-body space-y-20 p-40">
+																	<h3 class="text-center">Power Up</h3>
+																	<p class="text-center">Upgrade Your Power Level</p>
+
+																	<a href="javascript: void(0)" class="btn btn-dark w-full" (click)="SET_POWER_UP()"> Power Up</a>
+															</div>
+													</div>
+											</div>
+									</div>
 						<div class="modal fade popup" id="set_coupon" tabindex="-1" role="dialog" aria-hidden="true">
 
 											<div class="modal-dialog modal-dialog-centered" role="document">
@@ -371,8 +387,14 @@
 				<div class="item_details mt-40">
 					<div class="row sm:space-y-20">
 						<div class="col-lg-6">
-							<div class="row">
+							<div class="row" *ngIf="NFT && NFT.collection && NFT.collection._category!=5">
 								<img class="item_img" src="{{NFT.image}}" alt="">
+							</div>
+							<div class="row" *ngIf="NFT && NFT.collection && NFT.collection._category==5">
+								<video width="320" height="240" controls>
+								  <source src="{{NFT.collection._media}}" type="video/mp4">
+										Your browser does not support the video tag.
+								</video>
 							</div>
 							<div class="row mt-20" *ngIf="NFT && NFT.collection && NFT.collection._category==7">
 								<div class="col">
@@ -384,7 +406,8 @@
 									</div>
 								</div>
 							</div>
-							<div class="dashed_box bg_white mt-30">
+
+							<div class="dashed_box bg_white mt-30" *ngIf="!showPowerUpgrade && nft_id==1 && NFT.quantityIown<1">
 								<div class="row mt-20">
 									<h4 class="text-center">Brew pot</h4>
 									<p class="text-center">This NFT gets you access to the assets in this brew pot address</p>
@@ -413,6 +436,13 @@
 
 						</div> -->
 					</div>
+					<div class="dashed_box bg_white mt-30" *ngIf="!showPowerUpgrade && nft_id==1 && NFT.quantityIown>0">
+						<div class="row mt-20">
+							<h4 class="text-center">Redeem Power Up</h4>
+							<p class="text-center">Redeem your power upgrade NFT</p>
+							<p class="text-center mt-10"><a href="javascript: void(0)" class="btn btn-dark btn-lg" data-toggle="modal" data-target="#power_up">Power Up</a></p>
+						</div>
+			</div>
 						</div>
 
 						<div class="col-lg-6">
@@ -666,7 +696,7 @@
 									</div>
 								</div>
 								<div class="d-flex space-x-20" *ngIf="NFT && NFT.auction && NFT.auction.id>0 && NFT.auction.active==false">
-									<p class="text-center">Auction Concluded</p>.
+									<p class="text-center">Auction Canceled</p>.
 								</div>
 
                 <div class="d-flex space-x-20" *ngIf="user!=nft_owner && NFT.auction && NFT.auction.nft>0">
@@ -687,7 +717,7 @@
 
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT && NFT.auction && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase() && NFT.auction.active==1 && NFT.bidAccepted==false && NFT.highestBid<NFT.buyNowPrice"> Accept Bid</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase()"> Auction Closed</a>
-									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.id<1 && NFT.auction.active==false && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
+									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
 										<a href="javascript: void(0)" class="btn btn-grad btn-lg" data-toggle="modal" data-target="#wrap_nft" *ngIf="NFT.quantityIown>0 && NFT.quantity>1 && NFT.wrappedTo<1 && NFT.creator!=user"> Wrap NFT</a>
 
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create_shop" *ngIf="NFT.shop && NFT.shop.id==0"> Create Your Teashop</a>

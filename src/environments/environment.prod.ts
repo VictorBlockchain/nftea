@@ -10,5 +10,6 @@ export const environment = {
   HONEY:'0x0C0f4dd190534C1d3289710CA14e6E81BC195F73',
   HANDS:'',
   ESPORTS:'',
-  CHAIN:97
+  CHAIN:'0x38',
+  CHAINID: 56
 };

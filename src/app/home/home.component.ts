@@ -89,7 +89,7 @@ export class HomeComponent implements OnInit {
 
     if(this.isMobile){
 
-      Moralis.authenticate({signingMessage: 'NFTEA.app', provider:'walletconnect',chain: environment.CHAIN }).then((user)=> {
+      Moralis.authenticate({signingMessage: 'NFTEA.app', provider:'walletconnect',chain: 56 }).then((user)=> {
         //console.log(user);
         this.connected = true;
         this.user = user.get('ethAddress')
@@ -111,160 +111,67 @@ export class HomeComponent implements OnInit {
 
   }
   async start(_market:any){
+
     console.log("starting " + _market);
     //get profile from database
+    this.service.LISTEN();
     const _uProfile = Moralis.Object.extend("profile");
-    const _query = new Moralis.Query(_uProfile);
+    let _query = new Moralis.Query(_uProfile);
     _query.equalTo('user',this.user);
-    const results = await _query.first();
-    this.COLLECTOR = results;
+    let results1 = await _query.first();
+    this.COLLECTOR = results1;
     if(!this.COLLECTOR){
       setTimeout(() => {
         this.pop('error', 'lets set up your profile');
       }, 3000);
     }
 
-    this.service.GET_AUCTION_NFTS(this.user,_market)
-    .then(async(res:any)=>{
-      let auction:any = res[1];
-      //console.log(res);
-      // this.NFT = [];
-      for (let i = 0; i < auction.length; i++) {
-        const auctionID = auction[i];
+    const _Auctions = Moralis.Object.extend("auction");
+    let _query2 = new Moralis.Query(_Auctions);
+    _query2.equalTo('active', 1);
+    _query2.equalTo('market', _market);
+    let results2 = await _query2.find();
+    let auction:any = results2;
+    // console.log(auction);
+    for (let i=0; i<auction.length; i++){
+      console.log(auction[i].get('seller'), auction[i].get('nft'))
+      this.service.GET_AUCTION(auction[i].get('nft'),auction[i].get('seller'))
+      .then(async(res:any)=>{
+        console.log(res);
+      })
+    }
 
-        this.service.GET_AUCTION_HOST(auctionID)
-        .then(async(res:any)=>{
-          let host = res.host;
-          let nft = res.nft;
-
-          this.AUCTION = await this.service.GET_AUCTION(host,nft);
-          let ipfs = await axios.get(this.AUCTION[1]);
-          ipfs.data.nft_id = nft;
-          ipfs.data.auction = this.AUCTION;
-          ipfs.data.auction.seller = host;
-          this.NFT.push(ipfs.data);
-          // console.log(this.NFT);
-        })
-
-        // let ipfs = await axios.get(auctionID.token_uri);
-        // this.NFT.push(ipfs.data);
-        // console.log(this.NFT);
-
-      }
-      this.markets(_market);
-
-    })
-
-    //console.log(this.COLLECTOR);
-
-    // this.service.GET_PROFILE1(this.user)
-    // .then((res:any)=>{
-    //   if(res[0]==0 && res[1]==0 && res[2]==0 && res[3]==0){
-    //     this.pop('error', 'set up your profile');
+    // this.service.GET_AUCTION_NFTS(this.user,_market)
+    // .then(async(res:any)=>{
+    //   let auction:any = res[1];
+    //   //console.log(res);
+    //   // this.NFT = [];
+    //   for (let i = 0; i < auction.length; i++) {
+    //     const auctionID = auction[i];
+    //
+    //     this.service.GET_AUCTION_HOST(auctionID)
+    //     .then(async(res:any)=>{
+    //       let host = res.host;
+    //       let nft = res.nft;
+    //
+    //       this.AUCTION = await this.service.GET_AUCTION(host,nft);
+    //       let ipfs = await axios.get(this.AUCTION[1]);
+    //       ipfs.data.nft_id = nft;
+    //       ipfs.data.auction = this.AUCTION;
+    //       ipfs.data.auction.seller = host;
+    //       this.NFT.push(ipfs.data);
+    //       // console.log(this.NFT);
+    //     })
+    //
+    //     // let ipfs = await axios.get(auctionID.token_uri);
+    //     // this.NFT.push(ipfs.data);
+    //     // console.log(this.NFT);
+    //
     //   }
+    //   this.markets(_market);
+    //
     // })
 
-    // get NFTS from database
-
-
-
-    //alert('starting');
-    // this.NFT = [];
-    // let koin;
-    // const _auction = Moralis.Object.extend("auction");
-    // const _query = new Moralis.Query(_auction);
-    // _query.equalTo('active',1);
-    // _query.equalTo('market',_market.toString());
-    // const results = await _query.find();
-    // //alert(results.length);
-    // //console.log(results);
-    //   for (let i = 0; i < results.length; i++) {
-    //
-    //       const object = results[i];
-    //       //alert(object.get('nft'));
-    //
-    //       // console.log(object.get('nft'));
-    //       this.service.GET_NFT(object.get('nft'),0)
-    //       .then(async(jordi:any)=>{
-    //         // alert(jordi);
-    //         //console.log(jordi.ipfs);
-    //         // let ipfs = await axios.get(jordi.ipfs);
-    //         let params = {url:jordi.ipfs};
-    //
-    //         let ipfs = await Moralis.Cloud.run("getURL",params);
-    //         ipfs.data.nft_id = object.get('nft');
-    //         let auction = await this.service.GET_AUCTION(object.get('seller'),object.get('nft'));
-    //         //console.log(ipfs.data.image);
-    //         if(_market!=4){
-    //           koin = 1;
-    //         }else{
-    //           koin = 2;
-    //         }
-    //         let brewTea = await this.service.GET_BREW_VALUE(object.get('nft'),koin);
-    //         let brewDate = await this.service.GET_BREW_DATE(object.get('nft'),koin);
-    //         brewDate = moment(brewDate*1000).fromNow();
-    //         ipfs.data.auction = auction;
-    //         ipfs.data.brewTea = brewTea;
-    //         ipfs.data.dateTea = brewDate;
-    //         this.NFT.push(ipfs.data);
-    //         //console.log(this.NFT);
-    //         this.cd.detectChanges();
-    //       })
-    //     }
-    //     //this.GET_FEATURED();
-    //
-    // //this.changeDetectorRef.detectChanges();
-    //
-    //
-    //   if(_market==1){
-    //     this.ACTIVE_TAB = 1;
-    //     this.TAB_NAME = 'Avatars'
-    //   }
-    //   if(_market==2){
-    //     this.ACTIVE_TAB = 2;
-    //     this.TAB_NAME = 'Covers'
-    //
-    //   }
-    //   if(_market==3){
-    //     this.ACTIVE_TAB = 3;
-    //     this.TAB_NAME = 'Heritage'
-    //
-    //   }
-    //   if(_market==4){
-    //     this.ACTIVE_TAB = 4;
-    //     this.TAB_NAME = 'WALL'
-    //
-    //   }
-    //   if(_market==5){
-    //     this.ACTIVE_TAB = 5;
-    //     this.TAB_NAME = 'Film/Video'
-    //
-    //   }
-    //   if(_market==6){
-    //     this.ACTIVE_TAB = 6;
-    //     this.TAB_NAME = 'Art & All'
-    //
-    //   }
-    //   if(_market==7){
-    //     this.ACTIVE_TAB = 7;
-    //     this.TAB_NAME = 'Music'
-    //
-    //   }
-    //   if(_market==8){
-    //     this.ACTIVE_TAB = 8;
-    //     this.TAB_NAME = 'Prison'
-    //
-    //   }
-    //   if(_market==9){
-    //     this.ACTIVE_TAB = 9;
-    //     this.TAB_NAME = 'Sexy Women'
-    //
-    //   }
-    //   if(_market==10){
-    //     this.ACTIVE_TAB = 10;
-    //     this.TAB_NAME = 'Sexy Men'
-    //
-    //   }
 
   }
   async changeMarket(_market:any){
@@ -331,19 +238,6 @@ export class HomeComponent implements OnInit {
       }
   }
 
-  // async GET_FEATURED(){
-  //   console.log("working");
-  //   const _admin = Moralis.Object.extend("admin");
-  //   const _query = new Moralis.Query(_admin);
-  //   _query.equalTo('active',1);
-  //   const results = await _query.first();
-  //   let _featured = results.get('featured');
-  //   // console.log(_featured);
-  //   this.service.GET_FEATURED(_featured)
-  //   .then((res:any)=>{
-  //     console.log(res);
-  //   })
-  // }
   async GET_HONEY_POT(){
     // alert("getting honey pot");
     this.service.GET_TEAPOT_BALANCE(1)
@@ -365,16 +259,7 @@ export class HomeComponent implements OnInit {
 
     },15000);
   }
-  // private USERCHECK(){
-  //   setInterval(()=>{
-  //
-  //     let u= localStorage.getItem('user');
-  //     if(u && !this.user){
-  //       this.user = localStorage.getItem('user');
-  //       this.start(6);
-  //     }
-  //   },3000)
-  // }
+
   private pop(type,message){
     let title;
     if(type=='error'){

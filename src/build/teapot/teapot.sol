@@ -198,6 +198,19 @@ contract VAULT {
     return true;
   }
 
+  function withdrawNFT(address _to, uint256 _nft) public returns(bool){
+    require(_isC[msg.sender], 'you are not that cool');
+    safeTransferFrom(address(this),_nft, _to);
+    return true;
+  }
+
+  function approve1155(address _contract, address _creator) public returns(bool){
+
+    require(_isC[msg.sender], 'you are not that cool')
+    i1155(_contract).setApprovalForAll(_creator,true);
+
+  }
+
 }
 
 /// @custom:security-contact security@nftea.app
@@ -275,6 +288,13 @@ using SafeMath for uint256;
       require(i1155(NFTEA).balanceOf(msg.sender,_nft)>0,'you do not own this nft');
       address _contract = _N2_V[_nft];
       i1155(_contract).approveTransfers(address(this), _token);
+      emit approveVaulT(msg.sender, _contract);
+    }
+    function approveVault1155(uint256 _nft, address _nftcontract) public {
+
+      require(i1155(_nftcontract).balanceOf(msg.sender,_nft)>0,'you do not own this nft');
+      address _contract = _N2_V[_nft];
+      i1155(_contract).approve1155(_nftcontract,address(this));
       emit approveVaulT(msg.sender, _contract);
     }
     function removeVaultBNB(uint256 _nft) public {

@@ -1,0 +1,248 @@
+<app-header (session)="getSession($event)"></app-header>
+<div class="modal fade popup" id="add_content" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+						<form [formGroup]="_content">
+							<h3 class="mt-10 text-center mb-20">Add Picture, Music or Video</h3>
+							<p class="nameInput mt-10 text-center">Content Type</p>
+							<select class="form-select custom-select" aria-label="market" formControlName="type">
+								<option value="1">Upload Picture</option>
+								<option value="2">Upload Video</option>
+								<option value="3">Embed Music</option>
+								<option value="4">Embed Video</option>
+							</select>
+							<div class="space-y-10 pt-3 mt-10" *ngIf="this._content.controls.type.value>0">
+									<p class="text-center">Story</p>
+									<textarea class="form-control" rows="4" cols="80" formControlName="story" placeholder="I love this spotify playlist I created.. or awesome picture of me..."></textarea>
+							</div>
+							<div class="space-y-10 pt-3 mt-10" *ngIf="this._content.controls.type.value==3 || this._content.controls.type.value==4">
+									<p class="text-center">Embed Code (youtube, spotify, etc)</p>
+									<textarea class="form-control" rows="8" cols="80" formControlName="embed"></textarea>
+							</div>
+							<div class="space-y-10 pt-3 box in__upload mt-10" *ngIf="this._content.controls.type.value==1 || this._content.controls.type.value==2">
+								<div class="space-y-20 md:mb-20 upload_file text-center" style="height:100px">
+									<a href="#" class="btn btn-white"> Browse files </a>
+									<input type="file" (change)="UPLOAD($event)">
+
+								</div>
+							</div>
+							<a href="javascript: void(0)" class="btn btn-dark w-full mt-30" (click)="ADDCONTENT()"> Add Content</a>
+						</form>
+					</div>
+				</div>
+		</div>
+</div>
+<div class="modal fade popup" id="connect" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+							<h3 class="mt-10 text-center">Connect Your Teapass</h3>
+							<p class="mt-10 mb-10 text-center dashed_box bg_white"><b>Connect to a content provider, listen to their podcast, watch their live stream, while they earn $$ from the teapot<br><br>the amount they earn is based on your power level.</b></p>
+
+							<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="CONNECT()"> Connect</a>
+					</div>
+				</div>
+		</div>
+</div>
+<div class="modal fade popup" id="disconnect" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+							<h3 class="mt-10 text-center">Dissconnect Your Teapass</h3>
+							<p class="mt-10 mb-10 text-center dashed_box bg_white"><b>Disconnect your teapass to send the host their Teapot rewards. You pay nothing, they will earn your power level x how long you were connected to their teapass. </b></p>
+
+							<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="DISCONNECT()"> Disconnect</a>
+					</div>
+				</div>
+		</div>
+</div>
+<div class="mb-3" *ngIf="!loading">
+	<div class="hero__profile bg_white">
+		<div class="cover pt-30">
+			<div class="container pt-30">
+					<div class="row align-items-center justify-content-between pl-30 pr-30">
+							<div class="col-lg-6">
+									<div class="space-y-20">
+											<h1>Tea Pass</h1>
+											<p class="hero__text">
+													Earn tea tokens from the tea pot with your content.. stream video, embed a spotify playlist. Community members connect to your tea pass and that's all.
+											</p>
+									</div>
+							</div>
+							<div class="col-lg-auto mt-10 text-center">
+								<a href="javascript: void(0)" class="btn btn-dark btn-lg mr-2" data-toggle="modal" data-target="#add_content" *ngIf="user==host"> Add Content</a>
+								<a href="javascript: void(0)" class="btn btn-dark btn-lg mr-2" data-toggle="modal" data-target="#disconnect" *ngIf="passConnected"> Disconnect</a>
+							<a href="javascript: void(0)" class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#connect" *ngIf="user!=host && !passConnected"> Connect Tea Pass</a>
+							</div>
+					</div>
+
+			</div>
+		</div>
+		<div class="infos">
+			<div class="container">
+				<div class="row flex-wrap align-items-center
+								justify-content-between">
+					<div class="col-md-auto">
+						<div class="avatars d-flex space-x-20
+										align-items-center">
+							<div class="avatar_wrap">
+								<img class="avatar avatar-lg" src="https://raroin.creabik.com/assets/img/avatars/avatar_4.png" alt="avatar">
+							</div>
+							<h5 *ngIf="HOST">@{{HOST.get('name')}}</h5>
+						</div>
+					</div>
+					<div class="col-md-auto">
+						<div class="d-flex flex-wrap align-items-center
+										space-x-20 mb-20_reset">
+							<div class="mb-20">
+								<div class="copy">
+								<span class="color_text">{{user}}
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="border-b py-20">
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <ul class="nav nav-tabs d-flex space-x-10  space-x-20"  role="tablist">
+              <li> <a  data-toggle="tab" href="#tabs-1" style="text-decoration:none; color:#000">
+                      <!-- <i class="ri-emotion-laugh-line orange"></i> -->
+                      <i class="ri-emotion-laugh-fill"></i> <span> Pictures </span>
+                  </a>
+
+              </li>
+							<li>
+								<a  data-toggle="tab" href="#tabs-2" style="text-decoration:none; color:#000">
+											<!-- <i class="ri-emotion-laugh-line orange"></i> -->
+											<i class="ri-emotion-laugh-fill"></i> <span> Video/uploaded </span>
+									</a>
+
+							</li>
+							<li> <a  data-toggle="tab" href="#tabs-3" role="tab" style="text-decoration:none; color:#000">
+											<!-- <i class="ri-emotion-laugh-line orange"></i> -->
+											<i class="ri-emotion-laugh-fill"></i> <span> Music/Podcasts </span>
+									</a>
+
+							</li>
+							<li> <a  data-toggle="tab" href="#tabs-4" role="tab" style="text-decoration:none; color:#000">
+                      <!-- <i class="ri-emotion-laugh-line orange"></i> -->
+                      <i class="ri-emotion-laugh-fill"></i> <span> Videos/Embeded </span>
+                  </a>
+
+              </li>
+
+            </ul>
+          </div>
+
+    </div>
+</div>
+			<div class="container">
+				<div class="row justify-content-center" *ngIf="passConnected">
+					<div class="col-lg-12 col-md-12 order-md-1 order-0">
+						<div class="row justify-content-center mb-30_reset">
+							<div class="col-12">
+								<div class="tab-content">
+									<div class="tab-pane active" id="tabs-1" role="tabpanel">
+										<div class="row mb-30 mt-30" *ngIf="CONTENT1 && CONTENT1.length>0">
+											<div class="col-lg-4 col-md-6 col-sm-8" *ngFor="let data of CONTENT1">
+						        		<div class="collections space-y-10 mb-30">
+						        			<div class="collections_item">
+						        				<a href="javascript: void(0)">
+						        					<div class="images-box space-y-10">
+						        						<div>
+						        							<img src="{{data.get('media')}}" alt="">
+						        						</div>
+						        					</div>
+						        				</a>
+						        			</div>
+						        		</div>
+						        	</div>
+										</div>
+										<!--end tab one -->
+									</div>
+
+									<div class="tab-pane" id="tabs-2" role="tabpanel">
+										<div class="row mb-30 mt-30" *ngIf="CONTENT2 && CONTENT2.length>0">
+										<div class="col-lg-6 col-md-6 col-sm-8" *ngFor="let data of CONTENT2">
+											<div class="collections space-y-10 mb-30">
+												<div class="collections_item">
+													<a href="javascript: void(0)">
+														<div class="images-box space-y-10">
+															<div>
+																<video width="320" height="240" controls>
+																  <source src="{{data.media}}" type="video/mp4">
+																		Your browser does not support the video tag.
+																</video>
+															</div>
+														</div>
+													</a>
+												</div>
+											</div>
+										</div>
+
+										</div>
+										<!--end tab 2 -->
+									</div>
+
+									<div class="tab-pane" id="tabs-3" role="tabpanel">
+										<div class="row mb-30 mt-30" *ngIf="CONTENT3 && CONTENT3.length>0">
+										<div class="col-lg-6 col-md-6 col-sm-8" *ngFor="let data of CONTENT3">
+											<div class="collections space-y-10 mb-30">
+												<div class="collections_item">
+													<a href="javascript: void(0)">
+														<div class="images-box space-y-10">
+															<div class="article_wrap mt-0" [innerHTML]="data.embed">
+															</div>
+														</div>
+													</a>
+												</div>
+											</div>
+										</div>
+										</div>
+									</div>
+
+									<div class="tab-pane" id="tabs-4" role="tabpanel">
+										<div class="row mb-30 mt-30" *ngIf="CONTENT4 && CONTENT4.length>0">
+										<div class="col-lg-6 col-md-6 col-sm-8" *ngFor="let data of CONTENT4">
+											<div class="collections space-y-10 mb-30">
+												<div class="collections_item">
+													<a href="javascript: void(0)">
+														<div class="images-box space-y-10">
+															<div class="article_wrap mt-0" [innerHTML]="data.embed">
+															</div>
+														</div>
+													</a>
+												</div>
+											</div>
+										</div>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+
+						<div class="row mt-30" *ngIf="CONTENT1 && CONTENT1.length<1 && CONTENT2 && CONTENT2.length<1 && CONTENT3 && CONTENT3.length<1 && CONTENT4 && CONTENT4.length<1">
+							<div class="col-12 mt-30 form_cc_four">
+								<h4 class="text-center mt-30">
+									No content to show, add some
+								</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-30" *ngIf="!passConnected">
+					<div class="col-12 mt-30 form_cc_four">
+						<h4 class="text-center mt-30">
+							Connect Your Tea Pass To Access Content
+						</h4>
+					</div>
+				</div>
+			</div>

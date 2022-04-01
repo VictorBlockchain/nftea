@@ -66,6 +66,7 @@ export class ShowcaseComponent implements OnInit {
   COLLECTOR:any;
   SELLER:any;
   COLLECTION:any;
+  showPowerUpgrade:boolean;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -103,6 +104,7 @@ export class ShowcaseComponent implements OnInit {
 
   async run(){
 
+    this.service.LISTEN();
     this.NFT = [];
     this.SELLER = {};
     this.COLLECTOR = {};
@@ -206,65 +208,36 @@ export class ShowcaseComponent implements OnInit {
           }
           this.PRICE();
           this.GET_ALBUM(this.NFT.creator,this.NFT.collection._name);
+          if(this.nft_id==1){
+            this.checkPowerUp();
+          }
           // console.log(this.NFT);
         })
       })
 
-      //console.log(this.NFT.auction);
-      // ipfs.data.bidAccepted = await this.service.GET_BID_ACCEPTED(this.nft_id,this.nft_owner,res.highestBidder);
-      // this.NFT = ipfs.data;
-      // this.NFT.shop = await this.service.GET_SHOP(0,this.nft_owner);
-      // // console.log(this.NFT);
-      //
-      // //get seller
-      // let s:any = await this.service.GET_PROFILE1(this.nft_owner);
-      // if(s[0]==0){
-      //
-      //   this.SELLER.avatar = 'assets/img/avatars/avatar.png';
-      //
-      // }else{
-      //
-      //   // let s_info:any = this.service.GET_NFT(s[0],0);
-      //   // let s_ipfs = await axios.get(s_info.ipfs);
-      //   // this.SELLER.avatar = s_ipfs.data.image;
-      // }
-      //
-      // this.SELLER.heritage = s[2];
-      // this.SELLER.power = s[3];
-      // this.SELLER.gender = s[4];
-      //
-      // //get collector
-      // let c:any = await this.service.GET_PROFILE1(this.user);
-      // if(s[0]==0){
-      //
-      //   this.COLLECTOR.avatar = 'assets/img/avatars/avatar.png';
-      //
-      // }else{
-      //   let c_info:any = this.service.GET_NFT(s[0],0);
-      //   let c_ipfs = await axios.get(c_info.ipfs);
-      //   this.COLLECTOR.avatar = c_ipfs.data.image;
-      // }
-      // this.COLLECTOR.heritage = c[2];
-      // this.COLLECTOR.power = c[3];
-      // this.COLLECTOR.gender = c[4];
-
-      ///get bidder
-      // let b:any = await this.service.GET_PROFILE1(this.NFT.auction.highestBidder);
-      // if(b[0]==0){
-      //
-      //   this.BIDDER.avatar = 'assets/img/avatars/avatar.png';
-      //
-      // }else{
-      //
-      //   let b_info:any = this.service.GET_NFT(s[0],0);
-      //   let b_ipfs = await axios.get(c_info.ipfs);
-      //   this.BIDDER.avatar = c_ipfs.data.image;
-      // }
-
-      //await this.PRICE();
-
     });
   };
+
+  async checkPowerUp(){
+
+    console.log("checking power up")
+    this.service.GET_POWER_UP(this.user)
+    .then(async(res:any)=>{
+      this.showPowerUpgrade = res;
+      //console.log(res)
+    })
+  }
+
+  async SET_POWER_UP(){
+
+    console.log("powering up")
+    this.service.SET_POWER_UP(this.user,this.nft_id)
+    .then(async(res:any)=>{
+
+      //console.log(res)
+    })
+  }
+
   private curday(sp){
 
     let today:any = new Date();
@@ -833,51 +806,6 @@ export class ShowcaseComponent implements OnInit {
       }
     })
 
-      // if(this.WALL_BREW_TYPE==3){
-      //   //check if this user owns that nft
-      //   this.service.GET_NFT_BALANCE(this.user,this._sugar.controls.nft.value)
-      //   .then((res:any)=>{
-      //     if(res<this._sugar.controls.value.value || res==0){
-      //       this.pop('error','you don\'t own that many nft');
-      //     }else{
-      //       ///add sugar
-      //
-      //       this.service.SET_WALL_BREW(this.user,this.nft_id,this._sugar.controls.nft.value,this._sugar.controls.value.value,3)
-      //       .then((jordi:any)=>{
-      //         console.log(jordi);
-      //       })
-      //     }
-      //   })
-      // }else{
-      //   if(this.WALL_BREW_TYPE==1){
-      //
-      //     this.service.GET_TEA_BALANCE(this.user)
-      //     .then((res:any)=>{
-      //       this.teaBalance = res/1000000000;
-      //       if(this.teaBalance<this._sugar.controls.value.value){
-      //         this.pop('error','insufficient balance');
-      //
-      //       }else{
-      //         ///add sugar
-      //       }
-      //     })
-      //
-      //   }else{
-      //
-      //     this.service.GET_WALL_BALANCE(this.user)
-      //     .then((res:any)=>{
-      //       this.wallBalance = res/1000000000;
-      //       if(this.wallBalance<this._sugar.controls.value.value){
-      //         this.pop('error','insufficient balance');
-      //
-      //       }else{
-      //         //add sugar
-      //
-      //       }
-      //     })
-      //
-      //     }
-      // }
     }
   private DELETE_AUCTION(){
     if(this._delete_auction.controls.confirm.value!='confirm'){
@@ -892,24 +820,24 @@ export class ShowcaseComponent implements OnInit {
       this.service.DELETE_AUCTION(this.user,this.nft_id)
       .then(async(res:any)=>{
         if(res.success){
-          this.auction = await this.service.GET_AUCTION(this.user,this.nft_id);
-          let sold = 0;
-          if(this.auction.highestBidder.toLowerCase()!=this.user.toLowerCase()){
-            sold = 1;
-          }
-          const _auction = Moralis.Object.extend("auction");
-          const _query = new Moralis.Query(_auction);
-          _query.equalTo('seller',this.user.toLowerCase());
-          _query.equalTo('nft', this.nft_id);
-          _query.equalTo('active',1);
-          _query.first()
-          .then((results:any)=>{
-            results.set('pending',1);
-            results.set('buyer',this.auction.highestBidder);
-            results.set('sold', sold);
-            results.save();
-
-          })
+          // this.auction = await this.service.GET_AUCTION(this.user,this.nft_id);
+          // let sold = 0;
+          // if(this.auction.highestBidder.toLowerCase()!=this.user.toLowerCase()){
+          //   sold = 1;
+          // }
+          // const _auction = Moralis.Object.extend("auction");
+          // const _query = new Moralis.Query(_auction);
+          // _query.equalTo('seller',this.user.toLowerCase());
+          // _query.equalTo('nft', this.nft_id);
+          // _query.equalTo('active',1);
+          // _query.first()
+          // .then((results:any)=>{
+          //   results.set('pending',1);
+          //   results.set('buyer',this.auction.highestBidder);
+          //   results.set('sold', sold);
+          //   results.save();
+          //
+          // })
           //console.log(res)
           this.pop('success', 'auction canceled')
 

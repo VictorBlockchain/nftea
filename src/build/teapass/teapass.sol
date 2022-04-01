@@ -260,14 +260,16 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     function setProfile(uint256 _avatar, uint256 _cover, uint256 _heritage, uint256 _gender)public {
       require(i1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
-      require(i1155(NFTEA).balanceOf(msg.sender,_cover)>0, 'you do not own this cover');
-
+      uint256  _pwr = 300000*10**9;
+      if(_avatar==upgradePowerNFT && !powerUpgraded[msg.sender][upgradePowerNFT]){
+        _pwr = upgradePower.add(_pwr);
+      }
       COLLECTOR memory save = COLLECTOR({
         _address:msg.sender,
         _avatar:_avatar,
         _cover:_cover,
         _heritage:_heritage,
-        _power:3000,
+        _power:_pwr,
         _gender:_gender
       });
       _C[msg.sender] = save;
@@ -281,7 +283,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     function updateProfile(uint256 _avatar, uint256 _cover, uint256 _heritage, uint256 _gender)public {
 
       require(i1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
-      require(i1155(NFTEA).balanceOf(msg.sender,_cover)>0, 'you do not own this cover');
+
       _C[msg.sender]._avatar = _avatar;
       _C[msg.sender]._cover = _cover;
       _C[msg.sender]._heritage = _heritage;
@@ -376,7 +378,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
 
-              uint256 _pwr = 1000*10**9;
+              uint256 _pwr = 300000*10**9;
             if(_C[msg.sender]._power.sub(_pwr)>0){
               _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
             }else{
@@ -428,7 +430,12 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       address _host = _C2_H[msg.sender];
       if(block.timestamp > _C2_H_end[msg.sender][_host]){
 
-        _C[msg.sender]._power = _C[msg.sender]._power.sub(1000000*10**9);
+          uint256 _pwr = 300000*10**9;
+        if(_C[msg.sender]._power.sub(_pwr)>0){
+          _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
+        }else{
+          _C[msg.sender]._power = 0;
+        }
         _H2_connected[_host] = _H2_connected[_host].sub(1);
 
       }else{

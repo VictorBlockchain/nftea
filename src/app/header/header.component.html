@@ -39,9 +39,9 @@
         <a class="btn btn-grad btn-sm" href="javascript: void(0)" (click)="getConnected()" *ngIf="!connected">
           <i class="ri-links-line"></i> Connect
           wallet</a>
-        <a class="btn btn-orange btn-sm mr-3" href="javascript: void(0)" routerLink="/create" *ngIf="connected">
+        <a class="btn btn-grad btn-sm mr-3" href="javascript: void(0)" routerLink="/create" *ngIf="connected">
           <i class="ri-magic-line"></i> Create NFT's</a>
-          <a class="btn btn-dark btn-sm" href="javascript: void(0)" routerLink="/teapass" *ngIf="connected"><i class="ri-passport-fill"></i> TEA PASS</a>
+          <a class="btn btn-dark btn-sm" href="javascript: void(0)" routerLink="/cafe/{{user}}" *ngIf="connected"><i class="ri-passport-fill"></i> TEA PASS</a>
 
       </div>
 
@@ -129,7 +129,7 @@
               </button>
             </div>
             <a class="btn btn-grad btn-sm" href="javascript: void(0)" (click)="getConnected()" *ngIf="!connected"><i class="ri-links-line"></i> Connect wallet</a>
-            <a class="btn btn-orange btn-sm mr-3" href="javascript: void(0)" routerLink="/create" *ngIf="connected">Create</a>
+            <a class="btn btn-grad btn-sm mr-3" href="javascript: void(0)" routerLink="/create" *ngIf="connected">Create</a>
             <a class="btn btn-primary btn-sm" href="javascript: void(0)" routerLink="/raffle" *ngIf="connected" style="display:none">Raffles</a>
 
           </div>

@@ -129,6 +129,7 @@ export class MintComponent implements OnInit {
 
 
   async GET_IDS(){
+
     console.log("working")
     this.service.GET_IDS(this.creator)
     .then(async(res:any)=>{

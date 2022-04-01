@@ -59,6 +59,73 @@ async GET_WEB3(): Promise<any>{
         return res;
 
   }
+  async LISTEN(): Promise<any>{
+    console.log('listening')
+    await this.GET_WEB3();
+    const contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
+    contract.events.allEvents()
+    .on('data',async (event) => {
+      //console.log(event)
+      let _user = localStorage.getItem('user');
+      if(event.event=='auctionListed'){
+
+        let _seller = event.returnValues[0].toLowerCase();
+        let _nft = event.returnValues[1];
+        let _market = event.returnValues[0];
+          const _auc = Moralis.Object.extend("auction");
+          let _query = new Moralis.Query(_auc);
+          _query.equalTo('seller',_seller);
+          _query.equalTo('nft', _nft);
+          _query.equalTo('pending', 1);
+          let results = await _query.first();
+          if(results){
+            results.set('active',1);
+            resutls.set('pending',0);
+            results.save();
+
+          }
+
+      }
+      if(event.event=='auctionClosed'){
+
+        let _seller = event.returnValues[0].toLowerCase();
+        let _nft = event.returnValues[2];
+        let _buyer = event.returnValues[1].toLowerCase();
+          const _auc = Moralis.Object.extend("auction");
+          let _query = new Moralis.Query(_auc);
+          _query.equalTo('seller',_seller);
+          _query.equalTo('nft', _nft);
+          _query.equalTo('active', 1);
+          let results = await _query.first();
+          if(results){
+            results.set('active',0);
+            resutls.set('pending',0);
+            results.save();
+
+          }
+
+      }
+      if(event.event=='saleMade'){
+
+      }
+      if(event.event=='auctionPaid'){
+
+      }
+      if(event.event=='bidPlaced'){
+
+      }
+      if(event.event=='bidAccepted'){
+
+      }
+      if(event.event=='bidDeny'){
+
+      }
+      if(event.event=='royaltyPaid'){
+
+      }
+    })
+
+  }
   private pop(type,message){
     let title;
     if(type=='error'){
@@ -272,6 +339,46 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
+  public SET_POWER_UP(_user: any,_nft:any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        await this.GET_WEB3();
+        const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
+          name: "setUpgradePower",
+          type: "function",
+          inputs: [{
+            type: 'uint256',
+            name: '_nft'
+          }]
+        }, [_nft])
+        const txt = await this.web3.eth.sendTransaction({
+          from:_user,
+          to: TEAPASS,
+          gas: 1000000,
+          data:encodedFunction
+        }).on('transactionHash',(hash)=>{
+
+          console.log(hash)
+
+              resolve({ success: true, msg: hash });
+              // console.log(hash)
+          })
+          .on('receipt',(receipt)=>{
+             //console.log(receipt)
+             this.pop('success', 'you are disconnected');
+
+          })
+          .on('confirmation',(confirmationNumber, receipt)=>
+          {
+          //console.log(confirmationNumber, receipt)
+          }).on('error', console.error);
+
+      } catch (error) {
+        resolve({success:false,msg:error});
+      }
+    })
+  }
   public GET_TEAPASS_CREATOR(_user:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -315,6 +422,21 @@ async GET_WEB3(): Promise<any>{
         await this.GET_WEB3();
         const contract = new this.web3.eth.Contract(ABITEAPASS, TEAPASS);
         let result = await contract.methods.getProfile(_user).call();
+        // console.log(result);
+        resolve(result);
+
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  }
+  public GET_POWER_UP(_user:any): Promise<string> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // console.log("in the back getting profile 1 " + NFT);
+        await this.GET_WEB3();
+        const contract = new this.web3.eth.Contract(ABITEAPASS, TEAPASS);
+        let result = await contract.methods.powerUpgraded(_user,1).call();
         // console.log(result);
         resolve(result);
 
@@ -1790,7 +1912,7 @@ async GET_WEB3(): Promise<any>{
 
         await this.GET_WEB3();
         let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
-        let result = await contract.methods.GET_AUCTIONS(_user, _market).call();
+        let result = await contract.methods.GET_AUCTION(_auction).call();
 
         resolve(result);
 
@@ -1829,7 +1951,7 @@ async GET_WEB3(): Promise<any>{
 
         await this.GET_WEB3();
         let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
-        let result = await contract.methods.GET_AUCTIONS(_user).call();
+        let result = await contract.methods.GET_AUCTIONS(_user,0).call();
 
         resolve(result);
 

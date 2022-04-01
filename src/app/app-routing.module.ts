@@ -17,9 +17,9 @@ const routes: Routes = [
     .then(mod => mod.TeapassModule)
 },
 {
-  path: 'cafe/room/:room',
-  loadChildren: () => import('./cafeRoom/cafeRoom.module')
-    .then(mod => mod.CafeRoomModule)
+  path: 'cafe/:user',
+  loadChildren: () => import('./cafe/cafe.module')
+    .then(mod => mod.CafeModule)
 },
 {
   path: 'create',

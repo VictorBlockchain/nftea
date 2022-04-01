@@ -195,7 +195,7 @@ export class TeapassComponent implements OnInit {
     this.EMBED = this.sanitizer.bypassSecurityTrustHtml(embed);
     //this.EMBED = embed;
 
-    console.log(this.EMBED)
+    //console.log(this.EMBED)
   }
   async getSession(event){
 
