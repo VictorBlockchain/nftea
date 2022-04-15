@@ -1352,6 +1352,7 @@ interface i1155 is IERC1155{
     function disValueTeaPass(address _host, uint256 _value, address _token) external returns (bool);
     function BURN(uint256 _nft, address _collector) external returns (bool);
     function _WN2_N(uint256 _nft) external returns(uint256);
+    function getADDRESSES() external returns(address,address,address,address,address,address,address);
 
 }
 library SafeMath {
@@ -1425,7 +1426,7 @@ library SafeMath {
 }
 
 /// @custom:security-contact security@nftea.app
-contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
+contract TEAPASS {
    using SafeMath for uint256;
     //isA = isAdmin
     //isC = isContract
@@ -1490,8 +1491,10 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     uint256 public upgradePowerNFT = 0;
     uint256 public upgradePower = 1500000*10**9;
 
-    constructor() ERC1155("https://nftea.app/nft/{id}.json") {
+    constructor(address _nftea) {
 
+        NFTEA = _nftea;
+        isC[NFTEA] = true;
         isA[msg.sender] = true;
 
     }
@@ -1556,14 +1559,14 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       emit collectorAdded(msg.sender, _avatar, _cover, _heritage, _gender);
 
     }
-    function setAddress(address _teashop, address _nftea, address _teapot, address _token) public {
+    function setAddress() public {
 
         require(isA[msg.sender], 'you are not an admin');
-        TEASHOP = _teashop;
-        NFTEA = _nftea;
-        TEAPOT = _teapot;
+
+        (address _token,address _teashop,address _teapot,,,,) = i1155(NFTEA).getADDRESSES();
         TOKEN = _token;
-        isC[NFTEA] = true;
+        TEASHOP = _teashop;
+        TEAPOT = _teapot;
         isC[TEASHOP] = true;
         isC[TEAPOT] = true;
 
@@ -1723,39 +1726,6 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setURI(string memory newuri) public onlyOwner {
-        _setURI(newuri);
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
-
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
-        public
-        onlyOwner
-    {
-        _mint(account, id, amount, data);
-    }
-
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        public
-        onlyOwner
-    {
-        _mintBatch(to, ids, amounts, data);
-    }
-
-    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        internal
-        whenNotPaused
-        override(ERC1155, ERC1155Supply)
-    {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
-    }
     function checkSuccess()
         private pure
         returns (bool)

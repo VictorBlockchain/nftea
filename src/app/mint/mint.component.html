@@ -1,7 +1,239 @@
+<app-header (session)="getSession($event)"></app-header>
+<div class="modal fade popup" id="settings" tabindex="-1" role="dialog" aria-hidden="true">
 
+					<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<div class="modal-body space-y-20 p-40">
+											<h3 class="text-center">Settings</h3>
+											<p class="text-center">Set Split Payments & More</p>
+                      <form [formGroup]="_settings">
+                        <div class="space-y-10">
+                          <span class="nameInput">Title</span>
+                          <input type="text" class="form-control" placeholder="african hyena pets" formControlName="title">
+                        </div>
+                        <div class="space-y-20">
+                          <div class="space-y-10">
+                            <span class="nameInput">Album/Collection</span>
+                            <select class="form-select custom-select" aria-label="Preference" formControlName="album">
+                              <option *ngFor="let data of ALBUM"
+                                  [value]="data.id">
+                                {{data.name}}
+                              </option>
+                            </select>
+
+                          </div>
+                        </div>
+                        <div class="space-y-10">
+          								<span class="nameInput">Royalty</span>
+          								<input type="number" class="form-control" placeholder="e. g. `10`" formControlName="royalty">
+          							</div>
+          							<div class="space-y-10">
+          								<div class=row>
+          									<div class="col-6">
+          										<span class="nameInput">Split With <span class="color_text">
+          												(optional) </span></span>
+          										<input type="text" class="form-control" placeholder="e. g. `0x0`" formControlName="split1">
+          									</div>
+          									<div class="col-6">
+          										<span class="nameInput">Split % <span class="color_text">
+          												(optional) </span></span>
+          										<input type="number" class="form-control" placeholder="e. g. `25`" formControlName="split1Value">
+          									</div>
+          								</div>
+          							</div>
+          							<div class="space-y-10">
+          								<div class=row>
+          									<div class="col-6">
+          										<span class="nameInput">Split With <span class="color_text">
+          												(optional) </span></span>
+          										<input type="text" class="form-control" placeholder="e. g. `0x0`" formControlName="split2">
+          									</div>
+          									<div class="col-6">
+          										<span class="nameInput">Split % <span class="color_text">
+          												(optional) </span></span>
+          										<input type="number" class="form-control" placeholder="e. g. `25`" formControlName="split2Value">
+          									</div>
+          								</div>
+          							</div>
+          							<div class="space-y-10">
+          								<div class=row>
+          									<div class="col-6">
+          										<span class="nameInput">Split With <span class="color_text">
+          												(optional) </span></span>
+          										<input type="text" class="form-control" placeholder="e. g. `0x0`" formControlName="split3">
+          									</div>
+          									<div class="col-6">
+          										<span class="nameInput">Split % <span class="color_text">
+          												(optional) </span></span>
+          										<input type="number" class="form-control" placeholder="e. g. `25`" formControlName="split3Value">
+          									</div>
+          								</div>
+          							</div>
+            					</form>
+											<a href="javascript: void(0)" class="btn btn-dark w-full" (click)="setSettings()"> Set Settings</a>
+									</div>
+							</div>
+					</div>
+			</div>
+<div class="modal fade popup" id="nftstory" tabindex="-1" role="dialog" aria-hidden="true">
+
+					<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+									</button>
+									<div class="modal-body space-y-20 p-40">
+											<h3 class="text-center">NFT STORY</h3>
+											<p class="text-center">whats the story for this nft?</p>
+                      <form [formGroup]="_nftStory">
+            						<div class="space-y-20">
+                          <div class="space-y-10">
+                            <span class="nameInput">NFT ID</span>
+                            <input type="text" class="form-control" placeholder="10" formControlName="nftid">
+                          </div>
+                          <div class="space-y-10">
+                            <span class="nameInput">Rarity</span>
+                            <input type="text" class="form-control" placeholder="30" formControlName="rarity">
+                          </div>
+
+            							<div class="space-y-10">
+            								<span class="nameInput">Story</span>
+            								<input type="text" class="form-control" placeholder="e. g. `this is a story about`" formControlName="story">
+            							</div>
+            							<div class="space-y-10">
+            								<div class=row>
+            									<div class="col-6">
+            										<span class="nameInput">Propery Name <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `gender`" formControlName="prop1">
+            									</div>
+            									<div class="col-6">
+            										<span class="nameInput">Property Value <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `female`" formControlName="prop1Value">
+            									</div>
+            								</div>
+            							</div>
+            							<div class="space-y-10">
+            								<div class=row>
+            									<div class="col-6">
+            										<span class="nameInput">Propery Name <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `strength`" formControlName="prop2">
+            									</div>
+            									<div class="col-6">
+            										<span class="nameInput">Property Value <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `10`" formControlName="prop2Value">
+            									</div>
+            								</div>
+            							</div>
+            							<div class="space-y-10">
+            								<div class=row>
+            									<div class="col-6">
+            										<span class="nameInput">Propery Name <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `color`" formControlName="prop3">
+            									</div>
+            									<div class="col-6">
+            										<span class="nameInput">Property Value <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `blue`" formControlName="prop3Value">
+            									</div>
+            								</div>
+            							</div>
+            							<div class="space-y-10">
+            								<div class=row>
+            									<div class="col-6">
+            										<span class="nameInput">Propery Name <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `weapon`" formControlName="prop4">
+            									</div>
+            									<div class="col-6">
+            										<span class="nameInput">Property Value <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `sword`" formControlName="prop4Value">
+            									</div>
+            								</div>
+            							</div>
+            							<div class="space-y-10">
+            								<div class=row>
+            									<div class="col-6">
+            										<span class="nameInput">Propery Name <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `weapon strength`" formControlName="prop5">
+            									</div>
+            									<div class="col-6">
+            										<span class="nameInput">Property Value <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `8`" formControlName="prop5Value">
+            									</div>
+            								</div>
+            							</div>
+            							<div class="space-y-10">
+            								<div class=row>
+            									<div class="col-6">
+            										<span class="nameInput">Propery Name <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `dancing`" formControlName="prop6">
+            									</div>
+            									<div class="col-6">
+            										<span class="nameInput">Property Value <span class="color_text">
+            												(optional) </span></span>
+            										<input type="text" class="form-control" placeholder="e. g. `5`" formControlName="prop6Value">
+            									</div>
+            								</div>
+            							</div>
+
+            						</div>
+            					</form>
+											<a href="javascript: void(0)" class="btn btn-dark w-full" (click)="setStory()"> Set Story</a>
+									</div>
+							</div>
+					</div>
+			</div>
+
+      <div class="modal fade popup" id="mintpass" tabindex="-1" role="dialog" aria-hidden="true">
+
+      					<div class="modal-dialog modal-dialog-centered" role="document">
+      							<div class="modal-content">
+      									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      											<span aria-hidden="true">×</span>
+      									</button>
+      									<div class="modal-body space-y-20 p-40">
+      											<h3 class="text-center">Mint Pass</h3>
+      											<p class="text-center">which nft should members have to mint?</p>
+                            <form [formGroup]="_mintPass" *ngIf="ALBUM && ALBUM.length>0">
+                              <div class="space-y-20">
+                                <div class="space-y-10">
+                                  <span class="nameInput">Album/Collection</span>
+                                  <select class="form-select custom-select" aria-label="Preference" formControlName="album">
+                                    <option *ngFor="let data of ALBUM"
+                                        [value]="data.id">
+                                      {{data.name}}
+                                    </option>
+                                  </select>
+
+                                </div>
+                              </div>
+                  						<div class="space-y-20 mt-20">
+                                <div class="space-y-10">
+                                  <span class="nameInput">NFT ID</span>
+                                  <input type="text" class="form-control" placeholder="10" formControlName="nftid">
+                                </div>
+                  						</div>
+                  					</form>
+      											<a href="javascript: void(0)" class="btn btn-dark w-full" (click)="setMintPass()"> Set Mint Pass</a>
+      									</div>
+      							</div>
+      					</div>
+      			</div>
 <div class="hero_marketplace bg_white">
     <div class="container">
-        <h1 class="text-center">Regenerative Mint</h1>
+        <h1 class="text-center">Generative Mint</h1>
         <h5 class="text-center mt-20">collectors mint your nft's using your mint pass</h5>
         <div class="text-center mt-30">
             <div class="space-y-40 upload_file">
@@ -21,23 +253,23 @@
 			    <div class="container">
 			        <div class="d-flex justify-content-center">
 			            <ul class="menu_categories space-x-20">
-			                <li> <a href="javascript: void(0)">
-			                        <i class="ri-brush-line"></i> <span> NFT Story </span>
+			                <li> <a href="javascript: void(0)" data-toggle="modal" data-target="#nftstory">
+			                        <i class="ri-brush-fill"></i> <span> NFT Story </span>
 			                    </a>
 
 			                </li>
-			                <li> <a href="javascript: void(0)">
-			                        <i class="ri-magic-line"></i> <span> Mint Pass </span>
+			                <li> <a href="javascript: void(0)" data-toggle="modal" data-target="#settings">
+			                        <i class="ri-stock-fill"></i> <span> Settings </span>
 			                    </a>
 
 			                </li>
-			                <li> <a href="javascript: void(0)">
-			                        <i class="ri-stock-line"></i> <span> Settings </span>
-			                    </a>
+                      <li> <a href="javascript: void(0)" data-toggle="modal" data-target="#mintpass">
+                              <i class="ri-magic-fill"></i> <span> Mint Pass </span>
+                          </a>
 
-			                </li>
-
-			            </ul>        </div>
+                      </li>
+			            </ul>
+              </div>
 			    </div>
 			</div>
 <div class="container">
@@ -111,14 +343,14 @@
 			        							<div class="badge">
 			        								<img src="assets/img/icons/Badge.svg" alt="">
 			        							</div>
-			        							<a href="Profile.html">
+			        							<a href="javascript: void(0)">
 			        								<img src="assets/img/avatars/avatar_1.png" alt="Avatar" class="avatar avatar-md">
 			        							</a>
 			        						</div>
 			        						<div>
 			        							<p class="color_black">Bid accepted <span class="color_brand">1
 			        									ETH</span> by <a class="color_black txt
-			        									_bold" href="Profile.html">ayoub</a></p>
+			        									_bold" href="javascript: void(0)">ayoub</a></p>
 			        							<span class="date color_text">28/06/2021, 12:08</span>
 			        						</div>
 			        					</div>
@@ -129,14 +361,14 @@
 			        							<div class="badge">
 			        								<img src="assets/img/icons/Badge.svg" alt="">
 			        							</div>
-			        							<a href="Profile.html">
+			        							<a href="javascript: void(0)">
 			        								<img src="assets/img/avatars/avatar_2.png" alt="Avatar" class="avatar avatar-md">
 			        							</a>
 			        						</div>
 			        						<div>
 			        							<p class="color_black">Bid accepted <span class="color_brand">3
 			        									ETH</span> by <a class="color_black txt
-			        									_bold" href="Profile.html">monir</a></p>
+			        									_bold" href="javascript: void(0)">monir</a></p>
 			        							<span class="date color_text">22/05/2021, 12:08</span>
 			        						</div>
 			        					</div>
@@ -150,8 +382,8 @@
 			        			<div class="card_body space-y-10">
 
 			        				<div class="card_head">
-			        					<a href="Item-details.html">
-			        						<img src="{{data.image || 'assets/img/items/item_1.png'}}" alt="">
+			        					<a href="javascript: void(0)">
+			        						<img src="{{data.image || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCoL-8Yy9xsLfOJEHxweDzmN04hIDcPPu_goP1x23OXiKyknjv5dm5CNTJV1TpRkUcq8s&usqp=CAU'}}" alt="">
 			        					</a>
 
 			        					<a href="javascript: void(0)" class="likes space-x-3">

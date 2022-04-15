@@ -13,7 +13,7 @@
 
 												<input type="text" class="form-control" placeholder="1000" formControlName="quantity">
 											</form>
-											<a href="javascript: void(0)" class="btn btn-dark w-full" disable> reserve</a>
+											<a href="javascript: void(0)" class="btn btn-dark w-full" (click)="SET_IDS()"> reserve</a>
 									</div>
 							</div>
 					</div>
@@ -39,7 +39,7 @@
 						<img class="icon" src="assets/img/icons/cup_blue_256.png" alt="" style="width:auto; height:100px">
 						<div class="space-y-10">
 							<h5> Enable NFTea/TEA</h5>
-							<h6>nft contract can hold your TEA Tokens (as NFT brews)</h6>
+							<h6>nft contract can control your TEA Tokens</h6>
 							<div class="hr"></div>
 							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(1)">
 								Enable
@@ -52,7 +52,7 @@
 						<img class="icon" src="assets/img/icons/cup_mug_256.png" alt="" style="width:auto; height:100px">
 						<div class="space-y-10">
 							<h5> Enable Shop/TEA</h5>
-							<h6>shop contract can hold/move your TEA Tokens</h6>
+							<h6>shop contract can control your TEA Tokens</h6>
 
 							<div class="hr"></div>
 							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(2)">
@@ -66,7 +66,7 @@
 						<img class="icon" src="assets/img/icons/cup_peach_256.png" alt="" style="width:auto; height:100px">
 						<div class="space-y-10">
 							<h5> Enable Shop/NFT</h5>
-							<h6>shop contract can hold/move your nfts</h6>
+							<h6>shop contract can control your nfts</h6>
 
 							<div class="hr"></div>
 							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(3)">
@@ -80,7 +80,7 @@
 						<img class="icon" src="assets/img/logos/pot128.png" alt="" style="width:auto; height:100px">
 						<div class="space-y-10">
 							<h5> enable tea pass</h5>
-							<h6>tea pass can move your tea tokens</h6>
+							<h6>tea pass can control your tea tokens</h6>
 							<div class="hr"></div>
 							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(4)">
 								Enable
@@ -98,7 +98,7 @@
 						<img class="icon" src="assets/img/icons/cup_mug_256.png" alt="" style="width:auto; height:100px">
 						<div class="space-y-10">
 							<h5> Enable TeaPot/TEA </h5>
-							<h6>TeaPot can hold/Move your Tea Tokens</h6>
+							<h6>TeaPot can control your Tea Tokens</h6>
 							<div class="hr"></div>
 							<a class="btn btn-dark btn" href="javascript: void(0)" (click)="SET_APPROVE(5)">
 								Enable
@@ -163,7 +163,7 @@
 							<h5> Reserve Token ID's</h5>
 							<p class="color_text">minting regenrative NFT's?</p>
 							<div class="hr"></div>
-							<a class="btn btn-white btn" href="javascript: void(0)" disable>
+							<a class="btn btn-dark btn" href="javascript: void(0)" data-toggle="modal" data-target="#set_ids" >
 								Reserve
 							</a>
 						</div>

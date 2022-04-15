@@ -1,6 +1,12 @@
 [
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_nftea",
+				"type": "address"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
 	},
@@ -301,33 +307,7 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_token",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_nftea",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_teapass",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_teashop",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_fees",
-				"type": "address"
-			}
-		],
+		"inputs": [],
 		"name": "SET_ADDRESSES",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -498,6 +478,11 @@
 				"internalType": "address",
 				"name": "_nftcontract",
 				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_operator",
+				"type": "address"
 			}
 		],
 		"name": "approveVault1155",
@@ -515,6 +500,11 @@
 			{
 				"internalType": "address",
 				"name": "_token",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_operator",
 				"type": "address"
 			}
 		],
@@ -930,6 +920,35 @@
 		],
 		"name": "removeVaultBNB",
 		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_nft",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_vnft",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_vnftContract",
+				"type": "address"
+			}
+		],
+		"name": "remveVaultNFT",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},

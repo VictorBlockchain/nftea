@@ -296,6 +296,8 @@ interface IERC1155 is IERC165 {
     function _N2_V(uint256 _nft) external returns(address);
     function getIPFS(uint256 _nft) external returns(string memory);
     function getVault(uint256 _nft) external returns(address, uint256);
+    function getADDRESSES() external returns(address,address,address,address,address,address,address);
+
 }
 
 // File: contracts/TeaShop.sol
@@ -421,6 +423,43 @@ contract TEA_SHOP {
         address _buyer,
         uint256 _nft
         );
+
+        struct AUCTION {
+
+          uint256 id;
+          uint256 quantity;
+          uint256 royalty;
+          uint256 auctionEnd;
+          uint256 minPrice;
+          uint256 buyNowPrice;
+          uint256 bidQuantity;
+          uint256 highestBid;
+          address highestBidder;
+          address seller;
+          address nftCreator;
+          address[] partners;
+          uint256[] sips;
+          bool active;
+          address[] taxPartners;
+          uint256[] taxSips;
+          uint256 nft;
+          uint256 market;
+
+        }
+        AUCTION[] public auctions;
+
+        struct SHOP{
+
+          uint256 id;
+          address owner;
+          string name;
+          uint32 active;
+          uint256 rating;
+          address[] taxPartners;
+          uint256[] taxSips;
+
+        }
+
   mapping(uint256=>AUCTION) public auction;
   mapping(uint256=>mapping(address=>AUCTION)) public nftToHostToAuction;
   mapping(uint256=>SHOP) public idToShop;
@@ -442,6 +481,8 @@ contract TEA_SHOP {
   mapping(uint256=>address) public auctionToHost;
   mapping(uint256=>uint256) public auctionToNFT;
   mapping(address=>uint256) public userToClearAuctions;
+  mapping(uint256=>mapping(uint256=>uint256)) public marketToAuctionsIndex;
+  mapping(address=>mapping(uint256=>uint256)) public sellerToAuctionsIndex;
 
   uint256 auctionId;
   uint256 shopId;
@@ -454,44 +495,9 @@ contract TEA_SHOP {
   address public FEEADDRESS;
   address public TEAPASS;
 
-  struct AUCTION {
+  constructor(address _nftea){
 
-    uint256 id;
-    uint256 quantity;
-    uint256 royalty;
-    uint256 auctionEnd;
-    uint256 minPrice;
-    uint256 buyNowPrice;
-    uint256 bidQuantity;
-    uint256 highestBid;
-    address highestBidder;
-    address seller;
-    address nftCreator;
-    address[] partners;
-    uint256[] sips;
-    bool active;
-    address[] taxPartners;
-    uint256[] taxSips;
-    uint256 nft;
-    uint256 market;
-
-  }
-  AUCTION[] public auctions;
-
-  struct SHOP{
-
-    uint256 id;
-    address owner;
-    string name;
-    uint32 active;
-    uint256 rating;
-    address[] taxPartners;
-    uint256[] taxSips;
-
-  }
-
-  constructor(){
-
+    NFTEA = _nftea;
     auctionId = 0;
     shopId = 0;
     isAdmin[msg.sender] = true;
@@ -531,14 +537,15 @@ contract TEA_SHOP {
     }
   }
 
-  function setAddress(address _teapass, address _nftea, address _teapot, address _token, address _fee) public {
+  function setAddress() public {
 
       require(isAdmin[msg.sender], 'you are not an admin');
+      (address _token,,address _teapot,address _teapass,,address _fees,) = IERC1155(NFTEA).getADDRESSES();
+
       TEAPASS = _teapass;
-      NFTEA = _nftea;
       TEAPOT = _teapot;
       TOKEN = _token;
-      FEEADDRESS = _fee;
+      FEEADDRESS = _fees;
 
 
   }
@@ -584,14 +591,14 @@ contract TEA_SHOP {
       market:_market
 
     });
-
+    auction[auctionId] = save;
     nftToHostToAuction[_nft][msg.sender] = save;
     marketToAuctions[_market].push(auctionId);
+    marketToAuctionsIndex[_market][auctionId] = marketToAuctions[_market].length - 1;
+    sellerToAuctions[msg.sender].push(auctionId);
+    sellerToAuctionsIndex[msg.sender][auctionId] = sellerToAuctions[msg.sender].length -1;
     auctionToHost[auctionId] = msg.sender;
     auctionToNFT[auctionId] = _nft;
-    auctions.push(save);
-    auction[auctionId] = nftToHostToAuction[_nft][msg.sender];
-    sellerToAuctions[msg.sender].push(auctionId);
     IERC1155(NFTEA).safeTransferFrom(msg.sender,address(this),_nft,_quantity,'');
     IERC1155Receiver(address(this)).onERC1155Received(NFTEA,msg.sender,_nft,_quantity,'');
     if(_quantity==1){
@@ -610,30 +617,36 @@ contract TEA_SHOP {
 
   }
 
+  function GET_HOST_AUCTIONS(address _host) public view returns(uint256[] memory){
+
+    return sellerToAuctions[_host];
+
+  }
+
   function GET_AUCTIONS(uint256 _market) public view returns(uint256[] memory){
 
     return marketToAuctions[_market];
 
   }
 
-  function CLEAR_AUCTIONS(uint256 _market) public {
-
-    for (uint256 i = 0; i < marketToAuctions[_market].length; i++) {
-
-      address host = auctionToHost[marketToAuctions[_market][i]];
-      uint256 nft = auctionToNFT[marketToAuctions[_market][i]];
-      if(!nftToHostToAuction[nft][host].active){
-        delete marketToAuctions[_market][i];
-      }
-    }
-    if(block.timestamp>userToClearAuctions[msg.sender]){
-
-      uint256 powerUp = 500*10**9;
-      IERC1155(TEAPASS).setPower(msg.sender,powerUp,1);
-      userToClearAuctions[msg.sender] = block.timestamp + 60 minutes;
-    }
-
-  }
+  // function CLEAR_AUCTIONS(uint256 _market) public {
+  //
+  //   for (uint256 i = 0; i < marketToAuctions[_market].length; i++) {
+  //
+  //     address host = auctionToHost[marketToAuctions[_market][i]];
+  //     uint256 nft = auctionToNFT[marketToAuctions[_market][i]];
+  //     if(!nftToHostToAuction[nft][host].active){
+  //       delete marketToAuctions[_market][i];
+  //     }
+  //   }
+  //   if(block.timestamp>userToClearAuctions[msg.sender]){
+  //
+  //     uint256 powerUp = 500*10**9;
+  //     IERC1155(TEAPASS).setPower(msg.sender,powerUp,1);
+  //     userToClearAuctions[msg.sender] = block.timestamp + 60 minutes;
+  //   }
+  //
+  // }
 
   function SET_SHOP(string memory name, address[] memory taxPartners, uint256[] memory taxSips) public{
 
@@ -783,6 +796,8 @@ contract TEA_SHOP {
       require(checkSuccess(), "End auction transfer failed");
       nftToHostToAuction[_nft][_host].active = false;
       auction[nftToHostToAuction[_nft][_host].id].active = false;
+      delete sellerToAuctions[_host][sellerToAuctionsIndex[_host][nftToHostToAuction[_nft][_host].id]];
+      delete marketToAuctions[nftToHostToAuction[_nft][_host].market][marketToAuctionsIndex[nftToHostToAuction[_nft][_host].market][nftToHostToAuction[_nft][_host].id]];
       emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
 
      }
@@ -867,6 +882,8 @@ contract TEA_SHOP {
         nftToHostToAuction[_nft][_host].active = false;
         auction[nftToHostToAuction[_nft][_host].id].active = false;
         nftToHostToAuction[_nft][_host].auctionEnd = block.timestamp;
+        delete sellerToAuctions[msg.sender][nftToHostToAuction[_nft][_host].id];
+        delete marketToAuctions[nftToHostToAuction[_nft][_host].market][nftToHostToAuction[_nft][_host].id];
         emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
 
       }else{

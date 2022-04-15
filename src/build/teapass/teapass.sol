@@ -233,7 +233,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     }
 
     function setAdmin (address _admin) public {
-      require(isA[msg.sender], 'you are not an admin');
+      require(isA[msg.sender], 'you are not an admin tea pass');
       isA[_admin] = true;
     }
     function allowConnections(uint256 _nft, address[] memory _cohosts, uint256[] memory _sips) public {
@@ -293,7 +293,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     }
     function setAddress(address _teashop, address _nftea, address _teapot, address _token) public {
 
-        require(isA[msg.sender], 'you are not an admin');
+        require(isA[msg.sender], 'you are not an admin tea pass');
         TEASHOP = _teashop;
         NFTEA = _nftea;
         TEAPOT = _teapot;
@@ -305,13 +305,13 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     }
     function setContract(address _contract) public {
 
-        require(isA[msg.sender], 'you are not an admin');
+        require(isA[msg.sender], 'you are not an admin tea pass');
         isC[_contract] = true;
 
     }
     function setPowerAdmin(uint256 _powermul, uint256 _upgradenft, uint256 _upgradepower) public {
 
-        require(isA[msg.sender], 'you are not an admin');
+        require(isA[msg.sender], 'you are not an admin tea pass');
         powerMul = _powermul;
         upgradePowerNFT = _upgradenft;
         upgradePower = _upgradepower*10**9;
@@ -319,7 +319,7 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     }
     function setPower(address _collector, uint256 _value, uint256 _type) public returns(bool){
 
-      require(isC[msg.sender] || isA[msg.sender], ' you are not that cool');
+      require(isC[msg.sender] || isA[msg.sender], ' you are not that cool tea pass');
       uint256 _pwr = _value*10**9;
       if(_type==1){
 

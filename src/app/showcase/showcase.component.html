@@ -54,7 +54,7 @@
 
 														<div class="modal-dialog modal-dialog-centered" role="document">
 																<div class="modal-content">
-																	<div class="modal-body space-y-20 p-40">
+																	<div class="modal-body space-y-20 p-40" *ngIf="NFT">
 																		<form [formGroup]="_redeem">
 																			<h3 class="mt-10 text-center">Redeem Coupon NFT</h3>
 																			<p class="mt-10 mb-10 text-center dashed_box bg_white">You have {{NFT.redeemsLeft}} redeems left</p>
@@ -169,7 +169,7 @@
 			            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			                <span aria-hidden="true">×</span>
 			            </button>
-			            <div class="modal-body space-y-20 p-40" *ngIf="NFT.auction && NFT.auction.id">
+			            <div class="modal-body space-y-20 p-40" *ngIf="NFT && NFT.auction && NFT.auction.id">
                     <form [formGroup]="_bid">
 			                <h3 class="mb-10 text-center">Place Your Bid</h3>
 											<p class="mb-10 text-center">You must bid at least <span class="color_black">{{minBid(NFT.auction.highestBid/1000000000)}} TEA</span></p>
@@ -407,7 +407,7 @@
 								</div>
 							</div>
 
-							<div class="dashed_box bg_white mt-30" *ngIf="!showPowerUpgrade && nft_id==1 && NFT.quantityIown<1">
+							<div class="dashed_box bg_white mt-30" *ngIf="!showPowerUpgrade && nft_id!=1">
 								<div class="row mt-20">
 									<h4 class="text-center">Brew pot</h4>
 									<p class="text-center">This NFT gets you access to the assets in this brew pot address</p>
@@ -644,7 +644,10 @@
 										<div class="col-lg-6">
 											<div class="space-y-5">
 												<p class="color_text">Minimum bid</p>
-												<h4>{{NFT.auction.highestBid/1000000000 | number:'1.0-9'}} <span class="txt_sm color_text">
+												<h4 *ngIf="NFT.auction.minPrice==0">$0/<span class="txt_sm color_text">
+														Buy Only</span></h4>
+
+												<h4 *ngIf="NFT.auction.minPrice>0">{{NFT.auction.highestBid/1000000000 | number:'1.0-9'}} <span class="txt_sm color_text">
 														TEA/ ${{(NFT.auction.highestBid/1000000000)*PRICES | number:'1.0-2'}}</span></h4>
 											</div>
 										</div>

@@ -1529,6 +1529,8 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     address public TEAPASS;
     address public TEASHOP;
     address public TOKEN;
+    address public HONEY;
+    address public FEES;
     uint256 public _Nid = 0;
     uint256 public _Aid = 0;
     uint256 public mintPoints = 0;
@@ -1574,13 +1576,15 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function SET_ADDRESSES(address _token, address _teapot, address _teapass, address _teashop ) public {
+    function SET_ADDRESSES(address _token, address _teapot, address _teapass, address _teashop,address _honey, address _fees ) public {
       require(isA[msg.sender],'you are not an admin');
 
             TEAPOT = _teapot;
             TEAPASS = _teapass;
             TOKEN = _token;
             TEASHOP = _teashop;
+            HONEY = _honey;
+            FEES = _fees;
             isC[TEAPOT] = true;
             isC[TEAPASS] = true;
             isC[TEASHOP] = true;
@@ -1604,11 +1608,11 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       return _C2_As[_collector];
 
     }
-    // function getCollectorNfts(address _collector) public view returns(uint256[] memory){
+    function getADDRESSES() public view returns(address, address, address, address,address,address,address){
 
-    //   return _C2_Ns[_collector];
+      return (TOKEN,TEASHOP,TEAPOT,TEAPASS,HONEY,FEES,address(this));
 
-    // }
+    }
 
     function getAlBUMS(address _contract) public view returns(uint256[] memory){
 
@@ -1686,11 +1690,11 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setURI(string memory newuri) public {
+    // function setURI(string memory newuri) public {
 
-        require(isA[msg.sender], 'you are not an admin');
-        _setURI(newuri);
-    }
+    //     require(isA[msg.sender], 'you are not an admin');
+    //     _setURI(newuri);
+    // }
 
     function mint(uint256 amount, bytes memory data, string memory _ipfs,uint256 royalty, address[] memory partners, uint256[] memory sips, string memory story,uint256 _album,address _creator,uint256 _useThisId,uint256 _mintPass,bool _canWrap) public
     {
@@ -1829,14 +1833,6 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       require(balanceOf(msg.sender,_nft) >=_quantity, 'You do not own that many of these nft');
       safeTransferFrom(msg.sender,_to,_nft,_quantity,'');
       require(checkSuccess(), 'error gifting');
-
-      if(_to!=burn){
-        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
-        if(_a>0){
-
-                i1155(TEAPASS).setPower(msg.sender,giftPoints,1);
-              }
-      }
       emit gift(msg.sender,_nft);
     }
 

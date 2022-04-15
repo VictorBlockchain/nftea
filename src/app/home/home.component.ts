@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit {
       this.user = event
       // alert(this.user);
       this.connected = true;
-      this.start(1);
+      this.start(3);
       await this.GET_HONEY_POT();
     }else{
       this.connected = false;
@@ -114,7 +114,7 @@ export class HomeComponent implements OnInit {
 
     console.log("starting " + _market);
     //get profile from database
-    this.service.LISTEN();
+    this.service.LISTENSHOP();
     const _uProfile = Moralis.Object.extend("profile");
     let _query = new Moralis.Query(_uProfile);
     _query.equalTo('user',this.user);
@@ -126,51 +126,56 @@ export class HomeComponent implements OnInit {
       }, 3000);
     }
 
-    const _Auctions = Moralis.Object.extend("auction");
-    let _query2 = new Moralis.Query(_Auctions);
-    _query2.equalTo('active', 1);
-    _query2.equalTo('market', _market);
-    let results2 = await _query2.find();
-    let auction:any = results2;
-    // console.log(auction);
-    for (let i=0; i<auction.length; i++){
-      console.log(auction[i].get('seller'), auction[i].get('nft'))
-      this.service.GET_AUCTION(auction[i].get('nft'),auction[i].get('seller'))
-      .then(async(res:any)=>{
-        console.log(res);
-      })
-    }
+    // const _Auctions = Moralis.Object.extend("auction");
+    // let _query2 = new Moralis.Query(_Auctions);
+    // _query2.equalTo('active', 1);
+    // _query2.equalTo('market', _market);
+    // let results2 = await _query2.find();
+    // let auction:any = results2;
+    // // console.log(auction);
+    // for (let i=0; i<auction.length; i++){
+    //   console.log(auction[i].get('seller'), auction[i].get('nft'))
+    //   this.service.GET_AUCTION(auction[i].get('nft'),auction[i].get('seller'))
+    //   .then(async(res:any)=>{
+    //     console.log(res);
+    //   })
+    // }
 
-    // this.service.GET_AUCTION_NFTS(this.user,_market)
-    // .then(async(res:any)=>{
-    //   let auction:any = res[1];
-    //   //console.log(res);
-    //   // this.NFT = [];
-    //   for (let i = 0; i < auction.length; i++) {
-    //     const auctionID = auction[i];
-    //
-    //     this.service.GET_AUCTION_HOST(auctionID)
-    //     .then(async(res:any)=>{
-    //       let host = res.host;
-    //       let nft = res.nft;
-    //
-    //       this.AUCTION = await this.service.GET_AUCTION(host,nft);
-    //       let ipfs = await axios.get(this.AUCTION[1]);
-    //       ipfs.data.nft_id = nft;
-    //       ipfs.data.auction = this.AUCTION;
-    //       ipfs.data.auction.seller = host;
-    //       this.NFT.push(ipfs.data);
-    //       // console.log(this.NFT);
-    //     })
-    //
-    //     // let ipfs = await axios.get(auctionID.token_uri);
-    //     // this.NFT.push(ipfs.data);
-    //     // console.log(this.NFT);
-    //
-    //   }
-    //   this.markets(_market);
-    //
-    // })
+    this.service.GET_AUCTION_NFTS(this.user,_market)
+    .then(async(res:any)=>{
+      let auction:any = res;
+      // console.log(res);
+      // this.NFT = [];
+      for (let i = 0; i < auction.length; i++) {
+        const auctionID = auction[i];
+
+        this.service.GET_AUCTION_HOST(auctionID)
+        .then(async(res:any)=>{
+          console.log(res);
+
+          let host = res.host;
+          let nft = res.nft;
+          if(nft>0){
+            this.AUCTION = await this.service.GET_AUCTION(host,nft);
+            // console.log(this.AUCTION);
+            let ipfs = await axios.get(this.AUCTION[1]);
+            ipfs.data.nft_id = nft;
+            ipfs.data.auction = this.AUCTION;
+            ipfs.data.auction.seller = host;
+            this.NFT.push(ipfs.data);
+            console.log(this.NFT);            
+          }
+
+        })
+
+        // let ipfs = await axios.get(auctionID.token_uri);
+        // this.NFT.push(ipfs.data);
+        // console.log(this.NFT);
+
+      }
+      this.markets(_market);
+
+    })
 
 
   }
@@ -246,7 +251,7 @@ export class HomeComponent implements OnInit {
         this.teaBalance = res/1000000000;
       // console.log(this.teaBalance);
     })
-    this.PRICE();
+    //this.PRICE();
   }
   async PRICE(){
     let price:any = await  this.service.GET_PRICE();

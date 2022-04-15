@@ -1,4 +1,4 @@
-
+// SPDX-License-Identifier: MIT
 // File: @openzeppelin/contracts/utils/Context.sol
 
 
@@ -1349,6 +1349,8 @@ interface i1155 is IERC1155{
     function setPower(address _user,uint256 _power, uint256 _type) external returns (bool);
     function _N2_V(uint256 _nft) external returns(address);
     function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
+    function getADDRESSES() external returns(address,address,address,address,address,address,address);
+
 
 }
 library SafeMath {
@@ -1455,15 +1457,17 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     address public TEASHOP = 0x34BdA9f3B4E9322098040FB4C25364998934A3E0;
     uint256 honeyId;
 
-    constructor() ERC1155("https://nftea.app/nfea/{id}.json") {
+    constructor(address _nftea) ERC1155("https://nftea.app/nfea/{id}.json") {
 
+      NFTEA = _nftea;
       isA[msg.sender]= true;
     }
 
-    function setAddress(address _teapass, address _nftea, address _teapot, address _token, address _teashop) public {
+    function setAddress() public {
 
         require(isA[msg.sender], 'you are not an admin');
-        NFTEA = _nftea;
+        (address _token,address _teashop,address _teapot,address _teapass,,,) = i1155(NFTEA).getADDRESSES();
+
         TEAPOT = _teapot;
         TEATOKEN = _token;
         TEASHOP = _teashop;

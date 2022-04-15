@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TeapassComponent } from './cafe.component';
+import { TeapassComponent } from './teapass.component';
 
 describe('TeapassComponent', () => {
   let component: TeapassComponent;

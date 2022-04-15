@@ -104,7 +104,7 @@ export class ShowcaseComponent implements OnInit {
 
   async run(){
 
-    this.service.LISTEN();
+    this.service.LISTENSHOP();
     this.NFT = [];
     this.SELLER = {};
     this.COLLECTOR = {};
@@ -150,7 +150,7 @@ export class ShowcaseComponent implements OnInit {
         this.service.GET_AUCTION(this.nft_owner,this.nft_id)
         .then(async(res:any)=>{
           if(res){
-            // console.log(res);
+            console.log(res);
             ipfs.data.teapot = res[3];
             ipfs.data.brewDate = res[4];
             ipfs.data.bidAccepted = res[2];
@@ -583,7 +583,7 @@ export class ShowcaseComponent implements OnInit {
         confirmButtonText: 'Close'
       })
 
-    }else if (this._auction.controls.buyNowValue.value <= this._auction.controls.value.value && this._auction.controls.buyNowValue.value!=0){
+    }else if (this._auction.controls.buyNowValue.value <= this._auction.controls.value.value && this._auction.controls.value.value!=0){
 
       Swal.fire({
         title: 'Error!',
@@ -596,8 +596,8 @@ export class ShowcaseComponent implements OnInit {
 
       let buyNow = this._auction.controls.buyNowValue.value;
       let minPrice = this._auction.controls.value.value;
-
-      this.service.SET_AUCTION(this.user,this.nft_id,buyNow,minPrice,this.NFT.partners,this.NFT.sips,this._auction.controls.quantity.value,this.NFT.royalty,this.NFT.shop.taxPartners,this.NFT.shop.taxSips,this.NFT.creator,this._auction.controls.market.value)
+      console.log(this.NFT)
+      this.service.SET_AUCTION(this.user,this.nft_id,buyNow,minPrice,this.NFT.partners,this.NFT.sips,this._auction.controls.quantity.value,this.NFT.royalty,this.NFT.shop.taxPartners,this.NFT.shop.taxSips,this.NFT.partners[0],this._auction.controls.market.value)
       .then((data:any)=>{
       // console.log(data)
         if(data.success){
@@ -700,8 +700,9 @@ export class ShowcaseComponent implements OnInit {
 
     })
   }
+
   private SET_HONEY(){
-    if(this.USER.power<1000000*10**9){
+    if(this.COLLECTOR.power<1000*10**9){
 
       Swal.fire({
         title: 'Error!',

@@ -59,12 +59,12 @@ async GET_WEB3(): Promise<any>{
         return res;
 
   }
-  async LISTEN(): Promise<any>{
-    console.log('listening')
+  async LISTENSHOP(): Promise<any>{
+    console.log('listening shop')
     await this.GET_WEB3();
     const contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
     contract.events.allEvents()
-    .on('data',async (event) => {
+    .on('data', (event) => {
       //console.log(event)
       let _user = localStorage.getItem('user');
       if(event.event=='auctionListed'){
@@ -77,14 +77,16 @@ async GET_WEB3(): Promise<any>{
           _query.equalTo('seller',_seller);
           _query.equalTo('nft', _nft);
           _query.equalTo('pending', 1);
-          let results = await _query.first();
-          if(results){
-            results.set('active',1);
-            resutls.set('pending',0);
-            results.save();
+          _query.first()
+          .then((results:any)=>{
+            if(results){
 
-          }
+              results.set('active',1);
+              resutls.set('pending',0);
+              results.save();
 
+            }
+          })
       }
       if(event.event=='auctionClosed'){
 
@@ -96,14 +98,16 @@ async GET_WEB3(): Promise<any>{
           _query.equalTo('seller',_seller);
           _query.equalTo('nft', _nft);
           _query.equalTo('active', 1);
-          let results = await _query.first();
-          if(results){
-            results.set('active',0);
-            resutls.set('pending',0);
-            results.save();
+          _query.first()
+          .then((results:any)=>{
+            if(results){
 
-          }
+              results.set('active',0);
+              resutls.set('pending',0);
+              results.save();
 
+            }
+          })
       }
       if(event.event=='saleMade'){
 
@@ -126,6 +130,28 @@ async GET_WEB3(): Promise<any>{
     })
 
   }
+
+  async LISTENTEAPASS(): Promise<any>{
+    console.log('listening tea pass')
+    await this.GET_WEB3();
+    const contract = new this.web3.eth.Contract(ABITEAPASS, TEAPASS);
+    contract.events.allEvents()
+    .on('data', (event) => {
+
+    })
+  }
+
+  async LISTENTEAPOT(): Promise<any>{
+    console.log('listening tea pass')
+    await this.GET_WEB3();
+    const contract = new this.web3.eth.Contract(ABITEAPOT, TEAPOT);
+    contract.events.allEvents()
+    .on('data', (event) => {
+
+    })
+  }
+
+
   private pop(type,message){
     let title;
     if(type=='error'){
@@ -563,7 +589,7 @@ async GET_WEB3(): Promise<any>{
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:NFTEA,
-          gas: 1000000,
+          gas: 18000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
 
@@ -1319,7 +1345,7 @@ async GET_WEB3(): Promise<any>{
         let _token;
         await this.GET_WEB3();
         const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
-          name: "SET_HONEY",
+          name: "addHoney",
           type: "function",
           inputs: [{
             type:'uint256',
@@ -1357,6 +1383,10 @@ async GET_WEB3(): Promise<any>{
     return new Promise(async (resolve, reject) => {
       try {
         console.log("setting bid " + _value);
+        let m:any = new Big(_value);
+        _value = m.toFixed(0);
+        //_value = this.web3.utils.toWei(m.toString(), 'nanoether');
+        console.log(_value)
         await this.GET_WEB3();
         const encodedFunction = this.web3.eth.abi.encodeFunctionCall({
           name: "SET_BID",
@@ -1512,7 +1542,7 @@ async GET_WEB3(): Promise<any>{
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to:NFTEA,
-          gas: 2000000,
+          gas: 1000000,
           data:encodedFunction
         }).on('transactionHash',(hash)=>{
 
@@ -1912,7 +1942,7 @@ async GET_WEB3(): Promise<any>{
 
         await this.GET_WEB3();
         let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
-        let result = await contract.methods.GET_AUCTION(_auction).call();
+        let result = await contract.methods.GET_AUCTIONS(_market).call();
 
         resolve(result);
 
@@ -1951,7 +1981,7 @@ async GET_WEB3(): Promise<any>{
 
         await this.GET_WEB3();
         let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
-        let result = await contract.methods.GET_AUCTIONS(_user,0).call();
+        let result = await contract.methods.GET_HOST_AUCTIONS(_user).call();
 
         resolve(result);
 
@@ -2101,7 +2131,7 @@ async GET_WEB3(): Promise<any>{
           /// approves the nft to spend tea tokens on users behalf
 
           //let m:any = new Big(_value*1000000000000);
-          let m:any = new Big(30000000000000);
+          let m:any = new Big(900000000000000000000000000000);
           m = m.toFixed(0);
           _value = this.web3.utils.toWei(m.toString(), 'nanoether');
 
