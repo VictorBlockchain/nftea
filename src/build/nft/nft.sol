@@ -1561,7 +1561,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         album.push(save);
         (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
         if(_a>0){
-          uint256 _p = 500*10**9;
+          uint256 _p = 5000;
           i1155(TEAPASS).setPower(msg.sender,_p,1);
 
         }

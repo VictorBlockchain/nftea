@@ -1466,12 +1466,17 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     function setAddress() public {
 
         require(isA[msg.sender], 'you are not an admin');
-        (address _token,address _teashop,address _teapot,address _teapass,,,) = i1155(NFTEA).getADDRESSES();
+
+        (address _token,address _teashop,address _teapot,address _teapass,,,address _nftea) = i1155(NFTEA).getADDRESSES();
 
         TEAPOT = _teapot;
         TEATOKEN = _token;
         TEASHOP = _teashop;
         TEAPASS = _teapass;
+        if(_nftea!=NFTEA){
+          NFTEA = _nftea;
+          isC[NFTEA] = true;
+        }
         honeyId = 0;
 
     }
@@ -1506,7 +1511,7 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
           });
 
           _H2_stir[honeyId].push(save);
-          i1155(TEAPASS).setPower(msg.sender,500*10**9,2);
+          i1155(TEAPASS).setPower(msg.sender,5000,2);
         }
     }
 

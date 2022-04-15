@@ -1563,10 +1563,14 @@ contract TEAPASS {
 
         require(isA[msg.sender], 'you are not an admin');
 
-        (address _token,address _teashop,address _teapot,,,,) = i1155(NFTEA).getADDRESSES();
+        (address _token,address _teashop,address _teapot,,,,address _nftea) = i1155(NFTEA).getADDRESSES();
         TOKEN = _token;
         TEASHOP = _teashop;
         TEAPOT = _teapot;
+        if(_nftea!=NFTEA){
+          NFTEA = _nftea;
+          isC[NFTEA] = true;
+        }
         isC[TEASHOP] = true;
         isC[TEAPOT] = true;
 

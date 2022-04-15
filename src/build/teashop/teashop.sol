@@ -480,7 +480,6 @@ contract TEA_SHOP {
   mapping(uint256=>uint256[]) public marketToAuctions;
   mapping(uint256=>address) public auctionToHost;
   mapping(uint256=>uint256) public auctionToNFT;
-  mapping(address=>uint256) public userToClearAuctions;
   mapping(uint256=>mapping(uint256=>uint256)) public marketToAuctionsIndex;
   mapping(address=>mapping(uint256=>uint256)) public sellerToAuctionsIndex;
 
@@ -540,12 +539,15 @@ contract TEA_SHOP {
   function setAddress() public {
 
       require(isAdmin[msg.sender], 'you are not an admin');
-      (address _token,,address _teapot,address _teapass,,address _fees,) = IERC1155(NFTEA).getADDRESSES();
+      (address _token,,address _teapot,address _teapass,,address _fees,address _nftea) = IERC1155(NFTEA).getADDRESSES();
 
       TEAPASS = _teapass;
       TEAPOT = _teapot;
       TOKEN = _token;
       FEEADDRESS = _fees;
+      if(_nftea!=NFTEA){
+        NFTEA = _nftea;
+      }
 
 
   }
@@ -628,25 +630,6 @@ contract TEA_SHOP {
     return marketToAuctions[_market];
 
   }
-
-  // function CLEAR_AUCTIONS(uint256 _market) public {
-  //
-  //   for (uint256 i = 0; i < marketToAuctions[_market].length; i++) {
-  //
-  //     address host = auctionToHost[marketToAuctions[_market][i]];
-  //     uint256 nft = auctionToNFT[marketToAuctions[_market][i]];
-  //     if(!nftToHostToAuction[nft][host].active){
-  //       delete marketToAuctions[_market][i];
-  //     }
-  //   }
-  //   if(block.timestamp>userToClearAuctions[msg.sender]){
-  //
-  //     uint256 powerUp = 500*10**9;
-  //     IERC1155(TEAPASS).setPower(msg.sender,powerUp,1);
-  //     userToClearAuctions[msg.sender] = block.timestamp + 60 minutes;
-  //   }
-  //
-  // }
 
   function SET_SHOP(string memory name, address[] memory taxPartners, uint256[] memory taxSips) public{
 
@@ -874,16 +857,16 @@ contract TEA_SHOP {
     }
 
       IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder,_nft,quantity,'');
-      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].highestBidder,10000*10**9,1);
-      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,300*10**9,1);
+      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].highestBidder,150000,1);
+      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,100000,1);
       IERC20(TOKEN).setIsWalletLimitExempt(nftToHostToAuction[_nft][_host].highestBidder,true);
       nftToHostToBidderAccepted[_nft][_host][nftToHostToAuction[_nft][_host].highestBidder] = true;
-      if(nftToHostToAuction[_nft][_host].quantity<1){
+      if(nftToHostToAuction[_nft][_host].quantity.sub(1)<1){
         nftToHostToAuction[_nft][_host].active = false;
         auction[nftToHostToAuction[_nft][_host].id].active = false;
         nftToHostToAuction[_nft][_host].auctionEnd = block.timestamp;
-        delete sellerToAuctions[msg.sender][nftToHostToAuction[_nft][_host].id];
-        delete marketToAuctions[nftToHostToAuction[_nft][_host].market][nftToHostToAuction[_nft][_host].id];
+        delete sellerToAuctions[_host][sellerToAuctionsIndex[_host][nftToHostToAuction[_nft][_host].id]];
+        delete marketToAuctions[nftToHostToAuction[_nft][_host].market][marketToAuctionsIndex[nftToHostToAuction[_nft][_host].market][nftToHostToAuction[_nft][_host].id]];
         emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
 
       }else{
