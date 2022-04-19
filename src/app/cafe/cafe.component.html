@@ -45,6 +45,25 @@
 				</div>
 		</div>
 </div>
+<div class="modal fade popup" id="allow_connections" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body space-y-20 p-40">
+						<form [formGroup]="_allow">
+
+							<h3 class="mt-10 text-center">Allow Connections</h3>
+							<p class="mt-10 mb-10 text-center dashed_box bg_white"><b>Allow others to connect to your teapass<br>if needed you can require viewers/listeners have one of your NFTs to connect</b></p>
+							<div class="space-y-10">
+									<span class="nameInput">NFT To Connect (leave blank if none)</span>
+									<input type="number" class="form-control" placeholder="112" formControlName="nft">
+							</div>
+
+							<a href="javascript: void(0)" class="btn btn-primary w-full mt-30" (click)="ALLOW_CONNECTIONS()"> Connect</a>
+							</form>
+					</div>
+				</div>
+		</div>
+</div>
 <div class="modal fade popup" id="disconnect" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 				<div class="modal-content">
@@ -71,6 +90,7 @@
 									</div>
 							</div>
 							<div class="col-lg-auto mt-10 text-center">
+								<a href="javascript: void(0)" class="btn btn-white btn-lg mr-2" data-toggle="modal" data-target="#allow_connections" *ngIf="user==host"> Allow Connections</a>
 								<a href="javascript: void(0)" class="btn btn-dark btn-lg mr-2" data-toggle="modal" data-target="#add_content" *ngIf="user==host"> Add Content</a>
 								<a href="javascript: void(0)" class="btn btn-dark btn-lg mr-2" data-toggle="modal" data-target="#disconnect" *ngIf="passConnected"> Disconnect</a>
 							<a href="javascript: void(0)" class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#connect" *ngIf="user!=host && !passConnected"> Connect Tea Pass</a>

@@ -1466,7 +1466,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       uint256 _wnft
 
     );
-    event gift(
+    event sendNFT(
       address _collector,
       uint256 _nft
     );
@@ -1558,7 +1558,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         save._creator = msg.sender;
         _allAlbums[address(this)].push(_Aid);
         _C2_As[msg.sender].push(_Aid);
-        album.push(save);
+        _A[_Aid] = save;
         (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
         if(_a>0){
           uint256 _p = 5000;
@@ -1828,12 +1828,12 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       return true;
     }
 
-    function GIFT(uint256 _nft, address _to, uint256 _quantity) public{
+    function SENDNFT(uint256 _nft, address _to, uint256 _quantity) public{
 
       require(balanceOf(msg.sender,_nft) >=_quantity, 'You do not own that many of these nft');
       safeTransferFrom(msg.sender,_to,_nft,_quantity,'');
-      require(checkSuccess(), 'error gifting');
-      emit gift(msg.sender,_nft);
+      require(checkSuccess(), 'error sending');
+      emit sendNFT(msg.sender,_nft);
     }
 
     function EDITNFT(uint _nft,string memory _story, uint256 _album) public{

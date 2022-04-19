@@ -698,18 +698,18 @@
 										</div>
 									</div>
 								</div>
-								<div class="d-flex space-x-20" *ngIf="NFT && NFT.auction && NFT.auction.id>0 && NFT.auction.active==false">
+								<div class="d-flex space-x-20" *ngIf="NFT && NFT.auction && NFT.auction.id>0 && NFT.auction.active==false && (NFT.auction.highestBidder==NFT.auction.seller)">
 									<p class="text-center">Auction Canceled</p>.
 								</div>
 
                 <div class="d-flex space-x-20" *ngIf="user!=nft_owner && NFT.auction && NFT.auction.nft>0">
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="HONEY_GIVEN"> Honey Added</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.auction.active==false && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller"> Auction Closed</a>
-									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#popup_honey" *ngIf="!HONEY_GIVEN && NFT.auction.active==true"> Honey</a>
+									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#popup_honey" *ngIf="!HONEY_GIVEN && NFT.auction.active==true"> Add Honey</a>
 									<a href="javascript: void(0)" class="btn btn-grad btn-lg" data-toggle="modal" data-target="#popup_bid" *ngIf="NFT && NFT.auction.highestBidder.toLowerCase()!=user && NFT.auction.active==true"> Place bid</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT && NFT.auction.highestBidder.toLowerCase()==user"> bid placed</a>
 								</div>
-								<div class="d-flex space-x-20" *ngIf="user!=nft_owner && NFT.auction && !NFT.auction.active">
+								<div class="d-flex space-x-20" *ngIf="user!=nft_owner && NFT.auction && !NFT.auction.active && NFT.auction.auctionEnd<1">
 
 									<p class="text-center">Item not being sold</p>
 								</div>
@@ -720,7 +720,7 @@
 
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#accept_bid" *ngIf="NFT && NFT.auction && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase() && NFT.auction.active==1 && NFT.bidAccepted==false && NFT.auction.highestBid<NFT.auction.buyNowPrice"> Accept Bid</a>
 									<a href="javascript: void(0)" class="btn btn-white btn-lg" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && NFT.auction.highestBidder.toLowerCase()!=NFT.auction.seller.toLowerCase()"> Auction Closed</a>
-									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user)"> Auction / Sell</a>
+									<a href="javascript: void(0)" class="btn btn-orange btn-lg" data-toggle="modal" data-target="#set_auction" *ngIf="NFT.shop && NFT.shop.id!=0 && NFT.auction && NFT.auction.active==false && (NFT.auction.seller=='0x0000000000000000000000000000000000000000' || toLower(NFT.auction.seller)==user) && NFT.auction.auctionEnd<1"> Auction / Sell</a>
 										<a href="javascript: void(0)" class="btn btn-grad btn-lg" data-toggle="modal" data-target="#wrap_nft" *ngIf="NFT.quantityIown>0 && NFT.quantity>1 && NFT.wrappedTo<1 && NFT.creator!=user"> Wrap NFT</a>
 
 									<a href="javascript: void(0)" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#create_shop" *ngIf="NFT.shop && NFT.shop.id==0"> Create Your Teashop</a>

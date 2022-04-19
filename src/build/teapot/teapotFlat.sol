@@ -1539,6 +1539,7 @@ using SafeMath for uint256;
     address public TOKEN;
     address public TEASHOP;
     address public FEEADDRESS;
+    address public HONEY;
     address public burn = 0x000000000000000000000000000000000000dEaD;
 
     constructor(address _nftea) ERC1155("https://nftea.app/nft/{id}.json") {
@@ -1668,18 +1669,21 @@ using SafeMath for uint256;
     function SET_ADDRESSES() public {
 
             require(isA[msg.sender],'you are not an admin');
-            (address _token,address _teashop,,address _teapass,,address _fees,address _nftea) = i1155(NFTEA).getADDRESSES();
+
+            (address _token,address _teashop,,address _teapass,address _honey,address _fees,address _nftea) = i1155(NFTEA).getADDRESSES();
 
             TEAPASS = _teapass;
             TOKEN = _token;
             TEASHOP = _teashop;
             FEEADDRESS = _fees;
+            HONEY = _honey;
             if(_nftea!=NFTEA){
               NFTEA = _nftea;
               isC[NFTEA] = true;
             }
             isC[TEAPASS] = true;
             isC[TEASHOP] = true;
+            isC[HONEY] = true;
 
     }
     function setAdmin(address _user, bool _A) public{

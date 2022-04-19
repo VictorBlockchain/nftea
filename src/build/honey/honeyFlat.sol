@@ -1450,14 +1450,14 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     mapping(address=>mapping(uint256=>uint256)) public _Coll2_N2_H;
     mapping(address=>bool) public isA;
 
-    address public TEAPOT = 0x3c6A3Bc046eBd8Db9160384872a872b35E08158f;
-    address public NFTEA =0xFc3F896DC83999A66B302785Eaf44A738E70294d;
-    address public TEAPASS = 0x7832714FCAC74fA7245d9866Aaa64275e50C0337;
-    address public TEATOKEN = 0xb4668238Acf0314A7b4e153368e479fCd2E09831;
-    address public TEASHOP = 0x34BdA9f3B4E9322098040FB4C25364998934A3E0;
+    address public TEAPOT;
+    address public NFTEA;
+    address public TEAPASS;
+    address public TEATOKEN;
+    address public TEASHOP;
     uint256 honeyId;
 
-    constructor(address _nftea) ERC1155("https://nftea.app/nfea/{id}.json") {
+    constructor(address _nftea) {
 
       NFTEA = _nftea;
       isA[msg.sender]= true;
@@ -1475,7 +1475,7 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         TEAPASS = _teapass;
         if(_nftea!=NFTEA){
           NFTEA = _nftea;
-          isC[NFTEA] = true;
+          isA[NFTEA] = true;
         }
         honeyId = 0;
 
@@ -1485,8 +1485,7 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       address _contract = i1155(NFTEA)._N2_V(_nft);
       require(_Coll2_N2_H[msg.sender][_nft]<1, 'you already added honey');
              (,,,uint256 _power,) = i1155(TEAPASS).getProfile(msg.sender);
-      require(_power>300000*10**9,'you do not have that much power');
-      _power = _power.mul(2);
+      require(_power>300000000000000,'you do not have that much power');
       uint256 bal = IERC20(TEATOKEN).balanceOf(TEAPOT);
       require(bal>=_power, 'teapot is low');
 
@@ -1526,32 +1525,6 @@ contract Honey is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     }
     function getStir(uint256 _honeyId) public view returns(STIR[] memory){
       return _H2_stir[_honeyId];
-    }
-
-    function setURI(string memory newuri) public onlyOwner {
-        _setURI(newuri);
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
-    }
-
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
-        public
-        onlyOwner
-    {
-        _mint(account, id, amount, data);
-    }
-
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        public
-        onlyOwner
-    {
-        _mintBatch(to, ids, amounts, data);
     }
 
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)

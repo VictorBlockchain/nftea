@@ -222,6 +222,25 @@ export class CafeComponent implements OnInit {
     })
   }
 
+  async ALLOW_CONNECTIONS(){
+    let nft = this._allow.controls.nft.value;
+    if(!nft){
+      nft = 0
+    }
+    this.service.TEAPASS_ALLOW_CONNECTIONS(this.user,nft)
+    .then(async(res:any)=>{
+      if(res.success){
+
+          this.pop('success', 'processing..');
+
+      }else{
+
+        this.pop('error', res.msg);
+
+      }
+    })
+  }
+
   async DISCONNECT(){
 
     this.service.TEAPASS_DISCONNECT(this.user)
@@ -277,6 +296,10 @@ createForm(){
     embed:[''],
     story:['']
 
+  });
+  this._allow = this.formBuilder.group({
+
+    nft: ['']
   });
 }
 

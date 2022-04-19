@@ -855,11 +855,14 @@ contract TEA_SHOP {
       PAY(_nft,nftToHostToAuction[_nft][_host].seller,_value);
 
     }
-
+      address buyer = nftToHostToAuction[_nft][_host].highestBidder;
+      if(buyer==nftToHostToAuction[_nft][_host].seller){
+        buyer = msg.sender;
+      }
       IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].highestBidder,_nft,quantity,'');
-      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].highestBidder,150000,1);
+      IERC1155(TEAPASS).setPower(buyer,150000,1);
       IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,100000,1);
-      IERC20(TOKEN).setIsWalletLimitExempt(nftToHostToAuction[_nft][_host].highestBidder,true);
+      IERC20(TOKEN).setIsWalletLimitExempt(buyer,true);
       nftToHostToBidderAccepted[_nft][_host][nftToHostToAuction[_nft][_host].highestBidder] = true;
       if(nftToHostToAuction[_nft][_host].quantity.sub(1)<1){
         nftToHostToAuction[_nft][_host].active = false;

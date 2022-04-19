@@ -116,8 +116,10 @@ export class ShowcaseComponent implements OnInit {
     let quantity;
     this.service.GET_NFT(this.nft_id,0)
     .then(async(jordi:any)=>{
-      // console.log(jordi)
-      let ipfs = await axios.get(jordi.ipfs);
+      let url = jordi.ipfs;
+      url = url.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
+      //console.log(url);
+      let ipfs = await axios.get(url);
       if(jordi.wrappedTo<1){
 
         ipfs.data.isCoupon = await this.service.GET_IS_COUPON(this.nft_id);
@@ -150,7 +152,7 @@ export class ShowcaseComponent implements OnInit {
         this.service.GET_AUCTION(this.nft_owner,this.nft_id)
         .then(async(res:any)=>{
           if(res){
-            console.log(res);
+            // console.log(res);
             ipfs.data.teapot = res[3];
             ipfs.data.brewDate = res[4];
             ipfs.data.bidAccepted = res[2];
@@ -211,7 +213,7 @@ export class ShowcaseComponent implements OnInit {
           if(this.nft_id==1){
             this.checkPowerUp();
           }
-          // console.log(this.NFT);
+          console.log(this.NFT);
         })
       })
 

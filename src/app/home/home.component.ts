@@ -158,12 +158,15 @@ export class HomeComponent implements OnInit {
           if(nft>0){
             this.AUCTION = await this.service.GET_AUCTION(host,nft);
             // console.log(this.AUCTION);
-            let ipfs = await axios.get(this.AUCTION[1]);
+            let url = this.AUCTION[1];
+            url = url.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
+            //console.log(url);
+            let ipfs = await axios.get(url);
             ipfs.data.nft_id = nft;
             ipfs.data.auction = this.AUCTION;
             ipfs.data.auction.seller = host;
             this.NFT.push(ipfs.data);
-            console.log(this.NFT);            
+            console.log(this.NFT);
           }
 
         })

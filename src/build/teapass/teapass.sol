@@ -295,12 +295,14 @@ contract TEAPASS is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
         require(isA[msg.sender], 'you are not an admin tea pass');
         TEASHOP = _teashop;
+
         NFTEA = _nftea;
         TEAPOT = _teapot;
         TOKEN = _token;
         isC[NFTEA] = true;
         isC[TEASHOP] = true;
         isC[TEAPOT] = true;
+
 
     }
     function setContract(address _contract) public {

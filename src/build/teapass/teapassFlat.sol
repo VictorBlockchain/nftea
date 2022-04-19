@@ -1469,23 +1469,22 @@ contract TEAPASS {
     mapping(address=>bool) public isA;
     mapping(address=>bool) public isC;
     mapping(address=>address) public _C2_H;
+    mapping(address=>mapping(address=>uint256)) public _C2_Hosts;
     mapping(address=>mapping(address=>uint256)) public _C2_H_start;
     mapping(address=>mapping(address=>uint256)) public _C2_H_end;
     mapping(address=>bool) public _C2_connected;
     mapping(address=>uint256) public _H2_connected;
     mapping(address=>address[]) public _H2_collectors;
-    mapping(address=>mapping(address=>uint256)) public _C2_Hosts;
     mapping(address=>bool) public _H2_allowConnections;
     mapping(address=>uint256) public _H2_nftToConnect;
     mapping(address=>uint256) public _C2_powerUpgradeDate;
-    mapping(address=>address[]) public _H2_coHosts;
-    mapping(address=>uint256[]) public _H2_coHostSips;
     mapping(address=>mapping(uint256=>bool)) public powerUpgraded;
 
     address public TOKEN;
     address public TEASHOP;
     address public NFTEA;
     address public TEAPOT;
+    address public HONEY;
     address public burn = 0x000000000000000000000000000000000000dEaD;
     uint256 public powerMul = 2;
     uint256 public upgradePowerNFT = 0;
@@ -1503,24 +1502,18 @@ contract TEAPASS {
       require(isA[msg.sender], 'you are not an admin');
       isA[_admin] = true;
     }
-    function allowConnections(uint256 _nft, address[] memory _cohosts, uint256[] memory _sips) public {
+    function allowConnections(uint256 _nft) public {
 
       require(_C[msg.sender]._power>=100000*10**9, 'your power is too low');
       _H2_allowConnections[msg.sender] = true;
       _H2_nftToConnect[msg.sender] = _nft;
-      _H2_coHosts[msg.sender] = _cohosts;
-      _H2_coHostSips[msg.sender] = _sips;
       emit acceptConnections(msg.sender);
     }
 
     function stopConnections() public {
 
-      uint256[] memory _sips;
-      address[] memory _hosts;
       _H2_allowConnections[msg.sender] = false;
       _H2_nftToConnect[msg.sender] = 0;
-      _H2_coHosts[msg.sender] = _hosts;
-      _H2_coHostSips[msg.sender] = _sips;
       emit closeConnections(msg.sender);
 
     }
@@ -1563,23 +1556,23 @@ contract TEAPASS {
 
         require(isA[msg.sender], 'you are not an admin');
 
-        (address _token,address _teashop,address _teapot,,,,address _nftea) = i1155(NFTEA).getADDRESSES();
+        (address _token,address _teashop,address _teapot,,address _honey,,address _nftea) = i1155(NFTEA).getADDRESSES();
         TOKEN = _token;
         TEASHOP = _teashop;
         TEAPOT = _teapot;
+        HONEY = _honey;
         if(_nftea!=NFTEA){
           NFTEA = _nftea;
           isC[NFTEA] = true;
         }
         isC[TEASHOP] = true;
         isC[TEAPOT] = true;
+        isC[HONEY] = true;
 
     }
-    function setContract(address _contract) public {
-
-        require(isA[msg.sender], 'you are not an admin');
-        isC[_contract] = true;
-
+    function setContract(address _contract, bool _A) public {
+        require(isA[msg.sender], ' you are not an admin');
+                isC[_contract] = _A;
     }
     function setPowerAdmin(uint256 _powermul, uint256 _upgradenft, uint256 _upgradepower) public {
 

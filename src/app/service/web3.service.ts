@@ -167,7 +167,7 @@ async GET_WEB3(): Promise<any>{
       confirmButtonText: 'Close'
     })
   }
-  public TEAPASS_ALLOW_CONNECTSION(_user: any,_cohosts:any,_sips:any, _type:any, _embed:any, power:any): Promise<any> {
+  public TEAPASS_ALLOW_CONNECTIONS(_user: any,_nft:any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
 
@@ -178,14 +178,8 @@ async GET_WEB3(): Promise<any>{
           inputs: [{
             type: 'uint256',
             name: '_nft'
-          },{
-            type: 'address[]',
-            name: '_cohosts'
-          },{
-            type: 'uint256[]',
-            name: '_sips'
           }]
-        }, [0,_cohosts,_sips])
+        }, [_nft])
         const txt = await this.web3.eth.sendTransaction({
           from:_user,
           to: TEAPASS,
@@ -200,26 +194,8 @@ async GET_WEB3(): Promise<any>{
           })
           .on('receipt',(receipt)=>{
              //console.log(receipt)
-             const _uCafe = Moralis.Object.extend("cafe");
-             const _c = new _uCafe(_user);
-             let start = new Date();
-             //let end = moment(start).add(4, 'hours').format('X');
-             _c.save({
+             this.pop('success', 'tea pass connections allowed');
 
-               type:_type,
-               embed:_embed,
-               user:_user,
-               start:start,
-               power:power,
-               connected:0,
-               earnings:0,
-               active:1
-
-             }).then(()=>{
-
-               this.pop('success', 'tea pass connections allowed');
-
-             })
           })
           .on('confirmation',(confirmationNumber, receipt)=>
           {
