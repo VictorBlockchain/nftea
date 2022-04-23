@@ -1896,9 +1896,32 @@ async GET_WEB3(): Promise<any>{
         console.log('getting user nft\'s' + _user);
         await this.GET_WEB3();
         const options = { chain: environment.CHAIN, address:_user, token_address: NFTEA };
-        const NFTS = await Moralis.Web3API.account.getNFTs(options);
-        //console.log(NFTS);
+        const NFTS = await Moralis.Web3API.account.getNFTsForContract(options);
+        // console.log(NFTS.result);
         let result = {success:true,msg:NFTS.result};
+        resolve(result);
+
+      } catch (error) {
+        //console.log(JSON.stringify(error.error));
+        let result = {success:false, msg:error.error};
+        resolve(result);
+        //console.log(JSON.stringify(error.error));
+      }
+
+
+    })
+  }
+
+  public GET_USER_NFTS2(_user:any): Promise<any>{
+    return new Promise(async (resolve, reject)=>{
+      try {
+
+        console.log('getting user nft\'s' + _user);
+        await this.GET_WEB3();
+        const contract =  new this.web3.eth.Contract(ABINFTEA, NFTEA);
+        let NFT = await contract.methods.getCollectorNFTs(_user).call();
+        console.log(NFT)
+        let result = {success:true,msg:NFT};
         resolve(result);
 
       } catch (error) {

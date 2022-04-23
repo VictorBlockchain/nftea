@@ -82,10 +82,10 @@ export class ProfileComponent implements OnInit {
   }
 
   async start(){
-
+    // console.log(this.skip)
     let power:any = await this.service.GET_PROFILE1(this.user);
     this.POWER = power[3];
-    console.log(power)
+    // console.log(power)
     const _uProfile = Moralis.Object.extend("profile");
     const _query = new Moralis.Query(_uProfile);
     _query.equalTo('user',this.user);
@@ -114,18 +114,21 @@ export class ProfileComponent implements OnInit {
       }else{
 
         if(this.skip){
-
           this.showProfile = true;
           await this.service.GET_ALBUMS(this.user)
           .then((res:any)=>{
             this.ALBUMCOUNT = res.length;
             this.getNFTSIOWN();
+            console.log('skipping to my lou')
+
           })
 
         }else{
 
           this.showGoBuyAvatar = true;
           this.showProfile = false;
+          console.log('not skipped')
+
 
         }
 
@@ -135,7 +138,7 @@ export class ProfileComponent implements OnInit {
 
   }
   async getNFTSIOWN(){
-
+    console.log('getting nfts I own')
     this.service.GET_USER_NFTS(this.user)
     .then(async(res:any)=>{
       console.log(this.user)
@@ -148,9 +151,20 @@ export class ProfileComponent implements OnInit {
       }
       for (let i = 0; i < loop.length; i++) {
         const element = loop[i];
+        let ipfs:any;
           if(element.token_uri){
 
-            let ipfs:any = await axios.get(element.token_uri);
+           ipfs = await axios.get(element.token_uri);
+
+          }else{
+
+            let NFTDETAILS = await this.service.GET_NFT(element.token_id,null);
+            //console.log(NFTDETAILS.ipfs)
+            ipfs = await axios.get(NFTDETAILS.ipfs);
+            //ipfs = NFTDETAILS.ipfs;
+
+          }
+
             let isWrapped = await this.service.GET_WRAP(element.token_id);
             let q;
             if(isWrapped>0){
@@ -159,9 +173,8 @@ export class ProfileComponent implements OnInit {
             let _vault = await this.service.GET_TEAPOT(element.token_id);
             this.NFTEAS.push({ipfs:ipfs.data,teapot:_vault,id:element.token_id,wrappedTo:isWrapped});
             this.loading = false;
-          }
 
-          //console.log(this.NFTEAS);
+          // console.log(this.NFTEAS);
       }
       this.getMyAuctions()
     })

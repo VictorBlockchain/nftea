@@ -1,5 +1,5 @@
-
 // SPDX-License-Identifier: MIT
+// File: @openzeppelin/contracts/utils/Context.sol
 
 
 // OpenZeppelin Contracts v4.4.1 (utils/Context.sol)
@@ -1263,9 +1263,7 @@ abstract contract ERC1155Burnable is ERC1155 {
 // File: contracts/2_Owner.sol
 
 
-
 pragma solidity ^0.8.4;
-pragma experimental ABIEncoderV2;
 
 
 
@@ -1348,13 +1346,7 @@ interface IERC20 {
 
 interface i1155 is IERC1155{
 
-    function disValue(address _contract, uint256 _value, address _token) external returns (bool);
     function setPower(address _user,uint256 _power, uint256 _type) external returns (bool);
-    function approveTransfers(address _contract, address _token) external returns(bool);
-    function withdrawBNB(address _to) external returns(bool);
-    function payArtist(uint256 _nft, uint256 _value) external returns(bool);
-    function setVault(uint256 _nft, string memory _ipfs) external returns(address);
-    function clearVault(uint256 _nft, uint256 _index) external returns(bool);
     function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
 
 }
@@ -1427,125 +1419,50 @@ library SafeMath {
     decQuotient = add(prod_xTEN9, y / 2) / y;
   }
 }
-
 /// @custom:security-contact security@nftea.app
-contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
-   using SafeMath for uint256;
-    //isA = isAdmin
-    //isC = isContract
-    //_N = nft
-    //_A = album
-    //_C = collector
-    event newAlbum(
-      address _collector,
-      uint256 _album
-    );
-    event newMint(
-        address _creator,
-        uint256 _nft,
-        string _ipfs
-    );
-    event couponCreated(
-      address _collector,
-      uint256 _nft
-    );
-    event couponRedeemed(
-      address _collector,
-      uint256 _wnft,
-      uint256 _nft
-    );
-    event nftWrapped(
+contract COLLECTION  {
 
-      uint256 _nft,
-      uint256 _wnft
+      using SafeMath for uint256;
 
-    );
-    event nftUnWrapped(
+      event newAlbum(
+        address _collector,
+        uint256 _album
+      );
 
-      uint256 _nft,
-      uint256 _wnft
+      struct ALBUM{
 
-    );
-    event sendNFT(
-      address _collector,
-      uint256 _nft
-    );
-    event nftEdited(
-      address _collector,
-      uint256 _nft
-    );
-    struct ALBUM{
+        uint256 _id;
+        string _name;
+        address _creator;
+        uint256 _volume;
+        uint256 _floor;
+        string _media;
+        uint256 _category;
+      }
 
-      uint256 _id;
-      string _name;
-      address _creator;
-      uint256 _volume;
-      uint256 _floor;
-      string _media;
-      uint256 _category;
-    }
-    ALBUM[] public album;
+      ALBUM[] public album;
+      mapping(uint256=>ALBUM) public _A;
+      mapping(uint256=>uint256[]) public _A2_N;
+      mapping(address=>uint256[]) public _C2_As;
+      mapping(uint256=>uint256) public _A2_VOLUME;
+      mapping(uint256=>uint256) public _A2_FLOOR;
+      mapping(address=>uint256[]) public _allAlbums;
+      mapping(address=>bool) public _isA;
+      mapping(uint256=>mapping(uint256=>uint256)) public _A2_N2_index;
+      address TEAPASS;
+      address NFTEA;
 
-    struct NFT{
+      uint256 public _Aid = 0;
 
-        uint256 id;
-        uint256 quantity;
-        address creator;
-        string ipfs;
-        uint256 royalty;
-        address[] partners;
-        uint256[] sips;
-        string story;
-        uint256 album;
-        uint256 mintPass;
-        uint256 wrappedTo;
+    constructor(address _nftea) {
+
+      _isA[msg.sender] = true;
+      NFTEA = _nftea;
+      _isA[_nftea] = true;
 
     }
 
-    NFT[] public nft;
-
-    mapping(address=>bool) internal isA;
-    mapping(address=>bool) public isBA;
-    mapping(address=>bool) public isC;
-    mapping(uint256=>uint256[]) public _A2_N;
-    mapping(uint256=>ALBUM) public _A;
-    mapping(uint256=>NFT) public _N;
-    mapping(string=>NFT) public ipfs;
-    mapping(address=>uint256[]) public _C2_As;
-    mapping(address=>uint256[]) public _C2_Ns;
-    mapping(address=>uint256[]) public _allAlbums;
-    mapping(address=>bool) public BANNED;
-    mapping(uint256=>address) public _N2_V;
-    mapping(address=>uint256[]) public userToReserveIds;
-    mapping(uint256=>uint256) public _WN2_N;
-    mapping(uint256=>uint256) public _N2_VOLUME;
-    mapping(uint256=>uint256) public _N2_FLOOR;
-    mapping(uint256=>bool) public canWrapNFT;
-    mapping(uint256=>mapping(address=>uint256)) public reserveIndex;
-    mapping(uint256=>uint256) public _Nis_coupon;
-    mapping(uint256=>uint256) public _WN2_redeemCount;
-
-    address public TEAPOT;
-    address public TEAPASS;
-    address public TEASHOP;
-    address public TOKEN;
-    address public HONEY;
-    address public FEES;
-    uint256 public _Nid = 0;
-    uint256 public _Aid = 0;
-    uint256 public mintPoints = 0;
-    uint256 public reservePoints = 0;
-    uint256 public giftPoints = 0;
-    address public burn = 0x000000000000000000000000000000000000dEaD;
-
-    constructor() ERC1155("https://nftea.app/nft/{id}.json") {
-
-        isA[msg.sender] = true;
-        isBA[msg.sender] = true;
-
-    }
-
-    function setAlBUM(string memory name, string memory media, uint256 category, uint256 _album) public {
+    function setALBUM(string memory name, string memory media, uint256 category, uint256 _album, uint256 _type) public {
 
       if(_album<1){
 
@@ -1572,30 +1489,47 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         require(_A[_album]._creator==msg.sender,'you are not the owner of this album');
         _A[_album]._category = category;
         _A[_album]._name = name;
+
       }
 
     }
 
-    function SET_ADDRESSES(address _token, address _teapot, address _teapass, address _teashop,address _honey, address _fees ) public {
-      require(isA[msg.sender],'you are not an admin');
+    function setNFT(uint256 _nft, uint256 _album, address _creator) public {
 
-            TEAPOT = _teapot;
-            TEAPASS = _teapass;
-            TOKEN = _token;
-            TEASHOP = _teashop;
-            HONEY = _honey;
-            FEES = _fees;
-            isC[TEAPOT] = true;
-            isC[TEAPASS] = true;
-            isC[TEASHOP] = true;
+      require(_isA[msg.sender], 'you are not that cool');
+      require(_A[_album]._creator==_creator, 'not the creator of this album');
+      _A2_N[_album].push(_nft);
+      _A2_N2_index[_album][_nft] = _A2_N[_album].length - 1;
+
     }
 
-    function SET_POINTS(uint256 _mint, uint256 _reserve, uint256 _gift) public {
+    function editALBUM(uint256 _album, string memory _name, uint256 _category) public{
 
-      require(isA[msg.sender],'you are not an admin');
-      mintPoints = _mint*10**9;
-      reservePoints = _reserve*10**9;
-      giftPoints = _gift*10**9;
+      require(_A[_album]._creator==msg.sender, 'not the creator of this album');
+      _A[_album]._name = _name;
+      _A[_album]._category = _category;
+
+    }
+
+    function editNFTAlbum(uint256 _nft, uint256 _newAlbum, uint256 _oldAlbum) public{
+
+      require(_A[_album]._creator==msg.sender, 'not the creator of this album');
+      delete _A2_N[_oldAlbum][_A2_N2_index[_oldAlbum][_nft]];
+      _A2_N[_newAlbum].push(_nft);
+      _A2_N2_index[_newAlbum][_nft] = _A2_N[_newAlbum].length - 1;
+
+    }
+
+    function getAlbumOfNFT(uint256 _album) public view returns(uint256[] memory){
+
+      return _A2_N[_album];
+
+    }
+
+    function getAlBUMS() public view returns(uint256[] memory){
+
+      return _allAlbums[address(this)];
+
     }
 
     function getAlBUM(uint256 _album) public view returns(ALBUM memory){
@@ -1603,329 +1537,47 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       return _A[_album];
 
     }
+
     function getCollectorAlbums(address _collector) public view returns(uint256[] memory){
 
       return _C2_As[_collector];
 
     }
-    function getCollectorNFTs(address _collector) public view returns(uint256[] memory){
 
-      return _C2_Ns[_collector];
-
-    }
-    function getADDRESSES() public view returns(address, address, address, address,address,address,address){
-
-      return (TOKEN,TEASHOP,TEAPOT,TEAPASS,HONEY,FEES,address(this));
-
-    }
-
-    function getAlBUMS(address _contract) public view returns(uint256[] memory){
-
-      return _allAlbums[_contract];
-
-    }
-    function getIPFS(uint256 _nft) public view returns(string memory){
-
-      return _N[_nft].ipfs;
-
-    }
-    function getAlbumOfNFT(uint256 _album) public view returns(uint256[] memory){
-      return _A2_N[_album];
-    }
-
-    function GET_NFT(uint _nft, string memory _ipfs) public view returns (NFT memory) {
-
-        if(_nft>0){
-
-        return _N[_nft];
-
-        }else{
-
-        return ipfs[_ipfs];
-
-        }
-    }
-    function GET_SIPS(uint _nft) public view returns (address[] memory, uint256[] memory) {
-
-      return (_N[_nft].partners, _N[_nft].sips);
-
-    }
-    function SET_ADMIN(address _user, bool _a)public{
-
-       require(isA[msg.sender],'you are not an admin');
-
-        isA[_user] = _a;
-
-    }
-    function SET_BA(address _user, bool _a)public{
-
-       require(isA[msg.sender],'you are not an admin');
-
-        isBA[_user] = _a;
-
-    }
-    function setContract(address _C, bool _Ad) public {
-
-        require(isA[msg.sender], ' you are not an admin');
-                isC[_C] = _Ad;
-
-    }
-    function setCoupon(uint256 _nft, uint256 _redeemCount) public {
-
-      require(balanceOf(msg.sender,_nft)==_N[_nft].quantity, 'you do not own all these nfts');
-      _Nis_coupon[_nft] = _redeemCount;
-      emit couponCreated(msg.sender, _nft);
-
-    }
-
-    function redeemCoupon(uint256 _wnft, uint256 _count) public {
-
-      require(balanceOf(msg.sender,_wnft)>0, 'you do not own this nft');
-      require(_WN2_redeemCount[_wnft]>0, 'coupon redeemed');
-      require(_WN2_redeemCount[_wnft].sub(_count)>0, 'invalid redeem count');
-      _WN2_redeemCount[_wnft] = _WN2_redeemCount[_wnft].sub(_count);
-
-      (,,,uint256 _p,) = i1155(TEAPASS).getProfile(msg.sender);
-      if(_p>0){
-
-        i1155(TEAPOT).disValue(msg.sender,_p,TOKEN);
-
-      }
-      emit couponRedeemed(msg.sender, _WN2_N[_wnft], _wnft);
-
-    }
-
-    // function setURI(string memory newuri) public {
-
-    //     require(isA[msg.sender], 'you are not an admin');
-    //     _setURI(newuri);
-    // }
-
-    function mint(uint256 amount, bytes memory data, string memory _ipfs,uint256 royalty, address[] memory partners, uint256[] memory sips, string memory story,uint256 _album,address _creator,uint256 _useThisId,uint256 _mintPass,bool _canWrap) public
-    {
-
-        require(!BANNED[msg.sender], 'you are banned');
-
-
-        if(_useThisId<1){
-
-            _Nid = _Nid.add(1);
-            _useThisId = _Nid;
-            _creator = msg.sender;
-
-        }else{
-
-            require(balanceOf(msg.sender,_mintPass)>0, 'where is your mint pass?');
-            require(amount==1, 'you cannot mint more than one regenrative');
-            require(reserveIndex[_useThisId][_creator]>0,'invalid reserve id');
-
-        }
-
-        _setURI(_ipfs);
-        _mint(msg.sender, _useThisId, amount, data);
-
-        NFT memory save = NFT({
-            id:_useThisId,
-            quantity:amount,
-            creator:_creator,
-            ipfs:_ipfs,
-            royalty:royalty,
-            partners:partners,
-            sips:sips,
-            story:story,
-            album:_album,
-            mintPass:_mintPass,
-            wrappedTo: 0
-        });
-        nft.push(save);
-        _N[_useThisId] = save;
-        ipfs[_ipfs] = save;
-        _A2_N[_album].push(_useThisId);
-
-        if(amount==1){
-
-          address vault = i1155(TEAPOT).setVault(_useThisId,_ipfs);
-          _N2_V[_useThisId] = vault;
-          canWrapNFT[_useThisId] = false;
-
-        }
-        else{
-
-          canWrapNFT[_useThisId] = _canWrap;
-
-        }
-        if(_mintPass>0){
-
-          safeTransferFrom(msg.sender,burn, _mintPass,1,'');
-
-        }
-        uint256 _rIndex = reserveIndex[_useThisId][msg.sender];
-        if(_rIndex>0){
-
-          userToReserveIds[_creator][_rIndex] = 0;
-
-        }
-        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
-        if(_a>0){
-
-        i1155(TEAPASS).setPower(msg.sender,mintPoints,1);
-      }
-        _C2_Ns[_creator].push(_useThisId);
-        _Nis_coupon[_useThisId] = 0;
-
-        emit newMint(_creator,_useThisId,_ipfs);
-    }
-
-    function wrap(uint256 _nft,bytes memory data, string memory _ipfs)
-        public
-    {
-        require(balanceOf(msg.sender,_nft)>0, 'you do not own this nft');
-        require(canWrapNFT[_nft], 'cannot wrap this nft');
-        _Nid = _Nid.add(1);
-
-        address vault = i1155(TEAPOT).setVault(_Nid,_N[_nft].ipfs);
-        safeTransferFrom(msg.sender,burn,_nft,1,'');
-        require(checkSuccess(), 'wrap transfer faild');
-
-        NFT memory save = NFT({
-            id:_Nid,
-            quantity:1,
-            creator:msg.sender,
-            ipfs:_ipfs,
-            royalty:_N[_nft].royalty,
-            partners:_N[_nft].partners,
-            sips:_N[_nft].sips,
-            story:_N[_nft].story,
-            album:_N[_nft].album,
-            mintPass:_N[_nft].mintPass,
-            wrappedTo: _nft
-
-        });
-        nft.push(save);
-        _N[_Nid] = save;
-        ipfs[_ipfs] = save;
-        _A2_N[_N[_nft].album].push(_Nid);
-
-        _WN2_N[_Nid] = _nft;
-        _N2_V[_Nid] = vault;
-        _C2_Ns[msg.sender].push(_Nid);
-        _WN2_redeemCount[_Nid] = _Nis_coupon[_nft];
-        canWrapNFT[_Nid] = false;
-
-        _setURI(_ipfs);
-        _mint(msg.sender,_Nid,1,data);
-        emit nftWrapped(_nft, _Nid);
-
-    }
     function setVOLUME(uint256 _nft, uint256 _value) public returns(bool){
 
-      require(isC[msg.sender], 'you are not that cool');
+      require(_isA[msg.sender], 'you are not that cool');
       uint256 _album = _N[_nft].album;
       _A[_album]._volume = _A[_album]._volume.add(_value);
       return true;
 
     }
+
     function setFLOOR(uint256 _nft, uint256 _value) public returns(bool){
 
-      require(isC[msg.sender], 'you are not that cool');
+      require(_isA[msg.sender], 'you are not that cool');
       uint256 _album = _N[_nft].album;
       _A[_album]._floor = _value;
       return true;
-    }
-
-    function SENDNFT(uint256 _nft, address _to, uint256 _quantity) public{
-
-      require(balanceOf(msg.sender,_nft) >=_quantity, 'You do not own that many of these nft');
-      safeTransferFrom(msg.sender,_to,_nft,_quantity,'');
-      require(checkSuccess(), 'error sending');
-      emit sendNFT(msg.sender,_nft);
-    }
-
-    function EDITNFT(uint _nft,string memory _story, uint256 _album) public{
-
-      uint quantity = _N[_nft].quantity;
-      require(balanceOf(msg.sender,_nft) == quantity, 'You do not own all these nfts');
-
-      _N[_nft].story = _story;
-      _N[_nft].album = _album;
-      _N[_nft].quantity = balanceOf(msg.sender,_nft);
-      emit nftEdited(msg.sender,_nft);
-    }
-
-    function RESERVEIDS(uint256 _amount) public {
-        require(!BANNED[msg.sender], 'you are banned');
-        require(userToReserveIds[msg.sender].length<1, 'ids already reserved');
-
-        for (uint256 i = 0; i < _amount; i++) {
-
-            _Nid = _Nid.add(1);
-            userToReserveIds[msg.sender].push(_Nid);
-            reserveIndex[_Nid][msg.sender] = i;
-        }
-        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
-        if(_a>0){
-
-        i1155(TEAPASS).setPower(msg.sender,reservePoints, 1);
-      }
 
     }
 
-    function setBan(address _collector) public {
-      require(isA[msg.sender], 'you are not an admin');
-      BANNED[_collector] = true;
-    }
+    function setAddress() public {
 
-    function GET_RESERVEIDS(address _creator) public view returns(uint256[] memory){
+        require(_isA[msg.sender], 'you are not an admin');
+        (address _token, address _teashop, address _teapot,address _teapass,address _honey, address _fees, address _nftea) = IERC1155(NFTEA).getADDRESSES();
 
-        return userToReserveIds[_creator];
+        TEAPASS = _teapass;
+        TEAPOT = _teapot;
+        TEASHOP = _teashop;
 
-    }
-
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        public
-
-    {
-         require(isBA[msg.sender], ' you are not that cool');
-        _mintBatch(to, ids, amounts, data);
-    }
-
-    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        internal
-        whenNotPaused
-        override(ERC1155, ERC1155Supply)
-    {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
-    }
-    function checkSuccess()
-        private pure
-        returns (bool)
-      {
-        uint256 returnValue = 0;
-
-        /* solium-disable-next-line security/no-inline-assembly */
-        assembly {
-          // check number of bytes returned from last function call
-          switch returndatasize()
-
-            // no bytes returned: assume success
-            case 0x0 {
-              returnValue := 1
-            }
-
-            // 32 bytes returned: check if non-zero
-            case 0x20 {
-              // copy 32 bytes into scratch space
-              returndatacopy(0x0, 0x0, 0x20)
-
-              // load those bytes into returnValue
-              returnValue := mload(0x0)
-            }
-
-            // not sure what was returned: dont mark as success
-            default { }
-
+        if(_nftea!=NFTEA){
+          NFTEA = _nftea;
         }
 
-        return returnValue != 0;
-      }
+        _isA[NFTEA] = true;
+        _isA[TEASHOP] = true;
+
+    }
+
 }

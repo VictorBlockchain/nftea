@@ -1706,6 +1706,25 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_collector",
+				"type": "address"
+			}
+		],
+		"name": "getCollectorNFTs",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "_nft",
 				"type": "uint256"

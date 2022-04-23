@@ -87,6 +87,11 @@ const routes: Routes = [
     .then(mod => mod.ReferModule)
 },
 {
+  path: 'email/:type:/:to',
+  loadChildren: () => import('./email/email.module')
+    .then(mod => mod.EmailModule)
+},
+{
   path: '**',
   loadChildren: () => import('./four04/four04.module')
     .then(mod => mod.Four04Module)

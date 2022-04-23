@@ -22,6 +22,7 @@ export class MintComponent implements OnInit {
   _nftSettings: FormGroup;
   _nftStory:FormGroup;
   _mintPass:FormGroup;
+  _settings:FormGroup;
   imageURI:any;
   imageName:any;
   imageURL:any;

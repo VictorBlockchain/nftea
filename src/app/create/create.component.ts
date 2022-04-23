@@ -542,8 +542,8 @@ Swal.fire({
       await metaDataFile.saveIPFS();
       const metaDataURI = await metaDataFile.ipfs();
       let ipfs = metaDataFile._ipfs;
-      //console.log(this.useThisId);
-      this.service.MINT(metaDataURI,this.user,this._createNFT.controls.quantity.value,metaDataFile._ipfs,this._createNFT.controls.royalty.value,p,s,this._createNFT.controls.story.value,this.ALBUMID,this.user,this.useThisId,this.mintPass)
+      console.log(ipfs);
+      this.service.MINT(metaDataURI,this.user,this._createNFT.controls.quantity.value,ipfs,this._createNFT.controls.royalty.value,p,s,this._createNFT.controls.story.value,this.ALBUMID,this.user,this.useThisId,this.mintPass)
       .then(async(res:any)=>{
         // console.log(res)
           if(res.success){

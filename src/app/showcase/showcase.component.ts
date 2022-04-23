@@ -31,6 +31,10 @@ export class ShowcaseComponent implements OnInit {
   _shop:FormGroup;
   _report:FormGroup;
   _sugar:FormGroup;
+  _gift:FormGroup;
+  _coupon:FormGroup;
+  _redeem:FormGroup;
+  _withdraw:FormGroup;
   connected:boolean;
   service:any;
   web3:any;
@@ -252,26 +256,26 @@ export class ShowcaseComponent implements OnInit {
     return (mm+sp+dd+sp+yyyy);
 
   }
-  async GIFT(){
-    if(this._gift.controls.quantity.value>this.NFT.quantity){
-
-      this.pop('error', 'quantity too high');
-
-    }else{
-
-      this.service.SET_GIFT(this.user,this.nft_id,this._gift.controls.to.value,this._gift.controls.quantity.value)
-      .then(async(res:any)=>{
-        if(res.success){
-          this.pop('success', 'gift is on the way');
-
-        }else{
-          console.log(JSON.stringify(res.msg))
-          this.pop('error', res.msg);
-
-        }
-      })
-    }
-  }
+  // async GIFT(){
+  //   if(this._gift.controls.quantity.value>this.NFT.quantity){
+  //
+  //     this.pop('error', 'quantity too high');
+  //
+  //   }else{
+  //
+  //     this.service.SET_GIFT(this.user,this.nft_id,this._gift.controls.to.value,this._gift.controls.quantity.value)
+  //     .then(async(res:any)=>{
+  //       if(res.success){
+  //         this.pop('success', 'gift is on the way');
+  //
+  //       }else{
+  //         console.log(JSON.stringify(res.msg))
+  //         this.pop('error', res.msg);
+  //
+  //       }
+  //     })
+  //   }
+  // }
   async PRICE(){
     let price:any = await  this.service.GET_PRICE();
     this.PRICES = price.usdPrice.toFixed(18);
