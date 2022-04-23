@@ -1356,7 +1356,8 @@ interface i1155 is IERC1155{
     function setVault(uint256 _nft, string memory _ipfs) external returns(address);
     function clearVault(uint256 _nft, uint256 _index) external returns(bool);
     function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
-    function setNFT(uint256 _nft, uint256 _album, address _creator);
+    function setNFT(uint256 _nft, uint256 _album, address _creator) external returns(bool);
+    function getNFTALBUM(uint256 _nft) external returns(uint256);
 
 }
 library SafeMath {
@@ -1617,9 +1618,9 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       return _C2_Ns[_collector];
 
     }
-    function getADDRESSES() public view returns(address, address, address, address,address,address,address){
+    function getADDRESSES() public view returns(address, address, address, address,address,address,address,address){
 
-      return (TOKEN,TEASHOP,TEAPOT,TEAPASS,HONEY,FEES,address(this));
+      return (TOKEN,TEASHOP,TEAPOT,TEAPASS,HONEY,FEES,ALBUM,address(this));
 
     }
 
@@ -1745,7 +1746,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         ipfs[_ipfs] = save;
         _A2_N[_album].push(_useThisId);
         i1155(ALBUM).setNFT(_Nid,_album,msg.sender );
-        
+
         if(amount==1){
 
           address vault = i1155(TEAPOT).setVault(_useThisId,_ipfs);
@@ -1816,7 +1817,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         _WN2_redeemCount[_Nid] = _Nis_coupon[_nft];
         canWrapNFT[_Nid] = false;
 
-        _setURI(_ipfs);
+        setURI(_ipfs);
         _mint(msg.sender,_Nid,1,data);
         emit nftWrapped(_nft, _Nid);
 
@@ -1851,7 +1852,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       require(balanceOf(msg.sender,_nft) == quantity, 'You do not own all these nfts');
 
       _N[_nft].story = _story;
-      _N[_nft].album = _album;
+      _N[_nft].album = i1155(ALBUM).getALBUM(_nft);
       _N[_nft].quantity = balanceOf(msg.sender,_nft);
       emit nftEdited(msg.sender,_nft);
     }

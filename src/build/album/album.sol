@@ -1449,7 +1449,9 @@ contract COLLECTION  {
       mapping(uint256=>uint256) public _A2_FLOOR;
       mapping(address=>uint256[]) public _allAlbums;
       mapping(address=>bool) public _isA;
+      mapping(uint256=>uint256) public _N2_A;
       mapping(uint256=>mapping(uint256=>uint256)) public _A2_N2_index;
+      mapping(address=>mapping(uint256=>uint256)) public _C2_A2_index;
       address TEAPASS;
       address NFTEA;
 
@@ -1478,6 +1480,7 @@ contract COLLECTION  {
 
         _allAlbums[address(this)].push(_Aid);
         _C2_As[msg.sender].push(_Aid);
+        _C2_A2_index[msg.sender][_Aid] = _C2_As[msg.sender].length - 1;
         _A[_Aid] = save;
         (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
         if(_a>0){
@@ -1497,12 +1500,14 @@ contract COLLECTION  {
 
     }
 
-    function setNFT(uint256 _nft, uint256 _album, address _creator) public {
+    function setNFT(uint256 _nft, uint256 _album, address _creator) public returns(bool){
 
       require(_isA[msg.sender], 'you are not that cool');
       require(_A[_album]._creator==_creator, 'not the creator of this album');
       _A2_N[_album].push(_nft);
       _A2_N2_index[_album][_nft] = _A2_N[_album].length - 1;
+      _N2_A[_nft] = _album;
+      return true;
 
     }
 
@@ -1511,6 +1516,13 @@ contract COLLECTION  {
       require(_A[_album]._creator==msg.sender, 'not the creator of this album');
       _A[_album]._name = _name;
       _A[_album]._category = _category;
+
+    }
+
+    function deleteALBUM(uint256 _album) public {
+
+      require(_A[_album]._creator==msg.sender, 'not the creator of this album');
+      delete _C2_As[msg.sender][_C2_A2_index[msg.sender][_album]];
 
     }
 
@@ -1541,6 +1553,12 @@ contract COLLECTION  {
 
     }
 
+    function getNFTALBUM(uint256 _nft) public view returns(uint256){
+
+      return _N2_A[_nft];
+
+    }
+
     function getCollectorAlbums(address _collector) public view returns(uint256[] memory){
 
       return _C2_As[_collector];
@@ -1550,7 +1568,7 @@ contract COLLECTION  {
     function setVOLUME(uint256 _nft, uint256 _value) public returns(bool){
 
       require(_isA[msg.sender], 'you are not that cool');
-      uint256 _album = _N[_nft].album;
+      uint256 _album = _N2_A[_nft].album;
       _A[_album]._volume = _A[_album]._volume.add(_value);
       return true;
 
@@ -1559,7 +1577,7 @@ contract COLLECTION  {
     function setFLOOR(uint256 _nft, uint256 _value) public returns(bool){
 
       require(_isA[msg.sender], 'you are not that cool');
-      uint256 _album = _N[_nft].album;
+      uint256 _album = _N2_A[_nft];
       _A[_album]._floor = _value;
       return true;
 
@@ -1568,7 +1586,7 @@ contract COLLECTION  {
     function setAddress() public {
 
         require(_isA[msg.sender], 'you are not an admin');
-        (address _token, address _teashop, address _teapot,address _teapass,address _honey, address _fees, address _nftea) = IERC1155(NFTEA).getADDRESSES();
+        (address _token, address _teashop, address _teapot,address _teapass,address _honey, address _fees,,address _nftea) = IERC1155(NFTEA).getADDRESSES();
 
         TEAPASS = _teapass;
         TEAPOT = _teapot;

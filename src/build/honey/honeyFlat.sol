@@ -1467,7 +1467,7 @@ contract Honey  {
 
         require(isA[msg.sender], 'you are not an admin');
 
-        (address _token,address _teashop,address _teapot,address _teapass,,,address _nftea) = i1155(NFTEA).getADDRESSES();
+        (address _token,address _teashop,address _teapot,address _teapass,,,,address _nftea) = i1155(NFTEA).getADDRESSES();
 
         TEAPOT = _teapot;
         TEATOKEN = _token;

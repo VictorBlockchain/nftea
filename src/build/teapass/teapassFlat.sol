@@ -1536,11 +1536,13 @@ contract TEAPASS {
       _C[msg.sender] = save;
       emit collectorAdded(msg.sender, _avatar, _cover, _heritage, _gender);
     }
+
     function getProfile(address _collector) public view returns(uint256,uint256,uint256,uint256,uint256){
 
       return (_C[_collector]._avatar,_C[_collector]._cover,_C[_collector]._heritage,_C[_collector]._power,_C[_collector]._gender);
 
     }
+
     function updateProfile(uint256 _avatar, uint256 _cover, uint256 _heritage, uint256 _gender)public {
 
       require(i1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
@@ -1552,15 +1554,17 @@ contract TEAPASS {
       emit collectorAdded(msg.sender, _avatar, _cover, _heritage, _gender);
 
     }
+
     function setAddress() public {
 
         require(isA[msg.sender], 'you are not an admin');
 
-        (address _token,address _teashop,address _teapot,,address _honey,,address _nftea) = i1155(NFTEA).getADDRESSES();
+        (address _token,address _teashop,address _teapot,,address _honey,,address _album, address _nftea) = i1155(NFTEA).getADDRESSES();
         TOKEN = _token;
         TEASHOP = _teashop;
         TEAPOT = _teapot;
         HONEY = _honey;
+        ALBUM = _album;
         if(_nftea!=NFTEA){
           NFTEA = _nftea;
           isC[NFTEA] = true;
@@ -1568,12 +1572,15 @@ contract TEAPASS {
         isC[TEASHOP] = true;
         isC[TEAPOT] = true;
         isC[HONEY] = true;
+        isC[ALBUM] = true;
 
     }
+
     function setContract(address _contract, bool _A) public {
         require(isA[msg.sender], ' you are not an admin');
                 isC[_contract] = _A;
     }
+
     function setPowerAdmin(uint256 _powermul, uint256 _upgradenft, uint256 _upgradepower) public {
 
         require(isA[msg.sender], 'you are not an admin');
@@ -1582,6 +1589,7 @@ contract TEAPASS {
         upgradePower = _upgradepower*10**9;
 
     }
+    
     function setPower(address _collector, uint256 _value, uint256 _type) public returns(bool){
 
       require(isC[msg.sender] || isA[msg.sender], ' you are not that cool');

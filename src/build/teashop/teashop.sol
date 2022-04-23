@@ -539,7 +539,7 @@ contract TEA_SHOP {
   function setAddress() public {
 
       require(isAdmin[msg.sender], 'you are not an admin');
-      (address _token,,address _teapot,address _teapass,,address _fees,address _nftea) = IERC1155(NFTEA).getADDRESSES();
+      (address _token,,address _teapot,address _teapass,,address _fees,,address _nftea) = IERC1155(NFTEA).getADDRESSES();
 
       TEAPASS = _teapass;
       TEAPOT = _teapot;

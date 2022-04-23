@@ -1670,7 +1670,7 @@ using SafeMath for uint256;
 
             require(isA[msg.sender],'you are not an admin');
 
-            (address _token,address _teashop,,address _teapass,address _honey,address _fees,address _nftea) = i1155(NFTEA).getADDRESSES();
+            (address _token,address _teashop,,address _teapass,address _honey,address _fees,,address _nftea) = i1155(NFTEA).getADDRESSES();
 
             TEAPASS = _teapass;
             TOKEN = _token;
