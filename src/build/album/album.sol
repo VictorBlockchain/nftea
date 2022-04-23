@@ -1438,6 +1438,7 @@ contract COLLECTION  {
         uint256 _floor;
         string _media;
         uint256 _category;
+        uint256 _resellRating;
       }
 
       ALBUM[] public album;
@@ -1473,6 +1474,8 @@ contract COLLECTION  {
         save._media = media;
         save._category = category;
         save._creator = msg.sender;
+        save._resellRating = 0;
+
         _allAlbums[address(this)].push(_Aid);
         _C2_As[msg.sender].push(_Aid);
         _A[_Aid] = save;
@@ -1573,10 +1576,21 @@ contract COLLECTION  {
 
         if(_nftea!=NFTEA){
           NFTEA = _nftea;
+          _isA[_nftea] = true;
+
         }
 
-        _isA[NFTEA] = true;
         _isA[TEASHOP] = true;
+
+    }
+
+    function setResellRating(uint256 _album, uint256 _points) public returns(bool){
+
+      require(_isA[msg.sender], ' you are not that cool');
+
+      _A[_album]._resellRating = _A[_album]._resellRating.add(_points);
+
+      return true;
 
     }
 

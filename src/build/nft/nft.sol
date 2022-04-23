@@ -1356,6 +1356,7 @@ interface i1155 is IERC1155{
     function setVault(uint256 _nft, string memory _ipfs) external returns(address);
     function clearVault(uint256 _nft, uint256 _index) external returns(bool);
     function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
+    function setNFT(uint256 _nft, uint256 _album, address _creator);
 
 }
 library SafeMath {
@@ -1436,10 +1437,10 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     //_N = nft
     //_A = album
     //_C = collector
-    event newAlbum(
-      address _collector,
-      uint256 _album
-    );
+    // event newAlbum(
+    //   address _collector,
+    //   uint256 _album
+    // );
     event newMint(
         address _creator,
         uint256 _nft,
@@ -1474,17 +1475,17 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       address _collector,
       uint256 _nft
     );
-    struct ALBUM{
-
-      uint256 _id;
-      string _name;
-      address _creator;
-      uint256 _volume;
-      uint256 _floor;
-      string _media;
-      uint256 _category;
-    }
-    ALBUM[] public album;
+    // struct ALBUM{
+    //
+    //   uint256 _id;
+    //   string _name;
+    //   address _creator;
+    //   uint256 _volume;
+    //   uint256 _floor;
+    //   string _media;
+    //   uint256 _category;
+    // }
+    // ALBUM[] public album;
 
     struct NFT{
 
@@ -1507,19 +1508,19 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     mapping(address=>bool) internal isA;
     mapping(address=>bool) public isBA;
     mapping(address=>bool) public isC;
-    mapping(uint256=>uint256[]) public _A2_N;
-    mapping(uint256=>ALBUM) public _A;
+    // mapping(uint256=>uint256[]) public _A2_N;
+    // mapping(uint256=>ALBUM) public _A;
     mapping(uint256=>NFT) public _N;
     mapping(string=>NFT) public ipfs;
-    mapping(address=>uint256[]) public _C2_As;
+    // mapping(address=>uint256[]) public _C2_As;
     mapping(address=>uint256[]) public _C2_Ns;
-    mapping(address=>uint256[]) public _allAlbums;
+    // mapping(address=>uint256[]) public _allAlbums;
     mapping(address=>bool) public BANNED;
     mapping(uint256=>address) public _N2_V;
     mapping(address=>uint256[]) public userToReserveIds;
     mapping(uint256=>uint256) public _WN2_N;
-    mapping(uint256=>uint256) public _N2_VOLUME;
-    mapping(uint256=>uint256) public _N2_FLOOR;
+    // mapping(uint256=>uint256) public _N2_VOLUME;
+    // mapping(uint256=>uint256) public _N2_FLOOR;
     mapping(uint256=>bool) public canWrapNFT;
     mapping(uint256=>mapping(address=>uint256)) public reserveIndex;
     mapping(uint256=>uint256) public _Nis_coupon;
@@ -1531,8 +1532,9 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     address public TOKEN;
     address public HONEY;
     address public FEES;
+    address public ALBUM;
     uint256 public _Nid = 0;
-    uint256 public _Aid = 0;
+    // uint256 public _Aid = 0;
     uint256 public mintPoints = 0;
     uint256 public reservePoints = 0;
     uint256 public giftPoints = 0;
@@ -1545,38 +1547,38 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setAlBUM(string memory name, string memory media, uint256 category, uint256 _album) public {
+    // function setAlBUM(string memory name, string memory media, uint256 category, uint256 _album) public {
+    //
+    //   if(_album<1){
+    //
+    //     _Aid = _Aid.add(1);
+    //     ALBUM storage save = _A[_Aid];
+    //     save._id = _Aid;
+    //     save._name = name;
+    //     save._media = media;
+    //     save._category = category;
+    //     save._creator = msg.sender;
+    //     _allAlbums[address(this)].push(_Aid);
+    //     _C2_As[msg.sender].push(_Aid);
+    //     _A[_Aid] = save;
+    //     (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+    //     if(_a>0){
+    //       uint256 _p = 5000;
+    //       i1155(TEAPASS).setPower(msg.sender,_p,1);
+    //
+    //     }
+    //     emit newAlbum(msg.sender,_Aid);
+    //
+    //   }else{
+    //
+    //     require(_A[_album]._creator==msg.sender,'you are not the owner of this album');
+    //     _A[_album]._category = category;
+    //     _A[_album]._name = name;
+    //   }
+    //
+    // }
 
-      if(_album<1){
-
-        _Aid = _Aid.add(1);
-        ALBUM storage save = _A[_Aid];
-        save._id = _Aid;
-        save._name = name;
-        save._media = media;
-        save._category = category;
-        save._creator = msg.sender;
-        _allAlbums[address(this)].push(_Aid);
-        _C2_As[msg.sender].push(_Aid);
-        _A[_Aid] = save;
-        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
-        if(_a>0){
-          uint256 _p = 5000;
-          i1155(TEAPASS).setPower(msg.sender,_p,1);
-
-        }
-        emit newAlbum(msg.sender,_Aid);
-
-      }else{
-
-        require(_A[_album]._creator==msg.sender,'you are not the owner of this album');
-        _A[_album]._category = category;
-        _A[_album]._name = name;
-      }
-
-    }
-
-    function SET_ADDRESSES(address _token, address _teapot, address _teapass, address _teashop,address _honey, address _fees ) public {
+    function SET_ADDRESSES(address _token, address _teapot, address _teapass, address _teashop,address _honey, address _fees, address _album ) public {
       require(isA[msg.sender],'you are not an admin');
 
             TEAPOT = _teapot;
@@ -1585,6 +1587,8 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
             TEASHOP = _teashop;
             HONEY = _honey;
             FEES = _fees;
+            ALBUM = _album;
+
             isC[TEAPOT] = true;
             isC[TEAPASS] = true;
             isC[TEASHOP] = true;
@@ -1598,16 +1602,16 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       giftPoints = _gift*10**9;
     }
 
-    function getAlBUM(uint256 _album) public view returns(ALBUM memory){
-
-      return _A[_album];
-
-    }
-    function getCollectorAlbums(address _collector) public view returns(uint256[] memory){
-
-      return _C2_As[_collector];
-
-    }
+    // function getAlBUM(uint256 _album) public view returns(ALBUM memory){
+    //
+    //   return _A[_album];
+    //
+    // }
+    // function getCollectorAlbums(address _collector) public view returns(uint256[] memory){
+    //
+    //   return _C2_As[_collector];
+    //
+    // }
     function getCollectorNFTs(address _collector) public view returns(uint256[] memory){
 
       return _C2_Ns[_collector];
@@ -1619,19 +1623,19 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function getAlBUMS(address _contract) public view returns(uint256[] memory){
-
-      return _allAlbums[_contract];
-
-    }
+    // function getAlBUMS(address _contract) public view returns(uint256[] memory){
+    //
+    //   return _allAlbums[_contract];
+    //
+    // }
     function getIPFS(uint256 _nft) public view returns(string memory){
 
       return _N[_nft].ipfs;
 
     }
-    function getAlbumOfNFT(uint256 _album) public view returns(uint256[] memory){
-      return _A2_N[_album];
-    }
+    // function getAlbumOfNFT(uint256 _album) public view returns(uint256[] memory){
+    //   return _A2_N[_album];
+    // }
 
     function GET_NFT(uint _nft, string memory _ipfs) public view returns (NFT memory) {
 
@@ -1695,11 +1699,10 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    // function setURI(string memory newuri) public {
+    function setURI(string memory newuri) internal {
 
-    //     require(isA[msg.sender], 'you are not an admin');
-    //     _setURI(newuri);
-    // }
+        _setURI(newuri);
+    }
 
     function mint(uint256 amount, bytes memory data, string memory _ipfs,uint256 royalty, address[] memory partners, uint256[] memory sips, string memory story,uint256 _album,address _creator,uint256 _useThisId,uint256 _mintPass,bool _canWrap) public
     {
@@ -1721,7 +1724,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
         }
 
-        _setURI(_ipfs);
+        setURI(_ipfs);
         _mint(msg.sender, _useThisId, amount, data);
 
         NFT memory save = NFT({
@@ -1741,7 +1744,8 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         _N[_useThisId] = save;
         ipfs[_ipfs] = save;
         _A2_N[_album].push(_useThisId);
-
+        i1155(ALBUM).setNFT(_Nid,_album,msg.sender );
+        
         if(amount==1){
 
           address vault = i1155(TEAPOT).setVault(_useThisId,_ipfs);
