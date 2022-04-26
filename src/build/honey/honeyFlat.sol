@@ -1349,7 +1349,7 @@ interface i1155 is IERC1155{
     function setPower(address _user,uint256 _power, uint256 _type) external returns (bool);
     function _N2_V(uint256 _nft) external returns(address);
     function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
-    function getADDRESSES() external returns(address,address,address,address,address,address,address);
+    function getADDRESSES() external returns(address,address,address,address,address,address,address,address);
 
 
 }
@@ -1479,6 +1479,11 @@ contract Honey  {
         }
         honeyId = 0;
 
+    }
+    function setNFTEA(address _nftea) public {
+      require(isA[msg.sender], 'you are not that cool');
+      NFTEA = _nftea;
+      isA[_nftea] = true;
     }
     function addHoney(uint256 _nft) public {
 

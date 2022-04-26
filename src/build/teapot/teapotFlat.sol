@@ -1357,7 +1357,7 @@ interface i1155 is IERC1155{
     function payArtist(uint256 _nft, uint256 _value) external returns(bool);
     function GET_SIPS(uint256 _nft) external returns(address[] memory, uint256[] memory);
     function approve1155(address _contract, address _creator) external returns(bool);
-    function getADDRESSES() external returns(address,address,address,address,address,address,address);
+    function getADDRESSES() external returns(address,address,address,address,address,address,address,address);
 }
 library SafeMath {
 
@@ -1540,6 +1540,7 @@ using SafeMath for uint256;
     address public TEASHOP;
     address public FEEADDRESS;
     address public HONEY;
+    address public ALBUM;
     address public burn = 0x000000000000000000000000000000000000dEaD;
 
     constructor(address _nftea) ERC1155("https://nftea.app/nft/{id}.json") {
@@ -1670,13 +1671,14 @@ using SafeMath for uint256;
 
             require(isA[msg.sender],'you are not an admin');
 
-            (address _token,address _teashop,,address _teapass,address _honey,address _fees,,address _nftea) = i1155(NFTEA).getADDRESSES();
+            (address _token,address _teashop,,address _teapass,address _honey,address _fees,address _album,address _nftea) = i1155(NFTEA).getADDRESSES();
 
             TEAPASS = _teapass;
             TOKEN = _token;
             TEASHOP = _teashop;
             FEEADDRESS = _fees;
             HONEY = _honey;
+            ALBUM = _album;
             if(_nftea!=NFTEA){
               NFTEA = _nftea;
               isC[NFTEA] = true;
@@ -1684,7 +1686,13 @@ using SafeMath for uint256;
             isC[TEAPASS] = true;
             isC[TEASHOP] = true;
             isC[HONEY] = true;
+            isC[ALBUM] = true;
 
+    }
+    function setNFTEA(address _nftea) public {
+      require(isA[msg.sender], 'you are not that cool');
+      NFTEA = _nftea;
+      isC[_nftea] = true;
     }
     function setAdmin(address _user, bool _A) public{
 

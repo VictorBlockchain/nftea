@@ -551,7 +551,7 @@ Swal.fire({
             this.pop('success', 'NFTea minting');
 
           }else{
-            this.pop('error', 'could not mint for some reason');
+            this.pop('error', 'are you using the right wallet/network?');
           }
 
       })

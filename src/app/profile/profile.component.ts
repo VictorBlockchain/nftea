@@ -141,7 +141,7 @@ export class ProfileComponent implements OnInit {
     console.log('getting nfts I own')
     this.service.GET_USER_NFTS(this.user)
     .then(async(res:any)=>{
-      console.log(this.user)
+      // console.log(res)
       this.NFTCOUNT = res.msg.length;
       let loop:any = res.msg;
       this.NFTEAS = [];

@@ -1348,6 +1348,7 @@ interface i1155 is IERC1155{
 
     function setPower(address _user,uint256 _power, uint256 _type) external returns (bool);
     function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
+    function getADDRESSES() external returns(address,address,address,address,address,address,address,address);
 
 }
 library SafeMath {
@@ -1438,7 +1439,7 @@ contract COLLECTION  {
         uint256 _floor;
         string _media;
         uint256 _category;
-        uint256 _resellRating;
+        uint256 _albumValue;
       }
 
       ALBUM[] public album;
@@ -1452,31 +1453,36 @@ contract COLLECTION  {
       mapping(uint256=>uint256) public _N2_A;
       mapping(uint256=>mapping(uint256=>uint256)) public _A2_N2_index;
       mapping(address=>mapping(uint256=>uint256)) public _C2_A2_index;
-      address TEAPASS;
-      address NFTEA;
+      address public TEAPASS;
+      address public NFTEA;
+      address public TEAPOT;
+      address public TEASHOP;
 
-      uint256 public _Aid = 0;
+      uint256 public _Aid;
 
     constructor(address _nftea) {
 
       _isA[msg.sender] = true;
       NFTEA = _nftea;
       _isA[_nftea] = true;
+      _Aid = 0;
 
     }
 
-    function setALBUM(string memory name, string memory media, uint256 category, uint256 _album, uint256 _type) public {
-
-      if(_album<1){
+    function setCOLLECTION(string memory name, string memory media, uint256 category) public {
 
         _Aid = _Aid.add(1);
-        ALBUM storage save = _A[_Aid];
-        save._id = _Aid;
-        save._name = name;
-        save._media = media;
-        save._category = category;
-        save._creator = msg.sender;
-        save._resellRating = 0;
+        ALBUM memory save = ALBUM({
+          _id:_Aid,
+          _name: name,
+          _media: media,
+          _category: category,
+          _creator:msg.sender,
+          _volume:0,
+          _floor:0,
+          _albumValue:0
+        });
+        _A[_Aid] = save;
 
         _allAlbums[address(this)].push(_Aid);
         _C2_As[msg.sender].push(_Aid);
@@ -1489,15 +1495,6 @@ contract COLLECTION  {
 
         }
         emit newAlbum(msg.sender,_Aid);
-
-      }else{
-
-        require(_A[_album]._creator==msg.sender,'you are not the owner of this album');
-        _A[_album]._category = category;
-        _A[_album]._name = name;
-
-      }
-
     }
 
     function setNFT(uint256 _nft, uint256 _album, address _creator) public returns(bool){
@@ -1528,7 +1525,7 @@ contract COLLECTION  {
 
     function editNFTAlbum(uint256 _nft, uint256 _newAlbum, uint256 _oldAlbum) public{
 
-      require(_A[_album]._creator==msg.sender, 'not the creator of this album');
+      require(_A[_newAlbum]._creator==msg.sender, 'not the creator of this album');
       delete _A2_N[_oldAlbum][_A2_N2_index[_oldAlbum][_nft]];
       _A2_N[_newAlbum].push(_nft);
       _A2_N2_index[_newAlbum][_nft] = _A2_N[_newAlbum].length - 1;
@@ -1568,7 +1565,7 @@ contract COLLECTION  {
     function setVOLUME(uint256 _nft, uint256 _value) public returns(bool){
 
       require(_isA[msg.sender], 'you are not that cool');
-      uint256 _album = _N2_A[_nft].album;
+      uint256 _album = _N2_A[_nft];
       _A[_album]._volume = _A[_album]._volume.add(_value);
       return true;
 
@@ -1586,7 +1583,7 @@ contract COLLECTION  {
     function setAddress() public {
 
         require(_isA[msg.sender], 'you are not an admin');
-        (address _token, address _teashop, address _teapot,address _teapass,address _honey, address _fees,,address _nftea) = IERC1155(NFTEA).getADDRESSES();
+        (, address _teashop, address _teapot,address _teapass,,,,address _nftea) = i1155(NFTEA).getADDRESSES();
 
         TEAPASS = _teapass;
         TEAPOT = _teapot;
@@ -1601,14 +1598,15 @@ contract COLLECTION  {
         _isA[TEASHOP] = true;
 
     }
+    function setNFTEA(address _nftea) public {
+      require(_isA[msg.sender], 'you are not that cool');
+      NFTEA = _nftea;
+      _isA[_nftea] = true;
+    }
+    function setAlbumValue(address _collector, uint256 _album, uint256 _value) public {
 
-    function setResellRating(uint256 _album, uint256 _points) public returns(bool){
-
-      require(_isA[msg.sender], ' you are not that cool');
-
-      _A[_album]._resellRating = _A[_album]._resellRating.add(_points);
-
-      return true;
+      require(_A[_album]._creator==_collector, 'this is not the album creator');
+      _A[_album]._albumValue = _value;
 
     }
 

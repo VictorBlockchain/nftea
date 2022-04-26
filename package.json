@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4200  --no-live-reload --host 0.0.0.0 --disableHostCheck=true --proxy-config src/proxy.json",
+    "start": "ng serve --port 4200  --no-live-reload --disableHostCheck=true --proxy-config src/proxy.json",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -21,11 +21,13 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
+    "@daily-co/daily-js": "^0.22.0",
     "@fleekhq/fleek-storage-js": "^1.0.15",
     "@metamask/detect-provider": "^1.2.0",
     "@types/web3": "^1.2.2",
     "@walletconnect/client": "^1.4.1",
     "@walletconnect/web3-provider": "^1.4.1",
+    "ang-music-player": "0.0.4",
     "assert": "^2.0.0",
     "audit": "0.0.6",
     "axios": "^0.24.0",
@@ -43,6 +45,7 @@
     "moralis": "0.0.134",
     "ngx-device-detector": "^2.0.8",
     "ngx-summernote": "^0.8.4",
+    "node-mailjet": "^3.3.13",
     "os-browserify": "^0.3.0",
     "rxjs": "~6.4.0",
     "stream-browserify": "^3.0.0",
@@ -52,6 +55,7 @@
     "tslib": "^1.10.0",
     "web3": "~1.3.5",
     "web3-eth-contract": "^1.6.1",
+    "write-json-file": "^5.0.0",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {

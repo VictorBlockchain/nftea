@@ -1352,7 +1352,7 @@ interface i1155 is IERC1155{
     function disValueTeaPass(address _host, uint256 _value, address _token) external returns (bool);
     function BURN(uint256 _nft, address _collector) external returns (bool);
     function _WN2_N(uint256 _nft) external returns(uint256);
-    function getADDRESSES() external returns(address,address,address,address,address,address,address);
+    function getADDRESSES() external returns(address,address,address,address,address,address,address,address);
 
 }
 library SafeMath {
@@ -1475,16 +1475,19 @@ contract TEAPASS {
     mapping(address=>bool) public _C2_connected;
     mapping(address=>uint256) public _H2_connected;
     mapping(address=>address[]) public _H2_collectors;
+    mapping(address=>mapping(address=>bool)) internal _C2_H2_collectors_added;
     mapping(address=>bool) public _H2_allowConnections;
     mapping(address=>uint256) public _H2_nftToConnect;
     mapping(address=>uint256) public _C2_powerUpgradeDate;
     mapping(address=>mapping(uint256=>bool)) public powerUpgraded;
+    mapping(address=>uint256) public _H2_earnings;
 
     address public TOKEN;
     address public TEASHOP;
     address public NFTEA;
     address public TEAPOT;
     address public HONEY;
+    address public ALBUM;
     address public burn = 0x000000000000000000000000000000000000dEaD;
     uint256 public powerMul = 2;
     uint256 public upgradePowerNFT = 0;
@@ -1575,6 +1578,11 @@ contract TEAPASS {
         isC[ALBUM] = true;
 
     }
+    function setNFTEA(address _nftea) public {
+      require(isA[msg.sender], 'you are not that cool');
+      NFTEA = _nftea;
+      isC[_nftea] = true;
+    }
 
     function setContract(address _contract, bool _A) public {
         require(isA[msg.sender], ' you are not an admin');
@@ -1589,7 +1597,7 @@ contract TEAPASS {
         upgradePower = _upgradepower*10**9;
 
     }
-    
+
     function setPower(address _collector, uint256 _value, uint256 _type) public returns(bool){
 
       require(isC[msg.sender] || isA[msg.sender], ' you are not that cool');
@@ -1650,7 +1658,7 @@ contract TEAPASS {
         uint256 _timeConnected = 0;
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
 
-          _timeConnected = _C2_H_start[msg.sender][_host].sub(_C2_H_end[msg.sender][_host]);
+          _timeConnected = _C2_H_end[msg.sender][_host].sub(_C2_H_start[msg.sender][_host]);
           uint256 _pwr = 100000*10**9;
           if(_C[msg.sender]._power.sub(_pwr)>0){
             _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
@@ -1670,13 +1678,12 @@ contract TEAPASS {
         if(success){
 
           _C2_Hosts[msg.sender][_host] = _C2_Hosts[msg.sender][_host].add(_value);
+          _H2_earnings[_host] = _H2_earnings[_host].add(_value);
           _H2_connected[_host] = _H2_connected[_host].sub(1);
-
           _C2_H[msg.sender] = _to;
           _C2_H_start[msg.sender][_to] = block.timestamp;
           _C2_H_end[msg.sender][_to] = block.timestamp + 4 hours;
           _H2_connected[_to] = _H2_connected[_to].add(1);
-
         }
       }else{
 
@@ -1685,7 +1692,10 @@ contract TEAPASS {
           _C2_H_end[msg.sender][_to] = block.timestamp + 4 hours;
           _H2_connected[_to] = _H2_connected[_to].add(1);
           _C2_connected[msg.sender] = true;
-
+          if(!_C2_H2_collectors_added[msg.sender][_to]){
+            _H2_collectors[_to].push(msg.sender);
+            _C2_H2_collectors_added[msg.sender][_to] = true;
+          }
       }
 
       emit passConnected(msg.sender,_to);
@@ -1693,44 +1703,53 @@ contract TEAPASS {
 
     function disconnectTeaPass(address _token) public{
 
-      require(_C2_connected[msg.sender], 'you tea pass is not connected');
+      require(_C2_connected[msg.sender], 'your tea pass is not connected');
       address _host = _C2_H[msg.sender];
       uint256 _timeConnected = 0;
-      if(_C2_H_end[msg.sender][_host]>block.timestamp){
+      uint256 _pwr;
+      if(_C2_H_end[msg.sender][_host]<block.timestamp){
 
-        _timeConnected = _C2_H_start[msg.sender][_host].sub(_C2_H_end[msg.sender][_host]);
-        uint256 _pwr = 100000*10**9;
+        _timeConnected = 7200;
+        _pwr = 200000;
+
+
+      }else{
+
+        _timeConnected = block.timestamp.sub(_C2_H_start[msg.sender][_host]);
+        _pwr = 20000;
+      }
+      _timeConnected = _timeConnected.div(60);
+      uint256 _value = _timeConnected.mul(_C[msg.sender]._power);
+
+      bool success =  i1155(TEAPOT).disValueTeaPass(_host,_value, _token);
+      if(success){
+
+        _C2_Hosts[msg.sender][_host] = _C2_Hosts[msg.sender][_host].add(_value);
+        _H2_connected[_host] = _H2_connected[_host].sub(1);
+        _H2_earnings[_host] = _H2_earnings[_host].add(_value);
+        _C2_H[msg.sender] = burn;
+        _C2_H_start[msg.sender][burn] = block.timestamp;
+        _C2_H_end[msg.sender][burn] = block.timestamp - 3 hours;
+        _C2_connected[msg.sender] = false;
         if(_C[msg.sender]._power.sub(_pwr)>0){
           _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
         }else{
           _C[msg.sender]._power = 0;
         }
-
-      }else{
-
-        _timeConnected = block.timestamp.sub(_C2_H_start[msg.sender][_host]);
-
-      }
-      _timeConnected = _timeConnected.div(60);
-      uint256 _value = _timeConnected.mul(_C[msg.sender]._power);
-
-      bool success =  i1155(TEAPOT).disValue(_host,_value, _token);
-      if(success){
-
-        _C2_Hosts[msg.sender][_host] = _C2_Hosts[msg.sender][_host].add(_value);
-        _H2_connected[_host] = _H2_connected[_host].sub(1);
-
-        _C2_H[msg.sender] = burn;
-        _C2_H_start[msg.sender][burn] = block.timestamp;
-        _C2_H_end[msg.sender][burn] = block.timestamp - 3 hours;
-        _H2_connected[_host] = _H2_connected[_host].sub(1);
-        _C2_connected[msg.sender] = false;
-
       }
       emit passDissConnected(msg.sender,_host);
 
     }
 
+    function getConnectionViewer(address _user, address _host) public view returns(bool,uint256, address, uint256, uint256, uint256) {
+      //host can accept connections, nft to connect ot host, viewer is connected to, start, end, amount host has earned from viewer, viewer power
+      return(_H2_allowConnections[_host],_H2_nftToConnect[_host],_C2_H[_user], _C2_H_start[_user][_host], _C2_H_end[_user][_host],_C2_Hosts[_user][_host]);
+
+    }
+    function getConnectionHost(address _host) public view returns(bool,uint256,address[] memory,uint256,uint256,uint256){
+      //host can accept connections, nft to connect to host,all connections, earnings,number of current connections, host power
+      return(_H2_allowConnections[_host],_H2_nftToConnect[_host],_H2_collectors[_host],_H2_earnings[_host],_H2_connected[_host],_C[_host]._power);
+    }
     function checkSuccess()
         private pure
         returns (bool)

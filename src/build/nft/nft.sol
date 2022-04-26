@@ -1614,7 +1614,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
     //
     // }
     function getCollectorNFTs(address _collector) public view returns(uint256[] memory){
-
+      //nfts collector created
       return _C2_Ns[_collector];
 
     }
@@ -1700,9 +1700,10 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
     }
 
-    function setURI(string memory newuri) internal {
+    function setURI(string memory newuri) internal returns(bool){
 
         _setURI(newuri);
+        return true;
     }
 
     function mint(uint256 amount, bytes memory data, string memory _ipfs,uint256 royalty, address[] memory partners, uint256[] memory sips, string memory story,uint256 _album,address _creator,uint256 _useThisId,uint256 _mintPass,bool _canWrap) public
@@ -1725,60 +1726,60 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
 
         }
 
-        setURI(_ipfs);
-        _mint(msg.sender, _useThisId, amount, data);
+        bool success = setURI(_ipfs);
+        require(success, 'error setting uri');
 
-        NFT memory save = NFT({
-            id:_useThisId,
-            quantity:amount,
-            creator:_creator,
-            ipfs:_ipfs,
-            royalty:royalty,
-            partners:partners,
-            sips:sips,
-            story:story,
-            album:_album,
-            mintPass:_mintPass,
-            wrappedTo: 0
-        });
-        nft.push(save);
-        _N[_useThisId] = save;
-        ipfs[_ipfs] = save;
-        _A2_N[_album].push(_useThisId);
-        i1155(ALBUM).setNFT(_Nid,_album,msg.sender );
+          _mint(msg.sender, _useThisId, amount, data);
+          emit newMint(_creator,_useThisId,_ipfs);
 
-        if(amount==1){
+          NFT memory save = NFT({
+              id:_useThisId,
+              quantity:amount,
+              creator:_creator,
+              ipfs:_ipfs,
+              royalty:royalty,
+              partners:partners,
+              sips:sips,
+              story:story,
+              album:_album,
+              mintPass:_mintPass,
+              wrappedTo: 0
+          });
+          nft.push(save);
+          _N[_useThisId] = save;
+          i1155(ALBUM).setNFT(_Nid,_album,msg.sender );
 
-          address vault = i1155(TEAPOT).setVault(_useThisId,_ipfs);
-          _N2_V[_useThisId] = vault;
-          canWrapNFT[_useThisId] = false;
+          if(amount==1){
 
+            address vault = i1155(TEAPOT).setVault(_useThisId,_ipfs);
+            _N2_V[_useThisId] = vault;
+            canWrapNFT[_useThisId] = false;
+
+          }
+          else{
+
+            canWrapNFT[_useThisId] = _canWrap;
+
+          }
+          if(_mintPass>0){
+
+            safeTransferFrom(msg.sender,burn, _mintPass,1,'');
+
+          }
+          uint256 _rIndex = reserveIndex[_useThisId][msg.sender];
+          if(_rIndex>0){
+
+            userToReserveIds[_creator][_rIndex] = 0;
+
+          }
+          (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+          if(_a>0){
+
+          i1155(TEAPASS).setPower(msg.sender,mintPoints,1);
         }
-        else{
+          _C2_Ns[_creator].push(_useThisId);
+          _Nis_coupon[_useThisId] = 0;
 
-          canWrapNFT[_useThisId] = _canWrap;
-
-        }
-        if(_mintPass>0){
-
-          safeTransferFrom(msg.sender,burn, _mintPass,1,'');
-
-        }
-        uint256 _rIndex = reserveIndex[_useThisId][msg.sender];
-        if(_rIndex>0){
-
-          userToReserveIds[_creator][_rIndex] = 0;
-
-        }
-        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
-        if(_a>0){
-
-        i1155(TEAPASS).setPower(msg.sender,mintPoints,1);
-      }
-        _C2_Ns[_creator].push(_useThisId);
-        _Nis_coupon[_useThisId] = 0;
-
-        emit newMint(_creator,_useThisId,_ipfs);
     }
 
     function wrap(uint256 _nft,bytes memory data, string memory _ipfs)
@@ -1788,55 +1789,59 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
         require(canWrapNFT[_nft], 'cannot wrap this nft');
         _Nid = _Nid.add(1);
 
-        address vault = i1155(TEAPOT).setVault(_Nid,_N[_nft].ipfs);
-        safeTransferFrom(msg.sender,burn,_nft,1,'');
-        require(checkSuccess(), 'wrap transfer faild');
+        bool success = setURI(_ipfs);
+        require(success, 'error setting uri');
 
-        NFT memory save = NFT({
-            id:_Nid,
-            quantity:1,
-            creator:msg.sender,
-            ipfs:_ipfs,
-            royalty:_N[_nft].royalty,
-            partners:_N[_nft].partners,
-            sips:_N[_nft].sips,
-            story:_N[_nft].story,
-            album:_N[_nft].album,
-            mintPass:_N[_nft].mintPass,
-            wrappedTo: _nft
+          address vault = i1155(TEAPOT).setVault(_Nid,_N[_nft].ipfs);
+          safeTransferFrom(msg.sender,burn,_nft,1,'');
+          require(checkSuccess(), 'wrap transfer faild');
 
-        });
-        nft.push(save);
-        _N[_Nid] = save;
-        ipfs[_ipfs] = save;
-        _A2_N[_N[_nft].album].push(_Nid);
+          NFT memory save = NFT({
+              id:_Nid,
+              quantity:1,
+              creator:msg.sender,
+              ipfs:_ipfs,
+              royalty:_N[_nft].royalty,
+              partners:_N[_nft].partners,
+              sips:_N[_nft].sips,
+              story:_N[_nft].story,
+              album:_N[_nft].album,
+              mintPass:_N[_nft].mintPass,
+              wrappedTo: _nft
 
-        _WN2_N[_Nid] = _nft;
-        _N2_V[_Nid] = vault;
-        _C2_Ns[msg.sender].push(_Nid);
-        _WN2_redeemCount[_Nid] = _Nis_coupon[_nft];
-        canWrapNFT[_Nid] = false;
+          });
+          nft.push(save);
+          _N[_Nid] = save;
+          ipfs[_ipfs] = save;
+          i1155(ALBUM).setNFT(_Nid,_N[_nft].album,msg.sender);
 
-        setURI(_ipfs);
-        _mint(msg.sender,_Nid,1,data);
-        emit nftWrapped(_nft, _Nid);
+          _WN2_N[_Nid] = _nft;
+          _N2_V[_Nid] = vault;
+          _C2_Ns[msg.sender].push(_Nid);
+          _WN2_redeemCount[_Nid] = _Nis_coupon[_nft];
+          canWrapNFT[_Nid] = false;
 
-    }
-    function setVOLUME(uint256 _nft, uint256 _value) public returns(bool){
-
-      require(isC[msg.sender], 'you are not that cool');
-      uint256 _album = _N[_nft].album;
-      _A[_album]._volume = _A[_album]._volume.add(_value);
-      return true;
+          _mint(msg.sender,_Nid,1,data);
+          emit nftWrapped(_nft, _Nid);
 
     }
-    function setFLOOR(uint256 _nft, uint256 _value) public returns(bool){
 
-      require(isC[msg.sender], 'you are not that cool');
-      uint256 _album = _N[_nft].album;
-      _A[_album]._floor = _value;
-      return true;
-    }
+    // function setVOLUME(uint256 _nft, uint256 _value) public returns(bool){
+    //
+    //   require(isC[msg.sender], 'you are not that cool');
+    //   uint256 _album = _N[_nft].album;
+    //   _A[_album]._volume = _A[_album]._volume.add(_value);
+    //   return true;
+    //
+    // }
+    //
+    // function setFLOOR(uint256 _nft, uint256 _value) public returns(bool){
+    //
+    //   require(isC[msg.sender], 'you are not that cool');
+    //   uint256 _album = _N[_nft].album;
+    //   _A[_album]._floor = _value;
+    //   return true;
+    // }
 
     function SENDNFT(uint256 _nft, address _to, uint256 _quantity) public{
 
@@ -1846,13 +1851,13 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       emit sendNFT(msg.sender,_nft);
     }
 
-    function EDITNFT(uint _nft,string memory _story, uint256 _album) public{
+    function EDITNFT(uint _nft,string memory _story) public{
 
       uint quantity = _N[_nft].quantity;
       require(balanceOf(msg.sender,_nft) == quantity, 'You do not own all these nfts');
 
       _N[_nft].story = _story;
-      _N[_nft].album = i1155(ALBUM).getALBUM(_nft);
+      _N[_nft].album = i1155(ALBUM).getNFTALBUM(_nft);
       _N[_nft].quantity = balanceOf(msg.sender,_nft);
       emit nftEdited(msg.sender,_nft);
     }

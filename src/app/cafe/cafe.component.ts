@@ -40,7 +40,23 @@ export class CafeComponent implements OnInit {
   CONTENT4:any;
   media:any;
   fileUploading:boolean;
+
+  connectionsOpen:boolean;
+  connectionCount:any;
+  connectionNFT:any;
+  connectionHistory:any;
+  connectionEarnings:any;
+  hostPower:any;
+
+  viewerConnectTo:any;
+  viewerConnectionStart:any;
+  viewerConnectionEnd:any;
+  viewerConnectionPaidToHost:any;
+  viewerPower:any;
+
   passConnected:boolean;
+  passConnectedTo:any;
+  paidToHost:any;
 
   constructor(protected sanitizer: DomSanitizer,private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -65,50 +81,86 @@ export class CafeComponent implements OnInit {
   async start(){
 
     console.log('starting ' + this.user)
-    let power:any = await this.service.GET_PROFILE1(this.user);
-    this.POWER = power[3];
+    // let power:any = await this.service.GET_PROFILE1(this.user);
+    // this.POWER = power[3];
+    if(this.host==this.user){
+
+      this.service.START_TEAPASS_HOST(this.user)
+      .then(async(res:any)=>{
+        this.connectionsOpen = res[0];
+        this.connectionNFT = res[1];
+        this.connectionHistory = res[2]
+        this.connectionEarnings = res[3];
+        this.connectionCount = res[4];
+        this.hostPower = res[5];
+        this.loading = false;
+        this.getContent();
+        console.log(res)
+      })
+
+    }else{
+
+      this.service.START_TEAPASS_VIEWER(this.user,this.host)
+      .then(async(res:any)=>{
+        this.connectionsOpen = res[0];
+        this.connectionNFT = res[1];
+        this.viewerConnectTo = res[2].toLowerCase();
+        this.viewerConnectionStart = new Date(res[3]*1000);
+        // let start = moment().format('MMMM Do YYYY, h:mm:ss a');
+        // console.log(start)
+        this.viewerConnectionEnd = res[4];
+        this.viewerConnectionPaidToHost = res[5];
+        this.viewerPower = res[6];
+        this.loading =false;
+        this.getContent();
+        console.log(res)
+      })
+
+    }
+
+
     // console.log(power)
-    const _uProfile = Moralis.Object.extend("profile");
-    const _query = new Moralis.Query(_uProfile);
-    _query.equalTo('user',this.host);
-    const results = await _query.first();
-    this.HOST = results;
-    if(!this.HOST){
-      console.log('no collector')
-      this.showCreateProfile = true;
-      //console.log(this.HOST)
-
-    }else{
-      //console.log(this.HOST)
-      let avatar = this.HOST.get('avatar');
-
-      if(avatar>0){
-
-        this.showProfile = true;
-        ///get users cafe contents
-
-      }else{
-
-      }
-      this.getContent();
-    }
-    this.loading = false;
-    if(this.host!=this.user){
-      let res:any = await this.service.GET_TEAPASS_CONNECTION_COUNT(this.host,this.user);
-      if(res.imconnectTo.toLowerCase()==this.host){
-        this.passConnected = true;
-      }
-    }else{
-      this.passConnected = false;
-    }
-
-
-    this.START = moment().format('X');
-    this.END = moment().add(4, 'hours').format('X');
-    let time = this.END - this.START;
-    let totalTime = time/60;
-    let rate = 3000000*10**9;
-    this.EARNINGS = totalTime*rate;
+    // const _uProfile = Moralis.Object.extend("profile");
+    // const _query = new Moralis.Query(_uProfile);
+    // _query.equalTo('user',this.host);
+    // const results = await _query.first();
+    // this.HOST = results;
+    // if(!this.HOST){
+    //   console.log('no collector')
+    //   this.showCreateProfile = true;
+    //   //console.log(this.HOST)
+    //
+    // }else{
+    //   //console.log(this.HOST)
+    //   let avatar = this.HOST.get('avatar');
+    //
+    //   if(avatar>0){
+    //
+    //     this.showProfile = true;
+    //     ///get users cafe contents
+    //
+    //   }else{
+    //
+    //   }
+    //   this.getContent();
+    // }
+    // this.loading = false;
+    // if(this.host!=this.user){
+    //   let res:any = await this.service.GET_TEAPASS_CONNECTION_COUNT(this.host,this.user);
+    //   if(res.imconnectTo.toLowerCase()==this.host){
+    //     this.passConnected = true;
+    //   }
+    // }else{
+    //   this.passConnected = false;
+    // }
+    //
+    //
+    // this.START = moment().format('X');
+    // this.END = moment().add(4, 'hours').format('X');
+    // let time = this.END - this.START;
+    // let totalTime = time/60;
+    // let rate = 3000000*10**9;
+    // this.EARNINGS = totalTime*rate;
     //console.log(totalTime*rate);
 
     // setInterval(()=>{
@@ -189,7 +241,7 @@ export class CafeComponent implements OnInit {
     this.CONTENT3 = [];
     for (let i = 0; i < results.length; i++) {
       let embed = this.sanitizer.bypassSecurityTrustHtml(results[i].get('embed'));
-      this.CONTENT3.push({embed:embed});
+      this.CONTENT3.push({embed:embed,story:results[i].get('story')});
 
     }
 
@@ -200,7 +252,7 @@ export class CafeComponent implements OnInit {
     this.CONTENT4 = [];
     for (let i = 0; i < results.length; i++) {
       let embed = this.sanitizer.bypassSecurityTrustHtml(results[i].get('embed'));
-      this.CONTENT4.push({embed:embed});
+      this.CONTENT4.push({embed:embed,story:results[i].get('story')});
 
     }
     // console.log(this.CONTENT3)
@@ -208,18 +260,24 @@ export class CafeComponent implements OnInit {
 
   async CONNECT(){
 
-    this.service.TEAPASS_CONNECT(this.user, this.host)
-    .then(async(res:any)=>{
-      if(res.success){
+    if(!this.connectionsOpen){
+      this.pop('error','this tea pass is not open for connections');
+    }else{
 
-          this.pop('success', 'connecting shortly');
+      this.service.TEAPASS_CONNECT(this.user, this.host)
+      .then(async(res:any)=>{
+        if(res.success){
 
-      }else{
+            this.pop('success', 'connecting shortly');
 
-        this.pop('success', res.msg);
+        }else{
 
-      }
-    })
+          this.pop('success', res.msg);
+
+        }
+      })
+    }
+
   }
 
   async ALLOW_CONNECTIONS(){
@@ -247,7 +305,7 @@ export class CafeComponent implements OnInit {
     .then(async(res:any)=>{
       if(res.success){
 
-          this.pop('success', 'connecting shortly');
+          this.pop('success', 'processing...');
 
       }else{
 

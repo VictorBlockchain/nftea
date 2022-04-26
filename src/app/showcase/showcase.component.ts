@@ -8,7 +8,7 @@ const Moralis = require('moralis');
 import moment from 'moment';
 declare var $: any;
 const ABISHOP = require('../../build/teashop/artifacts/abi.json');
-const TEASHOP = "0xF29BFeF0122a67616FA64e3D49752067d2367df7";
+const TEASHOP = "0xcE643e62C96d0F970075E8b289277a67334A93e8";
 const axios = require('axios');
 import { environment } from '../../environments/environment';
 import Big from 'big.js';
@@ -120,6 +120,7 @@ export class ShowcaseComponent implements OnInit {
     let quantity;
     this.service.GET_NFT(this.nft_id,0)
     .then(async(jordi:any)=>{
+      //console.log(jordi)
       let url = jordi.ipfs;
       url = url.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
       //console.log(url);
@@ -205,8 +206,8 @@ export class ShowcaseComponent implements OnInit {
             }else{
 
               let b_info:any = this.service.GET_NFT(s[0],0);
-              let b_ipfs = await axios.get(c_info.ipfs);
-              this.BIDDER.avatar = c_ipfs.data.image;
+              let b_ipfs = await axios.get(b_info.ipfs);
+              this.BIDDER.avatar = b_ipfs.data.image;
               this.BIDDER.collector = res.highestBidder;
             }
           }else{
@@ -217,7 +218,7 @@ export class ShowcaseComponent implements OnInit {
           if(this.nft_id==1){
             this.checkPowerUp();
           }
-          console.log(this.NFT);
+          // console.log(this.NFT.auction);
         })
       })
 

@@ -76,7 +76,7 @@
 				</div>
 		</div>
 </div>
-<div class="mb-3" *ngIf="!loading">
+<div class="mb-3">
 	<div class="hero__profile bg_white">
 		<div class="cover pt-30">
 			<div class="container pt-30">
@@ -85,15 +85,21 @@
 									<div class="space-y-20">
 											<h1>Tea Pass</h1>
 											<p class="hero__text">
-													Earn tea tokens from the tea pot with your content.. stream video, embed a spotify playlist. Community members connect to your tea pass and that's all.
+													Earn tea tokens from the tea pot with your content.. stream video, embed a spotify playlist. Community members connect to your tea pass and that's all.<br>
 											</p>
 									</div>
 							</div>
-							<div class="col-lg-auto mt-10 text-center">
-								<a href="javascript: void(0)" class="btn btn-white btn-lg mr-2" data-toggle="modal" data-target="#allow_connections" *ngIf="user==host"> Allow Connections</a>
+							<div class="col-lg-auto mt-10 text-center" *ngIf="loading">
+								<h4 class="text-center">loading...</h4>
+							</div>
+
+							<div class="col-lg-auto mt-10 text-center" *ngIf="!loading">
+								<a href="javascript: void(0)" class="btn btn-info btn-lg mr-2" data-toggle="modal" data-target="#allow_connections" *ngIf="user==host && connectionsOpen"> Pause Connections</a>
+								<a href="javascript: void(0)" class="btn btn-white btn-lg mr-2" data-toggle="modal" data-target="#allow_connections" *ngIf="user==host && !connectionsOpen"> Allow Connections</a>
 								<a href="javascript: void(0)" class="btn btn-dark btn-lg mr-2" data-toggle="modal" data-target="#add_content" *ngIf="user==host"> Add Content</a>
-								<a href="javascript: void(0)" class="btn btn-dark btn-lg mr-2" data-toggle="modal" data-target="#disconnect" *ngIf="passConnected"> Disconnect</a>
-							<a href="javascript: void(0)" class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#connect" *ngIf="user!=host && !passConnected"> Connect Tea Pass</a>
+								<a href="javascript: void(0)" class="btn btn-info btn-lg mr-2" data-toggle="modal" data-target="#disconnect" *ngIf="user!=host && viewerConnectTo==host"> Disconnect</a>
+								<a href="javascript: void(0)" class="btn btn-primary btn-lg mr-2" data-toggle="modal" data-target="#connect" *ngIf="user!=host && viewerConnectTo!=host"> Connect Tea Pass</a>
+								<p class="pt-1" *ngIf="viewerConnectTo==host"><br>start: {{viewerConnectionStart | date:'medium'}}</p>
 							</div>
 					</div>
 
@@ -117,7 +123,9 @@
 										space-x-20 mb-20_reset">
 							<div class="mb-20">
 								<div class="copy">
-								<span class="color_text">{{user}}
+									<span class="color_text" *ngIf="user==host">Connections: {{connectionCount}}
+									</span>
+									<span class="color_text" *ngIf="user!=host && viewerConnectTo==host">Host Earnings: {{viewerConnectionPaidToHost/1000000000 || 0 | number:'1.0-9'}}
 									</span>
 								</div>
 							</div>
@@ -164,7 +172,7 @@
     </div>
 </div>
 			<div class="container">
-				<div class="row justify-content-center" *ngIf="passConnected || user==host">
+				<div class="row justify-content-center" *ngIf="viewerConnectTo==host || user==host">
 					<div class="col-lg-12 col-md-12 order-md-1 order-0">
 						<div class="row justify-content-center mb-30_reset">
 							<div class="col-12">
@@ -172,18 +180,31 @@
 									<div class="tab-pane active" id="tabs-1" role="tabpanel">
 										<div class="row mb-30 mt-30" *ngIf="CONTENT1 && CONTENT1.length>0">
 											<div class="col-lg-4 col-md-6 col-sm-8" *ngFor="let data of CONTENT1">
-						        		<div class="collections space-y-10 mb-30">
-						        			<div class="collections_item">
-						        				<a href="javascript: void(0)">
-						        					<div class="images-box space-y-10">
-						        						<div>
-						        							<img src="{{data.get('media')}}" alt="">
-						        						</div>
-						        					</div>
-						        				</a>
-						        			</div>
-						        		</div>
+												<div class="card__item has_style2 six">
+													<div class="card_body">
+														<!-- =============== -->
+														<div class="card_head">
+
+														<video width="320" height="240" controls>
+															<source src="{{data.media}}" type="video/mp4">
+																Your browser does not support the video tag.
+														</video>
+														</div>
+														<div class="card_footer">
+															<div class="details space-y-10">
+																<h4 class="card_title text-center p-3">{{data.story}}</h4>
+															</div>
+														</div>
+													</div>
+												</div>
 						        	</div>
+										</div>
+										<div class="row mt-30" *ngIf="CONTENT1 && CONTENT1.length<1">
+											<div class="col-12 mt-30 form_cc_four">
+												<h4 class="text-center mt-30">
+													no content here, try another tab above
+												</h4>
+											</div>
 										</div>
 										<!--end tab one -->
 									</div>
@@ -191,22 +212,32 @@
 									<div class="tab-pane" id="tabs-2" role="tabpanel">
 										<div class="row mb-30 mt-30" *ngIf="CONTENT2 && CONTENT2.length>0">
 										<div class="col-lg-6 col-md-6 col-sm-8" *ngFor="let data of CONTENT2">
-											<div class="collections space-y-10 mb-30">
-												<div class="collections_item">
-													<a href="javascript: void(0)">
-														<div class="images-box space-y-10">
-															<div>
-																<video width="320" height="240" controls>
-																  <source src="{{data.media}}" type="video/mp4">
-																		Your browser does not support the video tag.
-																</video>
-															</div>
+											<div class="card__item has_style2 six">
+												<div class="card_body">
+													<!-- =============== -->
+													<div class="card_head">
+														<video width="320" height="240" controls>
+															<source src="{{data.media}}" type="video/mp4">
+																Your browser does not support the video tag.
+														</video>
+													</div>
+
+													<div class="card_footer">
+														<div class="details space-y-10">
+															<h4 class="card_title text-center p-3">{{data.story}}</h4>
 														</div>
-													</a>
+													</div>
 												</div>
 											</div>
 										</div>
 
+										</div>
+										<div class="row mt-30" *ngIf="CONTENT2 && CONTENT2.length<1">
+											<div class="col-12 mt-30 form_cc_four">
+												<h4 class="text-center mt-30">
+													no content here, try another tab above
+												</h4>
+											</div>
 										</div>
 										<!--end tab 2 -->
 									</div>
@@ -214,34 +245,54 @@
 									<div class="tab-pane" id="tabs-3" role="tabpanel">
 										<div class="row mb-30 mt-30" *ngIf="CONTENT3 && CONTENT3.length>0">
 										<div class="col-lg-6 col-md-6 col-sm-8" *ngFor="let data of CONTENT3">
-											<div class="collections space-y-10 mb-30">
-												<div class="collections_item">
-													<a href="javascript: void(0)">
-														<div class="images-box space-y-10">
-															<div class="article_wrap mt-0" [innerHTML]="data.embed">
-															</div>
+											<div class="card__item has_style2 six">
+												<div class="card_body">
+													<!-- =============== -->
+													<div class="card_head" [innerHTML]="data.embed">
+
+													</div>
+													<div class="card_footer">
+														<div class="details space-y-10">
+															<h4 class="card_title text-center p-3">{{data.story}}</h4>
 														</div>
-													</a>
+													</div>
 												</div>
 											</div>
 										</div>
+										</div>
+										<div class="row mt-30" *ngIf="CONTENT3 && CONTENT3.length<1">
+											<div class="col-12 mt-30 form_cc_four">
+												<h4 class="text-center mt-30">
+													no content here, try another tab above
+												</h4>
+											</div>
 										</div>
 									</div>
 
 									<div class="tab-pane" id="tabs-4" role="tabpanel">
 										<div class="row mb-30 mt-30" *ngIf="CONTENT4 && CONTENT4.length>0">
 										<div class="col-lg-6 col-md-6 col-sm-8" *ngFor="let data of CONTENT4">
-											<div class="collections space-y-10 mb-30">
-												<div class="collections_item">
-													<a href="javascript: void(0)">
-														<div class="images-box space-y-10">
-															<div class="article_wrap mt-0" [innerHTML]="data.embed">
-															</div>
+											<div class="card__item has_style2 six">
+												<div class="card_body">
+													<!-- =============== -->
+													<div class="card_head" [innerHTML]="data.embed">
+
+													</div>
+													<div class="card_footer">
+														<div class="details space-y-10">
+															<h4 class="card_title text-center p-3">{{data.story}}</h4>
 														</div>
-													</a>
+													</div>
 												</div>
 											</div>
 										</div>
+										</div>
+										<div class="row mt-30" *ngIf="CONTENT4 && CONTENT4.length<1">
+											<div class="col-12 mt-30 form_cc_four">
+												<h4 class="text-center mt-30">
+													no content here, try another tab above
+												</h4>
+											</div>
 										</div>
 									</div>
 
@@ -258,7 +309,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="row mt-30" *ngIf="!passConnected && user!=host">
+				<div class="row mt-30" *ngIf="viewerConnectTo!=host && user!=host">
 					<div class="col-12 mt-30 form_cc_four">
 						<h4 class="text-center mt-30">
 							Connect Your Tea Pass To Access Content
