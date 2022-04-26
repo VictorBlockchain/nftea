@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit {
       this.user = event
       // alert(this.user);
       this.connected = true;
-      this.start(3);
+      this.start(1);
       await this.GET_HONEY_POT();
     }else{
       this.connected = false;
@@ -201,7 +201,7 @@ export class HomeComponent implements OnInit {
       }
       if(_market==2){
         this.ACTIVE_TAB = 2;
-        this.TAB_NAME = 'Covers'
+        this.TAB_NAME = 'Photography'
 
       }
       if(_market==3){

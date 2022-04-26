@@ -1933,7 +1933,7 @@ async GET_WEB3(): Promise<any>{
         await this.GET_WEB3();
         const options = { chain: environment.CHAIN, address:_user, token_address: NFTEA };
         const NFTS = await Moralis.Web3API.account.getNFTsForContract(options);
-        console.log(NFTS.result);
+        // console.log(NFTS.result);
         let result = {success:true,msg:NFTS.result};
         resolve(result);
 

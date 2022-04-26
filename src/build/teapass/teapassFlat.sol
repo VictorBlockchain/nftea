@@ -1481,6 +1481,7 @@ contract TEAPASS {
     mapping(address=>uint256) public _C2_powerUpgradeDate;
     mapping(address=>mapping(uint256=>bool)) public powerUpgraded;
     mapping(address=>uint256) public _H2_earnings;
+    mapping(address=>bool) public isBANNED;
 
     address public TOKEN;
     address public TEASHOP;
@@ -1492,6 +1493,7 @@ contract TEAPASS {
     uint256 public powerMul = 2;
     uint256 public upgradePowerNFT = 0;
     uint256 public upgradePower = 1500000*10**9;
+    bool public isPaused;
 
     constructor(address _nftea) {
 
@@ -1505,9 +1507,19 @@ contract TEAPASS {
       require(isA[msg.sender], 'you are not an admin');
       isA[_admin] = true;
     }
+
+    function setPause (uint256 _type) public {
+      require(isA[msg.sender], 'you are not an admin');
+      if(_type==1){
+        isPaused = true;
+      }else{
+        isPaused = false;
+      }
+    }
     function allowConnections(uint256 _nft) public {
 
       require(_C[msg.sender]._power>=100000*10**9, 'your power is too low');
+      require(!isBANNED[msg.sender], 'you are banned');
       _H2_allowConnections[msg.sender] = true;
       _H2_nftToConnect[msg.sender] = _nft;
       emit acceptConnections(msg.sender);
@@ -1588,6 +1600,21 @@ contract TEAPASS {
         require(isA[msg.sender], ' you are not an admin');
                 isC[_contract] = _A;
     }
+    function setBan(address _user) public {
+
+      require(isA[msg.sender], 'you are not that cool');
+      isBANNED[_user] = true;
+      _C[_user]._power = 0;
+      _H2_allowConnections[_user] = false;
+
+    }
+    function setUnBan(address _user, uint256 _pwr) public {
+
+      require(isA[msg.sender], 'you are not that cool');
+      isBANNED[_user] = false;
+      _C[_user]._power = _pwr;
+
+    }
 
     function setPowerAdmin(uint256 _powermul, uint256 _upgradenft, uint256 _upgradepower) public {
 
@@ -1647,6 +1674,8 @@ contract TEAPASS {
     function connectPass(address _to, address _token) public {
 
       require(_H2_allowConnections[_to],'this host is not accepting connections');
+      require(!isBANNED[msg.sender], 'you are banned');
+      require(!isPaused, 'tea pass paused');
 
       if(_H2_nftToConnect[_to]>0){
 
@@ -1658,8 +1687,8 @@ contract TEAPASS {
         uint256 _timeConnected = 0;
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
 
-          _timeConnected = _C2_H_end[msg.sender][_host].sub(_C2_H_start[msg.sender][_host]);
-          uint256 _pwr = 100000*10**9;
+          _timeConnected = 7200;
+          uint256 _pwr = 100000;
           if(_C[msg.sender]._power.sub(_pwr)>0){
             _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
           }else{
@@ -1706,21 +1735,24 @@ contract TEAPASS {
       require(_C2_connected[msg.sender], 'your tea pass is not connected');
       address _host = _C2_H[msg.sender];
       uint256 _timeConnected = 0;
-      uint256 _pwr;
+      uint256 _pwr = 0;
       if(_C2_H_end[msg.sender][_host]<block.timestamp){
 
         _timeConnected = 7200;
-        _pwr = 200000;
+        _pwr = 100000;
 
 
       }else{
 
         _timeConnected = block.timestamp.sub(_C2_H_start[msg.sender][_host]);
-        _pwr = 20000;
+        _pwr = 10000;
       }
       _timeConnected = _timeConnected.div(60);
       uint256 _value = _timeConnected.mul(_C[msg.sender]._power);
-
+      uint256 bal = IERC20(TOKEN).balanceOf(TEAPOT);
+      if(bal>_value){
+        _value = bal.mul(20).div(100);
+      }
       bool success =  i1155(TEAPOT).disValueTeaPass(_host,_value, _token);
       if(success){
 

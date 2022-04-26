@@ -38,7 +38,7 @@ export class ProfileComponent implements OnInit {
   editMessage:any
   loading:boolean;
   minting:any;
-  ALBUM:any;
+  ALBUMS:any;
   NFTEAS:any;
   AUCTIONS:any;
   hasProfile1:boolean;
@@ -85,6 +85,7 @@ export class ProfileComponent implements OnInit {
     // console.log(this.skip)
     let power:any = await this.service.GET_PROFILE1(this.user);
     this.POWER = power[3];
+    this.ALBUMS = [];
     // console.log(power)
     const _uProfile = Moralis.Object.extend("profile");
     const _query = new Moralis.Query(_uProfile);
@@ -97,15 +98,23 @@ export class ProfileComponent implements OnInit {
       //console.log(this.COLLECTOR)
 
     }else{
-      //console.log(this.COLLECTOR)
+      // console.log(this.COLLECTOR)
       let avatar = this.COLLECTOR.get('avatar');
 
       if(avatar>0){
 
         this.showProfile = true;
         await this.service.GET_ALBUMS(this.user)
-        .then((res:any)=>{
+        .then(async(res:any)=>{
           this.ALBUMCOUNT = res.length;
+          for (let i = 0; i < res.length; i++) {
+            const element = res[i];
+            await this.service.GET_ALBUM(element)
+            .then(async(res:any)=>{
+              this.ALBUMS.push(res)
+              // console.log(this.ALBUMS)
+            })
+          }
           this.getNFTSIOWN();
           // console.log(res)
         })
@@ -115,11 +124,21 @@ export class ProfileComponent implements OnInit {
 
         if(this.skip){
           this.showProfile = true;
-          await this.service.GET_ALBUMS(this.user)
-          .then((res:any)=>{
+          this.service.GET_ALBUMS(this.user)
+          .then(async(res:any)=>{
             this.ALBUMCOUNT = res.length;
+            for (let i = 0; i < res.length; i++) {
+              const element = res[i];
+              await this.service.GET_ALBUM(element)
+              .then(async(res:any)=>{
+                this.ALBUMS.push(res)
+                // console.log(this.ALBUMS)
+              })
+            }
+
+            // console.log('get albums is own ' + res);
             this.getNFTSIOWN();
-            console.log('skipping to my lou')
+            // console.log('skipping to my lou')
 
           })
 
@@ -211,34 +230,38 @@ export class ProfileComponent implements OnInit {
     })
   }
 
-  async getNFTSCreatedByMe(){
-    //console.log('getting nfts');
-    await this.service.GET_NFTS(this.user)
-    .then(async(res:any)=>{
+  async getMyAlbums(){
 
-      this.NFTCOUNT = res.length;
-      // console.log(res);
-      if(this.NFTCOUNT>0){
-        // console.log(res);
-        let NFTS:any = res;
-        this.NFTEAS = [];
-
-        NFTS.forEach(element => {
-          //console.log('album is ' + element);
-          this.service.GET_NFTEA(element)
-          .then(async(res:any)=>{
-
-            let _vault = await this.service.GET_TEAPOT(element);
-            let ipfs:any = await axios.get(res.ipfs);
-            this.NFTEAS.push({ipfs:ipfs.data,teapot:_vault,id:element});
-            this.loading = false;
-            //console.log(ipfs.data.image);
-          });
-        });
-      }
-
-    })
   }
+
+  // async getNFTSCreatedByMe(){
+  //   //console.log('getting nfts');
+  //   await this.service.GET_NFTS(this.user)
+  //   .then(async(res:any)=>{
+  //
+  //     this.NFTCOUNT = res.length;
+  //     // console.log(res);
+  //     if(this.NFTCOUNT>0){
+  //       // console.log(res);
+  //       let NFTS:any = res;
+  //       this.NFTEAS = [];
+  //
+  //       NFTS.forEach(element => {
+  //         //console.log('album is ' + element);
+  //         this.service.GET_NFTEA(element)
+  //         .then(async(res:any)=>{
+  //
+  //           let _vault = await this.service.GET_TEAPOT(element);
+  //           let ipfs:any = await axios.get(res.ipfs);
+  //           this.NFTEAS.push({ipfs:ipfs.data,teapot:_vault,id:element});
+  //           this.loading = false;
+  //           //console.log(ipfs.data.image);
+  //         });
+  //       });
+  //     }
+  //
+  //   })
+  // }
 
   async setProfile(){
 
@@ -414,104 +437,45 @@ async loadProfile(){
   this.loading = false;
 
 }
-async GET_USER_NFTS(){
-  console.log("getting nfts");
-  this.NFTS =[];
-  let koin;
-  let ALBUMNFTS = []
-  const _NFTS = Moralis.Object.extend("BscNFTOwners");
-  const _query = new Moralis.Query(_NFTS);
-  _query.equalTo('owner_of',this.user.toLowerCase());
-  const results = await _query.find();
-  if(results){
-    this.NFTCOUNT = results.length;
-  }else{
-    this.NFTCOUNT = 0;
-  }
-  // console.log(results);
-    for (let i = 0; i < results.length; i++) {
-    const object = results[i];
-    // console.log(object.get('token_address'));
-    if(object.get('token_address')==NFT.toLowerCase()){
-      //console.log(object.get('token_id'));
 
 
-              this.service.GET_NFT(object.get('token_id'),0)
-              .then(async(jordi:any)=>{
-                // console.log(jordi);
-
-                let ipfs = await axios.get(jordi.ipfs);
-                ipfs.data.nft_id = object.get('token_id');
-                //console.log(ipfs.data)
-                let COLL:any = this.COLLECTION.find(id=>id.id==ipfs.data.collection);
-                ALBUMNFTS.push(ipfs.data)
-                COLL.nfts = ALBUMNFTS;
-                //console.log(this.COLLECTION);
-
-                let auction = await this.service.GET_AUCTION(this.user,object.get('token_id'));
-                console.log(auction)
-                // if(auction.market!=4){
-                //   koin = 1;
-                // }else{
-                //   koin = 2;
-                // }
-                let brewTea = await this.service.GET_BREW_VALUE(object.get('token_id'));
-                let brewDate = await this.service.GET_BREW_DATE(object.get('token_id'),koin);
-                brewDate = moment(brewDate*1000).fromNow();
-                ipfs.data.auction = auction;
-                ipfs.data.brewTea = brewTea;
-                ipfs.data.dateTea = brewDate;
-                this.NFTS.push(ipfs.data);
-                //console.log(this.NFTS);
-                this.loading = false;
-              })
-
-    }else{
-      //console.log(object.get('token_address'));
-    }
-    //console.log(object.get('token_address'));
-    //alert(object.id + ' - ' + object.get('ownerName'));
-  }
-
-}
-
-async GET_USER_AUCTIONS(){
-  console.log('getting auctions');
-  this.AUCTIONS = [];
-  const _query = new Moralis.Query(_auction);
-  _query.equalTo('seller',this.user.toLowerCase());
-  _query.equalTo('active',1);
-  const results = await _query.find();
-  if(results){
-    this.AUCTIONCOUNT = results.length;
-  }else{
-    this.AUCTIONCOUNT = 0;
-  }
-  // console.log(results);
-    for (let i = 0; i < results.length; i++) {
-
-        const object = results[i];
-        this.service.GET_NFT(object.get('nft'),0)
-        .then(async(jordi:any)=>{
-          // console.log('nft is ' + object.get('nft'));
-          let ipfs = await axios.get(jordi.ipfs);
-          ipfs.data.nft_id = object.get('nft');
-          let auction = await this.service.GET_AUCTION(this.user,object.get('nft'));
-          ipfs.data.auction = auction;
-          this.AUCTIONS.push(ipfs.data);
-          // console.log(this.AUCTIONS);
-        })
-      }
-      this.cd.detectChanges();
-}
-async GET_MINTING(){
-
-  const _MINTING = Moralis.Object.extend("BscNFTOwnersPending");
-  const _query = new Moralis.Query(_MINTING);
-  _query.equalTo('owner_of',this.user);
-  this.minting = await _query.first();
-  //console.log(this.minting);
-}
+// async GET_USER_AUCTIONS(){
+//   console.log('getting auctions');
+//   this.AUCTIONS = [];
+//   const _query = new Moralis.Query(_auction);
+//   _query.equalTo('seller',this.user.toLowerCase());
+//   _query.equalTo('active',1);
+//   const results = await _query.find();
+//   if(results){
+//     this.AUCTIONCOUNT = results.length;
+//   }else{
+//     this.AUCTIONCOUNT = 0;
+//   }
+//   // console.log(results);
+//     for (let i = 0; i < results.length; i++) {
+//
+//         const object = results[i];
+//         this.service.GET_NFT(object.get('nft'),0)
+//         .then(async(jordi:any)=>{
+//           // console.log('nft is ' + object.get('nft'));
+//           let ipfs = await axios.get(jordi.ipfs);
+//           ipfs.data.nft_id = object.get('nft');
+//           let auction = await this.service.GET_AUCTION(this.user,object.get('nft'));
+//           ipfs.data.auction = auction;
+//           this.AUCTIONS.push(ipfs.data);
+//           // console.log(this.AUCTIONS);
+//         })
+//       }
+//       this.cd.detectChanges();
+// }
+// async GET_MINTING(){
+//
+//   const _MINTING = Moralis.Object.extend("BscNFTOwnersPending");
+//   const _query = new Moralis.Query(_MINTING);
+//   _query.equalTo('owner_of',this.user);
+//   this.minting = await _query.first();
+//   //console.log(this.minting);
+// }
 async editProfile(){
   console.log("editing");
   if(!this.user){
@@ -660,6 +624,7 @@ async editProfile(){
 }
 
 async editBlockchainProfile(){
+
   const _uProfile = Moralis.Object.extend("profile");
   const _query = new Moralis.Query(_uProfile);
   _query.equalTo('user',this.user);

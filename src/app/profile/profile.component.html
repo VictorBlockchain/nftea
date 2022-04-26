@@ -43,7 +43,7 @@
 				<div class="row form_cc_four mb-20 text-center">
 					<div class="col-12">
 							<h5 class="text-center">
-								Next, you should set your avatar and cover NFT's. These must be NFT's you own... head over to the avatar market to find an NFT suited for you.
+								Next, you should set your avatar NFT, head over to the avatar market to find an NFT suited for you.
 							</h5>
 
 					</div>
@@ -127,7 +127,7 @@
 					 </form>
 					</div>
 					<div class="col-12">
-						<a class="btn btn-primary btn-lg" href="javascript: void(0)" (click)="SETAVATAR();">Set Avatar/Cover</a><br><br>
+						<a class="btn btn-primary btn-lg" href="javascript: void(0)" (click)="SETAVATAR();">Set Avatar</a><br><br>
 						<a class="btn btn-white btn-lg mt-10" href="javascript: void(0)" (click)="showEditProfile=false;">back</a>
 
 					</div>
@@ -183,7 +183,7 @@
 									<select class="form-select custom-select" aria-label="Preference" formControlName="preference">
 										<option>Please Select</option>
 										<option value="1">Avatar</option>
-										<option value="2">Cover</option>
+										<option value="2">Photography</option>
 										<option value="3">Heritage</option>
 										<option value="4">Cafe Wall</option>
 										<option value="5">Film/Video</option>
@@ -541,8 +541,39 @@
 									</div>
 
 									<div class="tab-pane" id="tabs-3" role="tabpanel">
-										<div class="row mb-30_reset" *ngIf="ALBUM && !loading">
-											<div class="col-lg-4 col-md-6 col-sm-8" *ngFor="let data of ALBUM; index as i">
+										<div class="row mb-30_reset" *ngIf="ALBUMS && !loading">
+											<div class="container">
+			        <div class="box d-flex table-responsive">
+			            <table class="table ranking ">
+			                <thead>
+			                    <tr>
+			                        <th scope="col"><span>Title</span></th>
+			                        <th scope="col"><span>Category</span></th>
+			                        <th scope="col"><span>Volume</span></th>
+			                        <th scope="col"><span>Floor</span></th>
+			                        <th scope="col"><span>Value</span></th>
+			                        <th scope="col"><span>Owners</span></th>
+			                        <th scope="col"><span>NFTs</span></th>
+			                    </tr>
+			                </thead>
+			                <tbody>
+			                    <tr *ngFor="let data of ALBUMS">
+			                        <td>
+																{{data._name}}
+			                         </td>
+			                        <td><span>{{data._category}}</span></td>
+			                        <td><span class="color_green">{{data._volume}}</span></td>
+			                        <td><span class="color_red">{{data._floor}}</span></td>
+			                        <td><span>{{data._albumValue}}</span></td>
+			                        <td><span>0<span></span></span></td>
+			                        <td><span>0<span></span></span></td>
+			                    </tr>
+			                </tbody>
+			            </table>
+			        </div>
+			    </div>
+
+											<!-- <div class="col-lg-4 col-md-6 col-sm-8" *ngFor="let data of ALBUMS; index as i">
 												<div class="collections space-y-10 mb-30">
 													<div class="collections_item">
 														<div class="images-box space-y-10">
@@ -577,8 +608,8 @@
 															<p class="avatars_name txt_sm"> @william_jamy... </p>
 														</a>
 													</div> -->
-												</div>
-											</div>
+												<!-- </div>
+											</div> --> -->
 
 										</div>
 									</div>
