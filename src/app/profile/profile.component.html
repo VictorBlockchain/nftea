@@ -1,10 +1,10 @@
 <app-header (session)="getSession($event)"></app-header>
-<div class="mb-50" *ngIf="!loading">
+<div class="mb-50">
 	<div class="hero__profile">
 		<div class="cover">
 			<img src="https://raroin.creabik.com/assets/img/bg/prrofile.png" alt="">
 		</div>
-		<div class="infos">
+		<div class="infos" *ngIf="!loading">
 			<div class="container">
 				<div class="row flex-wrap align-items-center
 								justify-content-between">
@@ -60,7 +60,7 @@
 </div>
 <div class="container" style="margin-bottom: 30px" *ngIf="showCreateProfile && !showEditProfile">
 	<div class="mt-20">
-		<h3 class="mb-40" (click)="showCreateBrew=false">
+		<h3 class="mb-40 text-center">
 			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
 														32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
@@ -87,9 +87,8 @@
 			</div>
 		</div>
 	</div>
-
 </div>
-<div class="container" style="margin-bottom: 30px" *ngIf="showEditProfile">
+<div class="container" style="margin-bottom: 30px" *ngIf="!showCreateProfile && showEditProfile">
 	<div class="mt-20">
 		<h3 class="mb-40 text-center">
 			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -102,6 +101,36 @@
 														27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
 			</svg>
 			Edit Your Profile
+		</h3>
+	</div>
+	<div class="row">
+		<div class="mt-10 col-lg-8 offset-lg-2">
+			<div class="box in__upload mb-20 form_cc_four mb-20">
+				<div class="row form_cc_four mb-20 text-center">
+					<div class="col-12">
+							<h5 class="text-center">
+								Adding your gender and Heritage allow us to highlight women artist or Jewish artists, or South East Asian artists and so on.
+							</h5>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container" style="margin-bottom: 30px" *ngIf="showEditAvatar">
+	<div class="mt-20 text-center">
+		<h3 class="mb-40 text-center">
+			<svg width="39" height="44" viewBox="0 0 39 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.816 43.904L16.016 27.552L0.448 33.376L0
+														32.592L12.768 21.952L0 11.424L0.448 10.64L16.016
+														16.352L18.816 0H19.712L22.512 16.352L38.08
+														10.64L38.528
+														11.424L25.76 21.952L38.528 32.592L38.08
+														33.376L22.512
+														27.552L19.712 43.904H18.816Z" fill="#183B56"></path>
+			</svg>
+			Edit Your Avatar
 		</h3>
 	</div>
 	<div class="row">
@@ -158,8 +187,8 @@
 									<span class="variationInput">Gender</span>
 									<select class="form-select custom-select" aria-label="Gender" formControlName="gender">
 										<option>Please Select</option>
-										<option>Female</option>
-										<option>Male</option>
+										<option value="female">Female</option>
+										<option value="male"> Male</option>
 									</select>
 								</div>
 							</div>
@@ -173,26 +202,26 @@
 									<span class="variationInput">Creator / Collector</span>
 									<select class="form-select custom-select input_white" aria-label="accountType" formControlName="accountType">
 										<option>Please Select</option>
-										<option value="1">Creator</option>
-										<option value="2">Collector</option>
-										<option value="3">Both</option>
+										<option value="creator">Creator</option>
+										<option value="collector">Collector</option>
+										<option value="both">Both</option>
 									</select>
 								</div>
 								<div class="form-group space-y-10">
 									<span class="variationInput">Preference</span>
 									<select class="form-select custom-select" aria-label="Preference" formControlName="preference">
 										<option>Please Select</option>
-										<option value="1">Avatar</option>
-										<option value="2">Photography</option>
-										<option value="3">Heritage</option>
-										<option value="4">Cafe Wall</option>
-										<option value="5">Film/Video</option>
-										<option value="6">Art & All</option>
-										<option value="7">Music</option>
-										<option value="8">Prison Art</option>
-										<option value="9">Sexy Women</option>
-										<option value="10">Sexy Men</option>
-										<option value="11">Coupons</option>
+										<option value="avatar">Avatar</option>
+										<option value="photography">Photography</option>
+										<option value="heritage">Heritage</option>
+										<option value="cafe wall">Cafe Wall</option>
+										<option value="film/video">Film/Video</option>
+										<option value="art & all">Art & All</option>
+										<option value="music">Music</option>
+										<option value="prison art">Prison Art</option>
+										<option value="sexy women">Sexy Women</option>
+										<option value="sexy men">Sexy Men</option>
+										<option value="coupons">Coupons</option>
 									</select>
 								</div>
 							</div>
@@ -200,33 +229,35 @@
 								<span class="variationInput">Heritage</span>
 								<select class="form-select custom-select" aria-label="Preference" formControlName="heritage">
 									<option value="1">Please Select</option>
-									<option value="2"> African</option>
-									<option value="3">North African</option>
-									<option value="4">West African</option>
-									<option value="5">East African</option>
-									<option value="6">South African</option>
-									<option value="7">American</option>
-									<option value="8">American White</option>
-									<option value="9">American Black</option>
-									<option value="10">American Indian</option>
-									<option value="11">American Latino</option>
-									<option value="12">American Asain</option>
-									<option value="13">Asian</option>
-									<option value="14">East Asian</option>
-									<option value="15">South East Asian</option>
-									<option value="16">Japanese</option>
-									<option value="17">Korean</option>
-									<option value="18">Middle East</option>
-									<option value="19">Jewish</option>
-									<option value="20">Muslim</option>
-									<option value="21">Christian</option>
-									<option value="22">Buddist</option>
-									<option value="23">Alt-ist</option>
-									<option value="24">Australian</option>
-									<option value="25">Carribean</option>
-									<option value="26">European</option>
-									<option value="27">Eastern European</option>
-									<option value="28">Alien</option>
+									<option value="african"> African</option>
+									<option value="north african">North African</option>
+									<option value="west african">West African</option>
+									<option value="east african">East African</option>
+									<option value="south african">South African</option>
+									<option value="american">American</option>
+									<option value="american white">American White</option>
+									<option value="american black">American Black</option>
+									<option value="american indian">American Indian</option>
+									<option value="american latino">American Latino</option>
+									<option value="american asain">American Asain</option>
+									<option value="south american">south american</option>
+									<option value="asian">Asian</option>
+									<option value="east asian">East Asian</option>
+									<option value="south east asian">South East Asian</option>
+									<option value="japanese">Japanese</option>
+									<option value="korean">Korean</option>
+									<option value="middle east">Middle East</option>
+									<option value="jewish">Jewish</option>
+									<option value="muslim">Muslim</option>
+									<option value="christian">Christian</option>
+									<option value="buddist">Buddist</option>
+									<option value="alt-ist">Alt-ist</option>
+									<option value="australian">Australian</option>
+									<option value="carrinbean">Carribean</option>
+									<option value="jamaican">jamaican</option>
+									<option value="european">European</option>
+									<option value="eastern european">Eastern European</option>
+									<option value="alien">Alien</option>
 								</select>
 							</div>
 					<div class="col-lg-12 col-md-12">
@@ -239,8 +270,121 @@
 					</div>
 					<p class="text-center mt-30">
 
-						<a *ngIf="!showEditProfile" class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="setProfile()"><i class="ri-donut-chart-fill
+						<a *ngIf="showCreateProfile" class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="setProfile()"><i class="ri-donut-chart-fill
 																            lg"></i> Create Profile</a>
+					</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+
+<div class="container" *ngIf="!showCreateProfile && showEditProfile && !showEditBlockchain && !showGoBuyAvatar && !showGoBuyAvatar">
+	<div class="row">
+		<div class="mt-10 col-lg-8 offset-lg-2">
+			<div class="box in__upload mb-120 form_cc_four mb-20">
+				<div class="col-12">
+					<div class="form_cc_four mb-20">
+						<form action="text" class="row justify-content-center" [formGroup]="_profile">
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group space-y-10">
+									<span class="nameInput">User Name</span>
+									<input type="text" class="form-control" placeholder="{{COLLECTOR.get('name')}}" formControlName="name">
+								</div>
+								<div class="form-group space-y-10">
+									<span class="nameInput">Your Email</span>
+									<input type="text" class="form-control input_white" placeholder="{{COLLECTOR.get('email')}}" formControlName="email">
+								</div>
+								<div class="form-group space-y-10">
+									<span class="variationInput">Gender ({{COLLECTOR.get('gender')}})</span>
+									<select class="form-select custom-select" aria-label="Gender" formControlName="gender">
+										<option>Please Select</option>
+										<option value="female">Female</option>
+										<option value="male">Male</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-lg-6 col-md-6">
+								<div class="form-group space-y-10">
+									<span class="variationInput">Real Name</span>
+									<input type="text" class="form-control input_white" placeholder="{{COLLECTOR.get('realName') || 'whats your real name?'}}" formControlName="realName">
+
+								</div>
+								<div class="form-group space-y-10">
+									<span class="variationInput">Creator / Collector ({{COLLECTOR.get('accountType')}})</span>
+									<select class="form-select custom-select input_white" aria-label="accountType" formControlName="accountType">
+										<option>Please Select</option>
+										<option value="creator">Creator</option>
+										<option value="collector">Collector</option>
+										<option value="both">Both</option>
+									</select>
+								</div>
+								<div class="form-group space-y-10">
+									<span class="variationInput">Preference ({{COLLECTOR.get('preference')}})</span>
+									<select class="form-select custom-select" aria-label="Preference" formControlName="preference">
+										<option>Please Select</option>
+										<option value="avatar">Avatar</option>
+										<option value="photography">Photography</option>
+										<option value="heritage">Heritage</option>
+										<option value="cafe wall">Cafe Wall</option>
+										<option value="film/video">Film/Video</option>
+										<option value="art & all">Art & All</option>
+										<option value="music">Music</option>
+										<option value="prison art">Prison Art</option>
+										<option value="sexy women">Sexy Women</option>
+										<option value="sexy men">Sexy Men</option>
+										<option value="coupons">Coupons</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group space-y-10">
+								<span class="variationInput">Heritage ({{COLLECTOR.get('heritage')}})</span>
+								<select class="form-select custom-select" aria-label="Preference" formControlName="heritage">
+									<option value="1">Please Select</option>
+									<option value="african"> African</option>
+									<option value="north african">North African</option>
+									<option value="west african">West African</option>
+									<option value="east african">East African</option>
+									<option value="south african">South African</option>
+									<option value="american">American</option>
+									<option value="american white">American White</option>
+									<option value="american black">American Black</option>
+									<option value="american indian">American Indian</option>
+									<option value="american latino">American Latino</option>
+									<option value="american asain">American Asain</option>
+									<option value="south american">south american</option>
+									<option value="asian">Asian</option>
+									<option value="east asian">East Asian</option>
+									<option value="south east asian">South East Asian</option>
+									<option value="japanese">Japanese</option>
+									<option value="korean">Korean</option>
+									<option value="middle east">Middle East</option>
+									<option value="jewish">Jewish</option>
+									<option value="muslim">Muslim</option>
+									<option value="christian">Christian</option>
+									<option value="buddist">Buddist</option>
+									<option value="alt-ist">Alt-ist</option>
+									<option value="australian">Australian</option>
+									<option value="carrinbean">Carribean</option>
+									<option value="jamaican">jamaican</option>
+									<option value="european">European</option>
+									<option value="eastern european">Eastern European</option>
+									<option value="alien">Alien</option>
+								</select>
+							</div>
+					<div class="col-lg-12 col-md-12">
+						<div class="form-group space-y-10">
+							<span class="nameInput">Your Story</span>
+							<textarea type="text" class="form-control" placeholder="{{COLLECTOR.get('story') || 'i love being an artist'}}" formControlName="story">
+
+										</textarea>
+						</div>
+					</div>
+					<p class="text-center mt-30">
+
 						<a *ngIf="showEditProfile" class="btn btn-dark btn-lg" href="javascript: void(0)" (click)="editProfile()"><i class="ri-donut-chart-fill
 																																            lg"></i> Edit Profile</a>
 
@@ -282,9 +426,7 @@
 									<div class="box">
 										<ul class="social_profile space-y-10 overflow-hidden">
 											<li>
-												<a href="javascript: void(0)">
-												{{POWER/1000000000}}
-												</a>
+												{{POWER/1000000000 | number:'1.0-9'}}
 											</li>
 										</ul>
 									</div>
@@ -292,17 +434,12 @@
 
 								<div class="space-y-10 text-center" *ngIf="user==profile">
 									<p class="p-2">
-										<a class="btn btn-dark btn-lg" (click)="showEditProfile=true">Set Avatar</a>
+										<a class="btn btn-dark btn-lg" (click)="showEditAvatar=true">Set Avatar</a>
 									</p>
 									<p class="p-2">
 										<a class="btn btn-info btn-lg" (click)="showEditProfile=true">Edit Profile</a>
 
 									</p>
-									<p class="p-2" style="display:none">
-										<a class="btn btn-danger btn-lg" (click)="showEditProfile=true">Open Tea Pass</a>
-
-									</p>
-
 								</div>
 
 
@@ -560,9 +697,21 @@
 			                        <td>
 																{{data._name}}
 			                         </td>
-			                        <td><span>{{data._category}}</span></td>
-			                        <td><span class="color_green">{{data._volume}}</span></td>
-			                        <td><span class="color_red">{{data._floor}}</span></td>
+
+			                        <td>
+																<span *ngIf="data._category==1">Avatar</span>
+																<span *ngIf="data._category==2">Photography</span>
+																<span *ngIf="data._category==3">Heritage</span>
+																<span *ngIf="data._category==4">Cafe Wall</span>
+																<span *ngIf="data._category==5">Film/Video</span>
+																<span *ngIf="data._category==6">Art & All</span>
+																<span *ngIf="data._category==7">Music</span>
+																<span *ngIf="data._category==8">Prison</span>
+																<span *ngIf="data._category==9">Sexy Women</span>
+																<span *ngIf="data._category==10">Sexy Men</span>
+															</td>
+			                        <td><span class="color_green">{{data._volume/1000000000 | number:'1.0-9'}} TEA</span></td>
+			                        <td><span class="color_red">{{data._floor/1000000000 | number:'1.0-9'}} TEA</span></td>
 			                        <td><span>{{data._albumValue}}</span></td>
 			                        <td><span>0<span></span></span></td>
 			                        <td><span>0<span></span></span></td>

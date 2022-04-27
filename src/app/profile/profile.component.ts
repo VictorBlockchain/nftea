@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ViewChildren, QueryList, NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from "@angular/core";
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import {  Router, ActivatedRoute, ParamMap } from '@angular/router'
-import { SERVICE } from '../service/web3.service';
 import Swal from 'sweetalert2'
 import { NgxSummernoteModule } from 'ngx-summernote';
 const Moralis = require('moralis');
@@ -11,6 +10,7 @@ declare var $: any;
 const NFT = "0xd4dE3Aab3F26AF139b03b93CdEc9f688641cDd8f";
 const _auction = Moralis.Object.extend("auction");
 import { environment } from '../../environments/environment';
+import {SERVICE} from '../service/web3.service';
 
 @Component({
   selector: 'app-profile',
@@ -32,6 +32,7 @@ export class ProfileComponent implements OnInit {
   showEditProfile:boolean;
   showProfile:boolean;
   showEditBlockchain:boolean;
+  showEditAvatar:boolean;
   profile:any
   PROFILE1:any
   PROFILE2:any
@@ -49,6 +50,7 @@ export class ProfileComponent implements OnInit {
   POWER:any;
   showGoBuyAvatar:boolean;
   skip:boolean;
+  COLLECTOR:any;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 
@@ -195,8 +197,10 @@ export class ProfileComponent implements OnInit {
   async getMyAuctions(){
 
     this.AUCTIONS = [];
-    let NFTEA =[];
-    let DATA= [];
+    let NFTEA:any;
+    NFTEA = [];
+    let DATA:any;
+    DATA = [];
     this.service.GET_MY_AUCTIONS(this.user)
     .then(async(res:any)=>{
       if(res.length>0){
@@ -310,6 +314,7 @@ export class ProfileComponent implements OnInit {
         preference:this._profile.controls.preference.value,
         story:this._profile.controls.story.value,
         heritage:this._profile.controls.heritage.value,
+        gender:this._profile.controls.gender.value,
         avatar:0,
         cover:0,
         user:this.user
@@ -390,45 +395,7 @@ export class ProfileComponent implements OnInit {
   //   }
   // }
 
-async loadProfile(){
 
-  console.log("geting collections and things");
-  this.service.GET_PROFILE1(this.user)
-  .then(async(res:any)=>{
-    let ALBUMS:any = res.albums;
-    // console.log(res);
-    this.COLLECTIONCOUNT = ALBUMS.length;
-    this.COLLECTION = [];
-
-    ALBUMS.forEach(element => {
-      //console.log('album is ' + element);
-      this.service.GET_ALBUM(element)
-      .then((res:any)=>{
-
-        this.COLLECTION.push({id:element,name:res.name});
-        //console.log(this.COLLECTION);
-
-      })
-    });
-  })
-//   const _uCollection = Moralis.Object.extend("collection");
-//   const _query = new Moralis.Query(_uCollection);
-//   _query.equalTo('user',this.user);
-//   const results = await _query.find();
-//   for (let i = 0; i < results.length; i++) {
-//   const object = results[i];
-//   //console.log(object.get('nfteas'))
-// }
-//   this.COLLECTION = results;
-//   if(this.COLLECTION){
-//     this.COLLECTIONCOUNT = this.COLLECTION.length;
-//   }else{
-//     this.COLLECTIONCOUNT = 0;
-//   }
-  //console.log(this.COLLECTION);
-  this.loading = false;
-
-}
 
 
 // async GET_USER_AUCTIONS(){
@@ -469,7 +436,7 @@ async loadProfile(){
 //   //console.log(this.minting);
 // }
 async editProfile(){
-  console.log("editing");
+
   if(!this.user){
 
     Swal.fire({
@@ -481,104 +448,19 @@ async editProfile(){
 
   }else{
 
-    if(this.PROFILE2 && this.PROFILE2.length<1){
-      ///store in db
-      if(this.profile!=this.user){
-
-        Swal.fire({
-          title: 'Error!',
-          text: 'You cannot edit this profile',
-          icon: 'error',
-          confirmButtonText: 'Close'
-        })
-      }else if(!this._profile.controls.name.value){
-
-        Swal.fire({
-          title: 'Error!',
-          text: 'enter your cool user name',
-          icon: 'error',
-          confirmButtonText: 'Close'
-        })
-      }else if(!this._profile.controls.email.value){
-
-        Swal.fire({
-          title: 'Error!',
-          text: 'enter your email',
-          icon: 'error',
-          confirmButtonText: 'Close'
-        })
-      }else if(!this._profile.controls.accountType.value){
-
-        Swal.fire({
-          title: 'Error!',
-          text: 'are you a collector or creator?',
-          icon: 'error',
-          confirmButtonText: 'Close'
-        })
-      }else if(!this._profile.controls.preference.value){
-
-        Swal.fire({
-          title: 'Error!',
-          text: 'what is your art preference?',
-          icon: 'error',
-          confirmButtonText: 'Close'
-        })
-      }else if(!this._profile.controls.story.value){
-
-        Swal.fire({
-          title: 'Error!',
-          text: 'what is your story?',
-          icon: 'error',
-          confirmButtonText: 'Close'
-        })
-      }else{
-
-        const _uProfile = Moralis.Object.extend("profile");
-        const _p = new _uProfile(this._profile.controls.email.value);
-
-        _p.save({
-
-          name:this._profile.controls.name.value,
-          email:this._profile.controls.email.value,
-          accountType:this._profile.controls.accountType.value,
-          preference:this._profile.controls.preference.value,
-          story:this._profile.controls.story.value,
-          user:this.user
-
-        }).then(()=>{
-
-          this.pop('success', 'profile created');
-        })
-
-      }
-
-    }else{
-
-      if(!this.PROFILE1.user){
-        ///send to blockchain
-        this.service.SET_PROFILE(this.user)
-        .then((res:any)=>{
-          if(res){
-            this.pop('success', 'profile created');
-          }else{
-            this.pop('error','error creating your profile');
-          }
-        })
-      }else{
-
         ///update database
         const _uProfile = Moralis.Object.extend("profile");
         const _query = new Moralis.Query(_uProfile);
         _query.equalTo('user',this.user);
         const results = await _query.first();
         //console.log(results);
-        if(results){
-          results.email = this._profile.controls.email.value;
-          results.name = this._profile.controls.name.value;
-          results.accountType = this._profile.controls.accountType.value;
-          results.preference = this._profile.controls.preference.value;
-          results.story = this._profile.controls.story.value;
-          results.heritage = this._profile.controls.heritage.value;
+          results.email = this._profile.controls.email.value || this.COLLECTOR.get('email');
+          results.name = this._profile.controls.name.value || this.COLLECTOR.get('name');
+          results.accountType = this._profile.controls.accountType.value || this.COLLECTOR.get('accountType');
+          results.preference = this._profile.controls.preference.value || this.COLLECTOR.get('preference');
+          results.story = this._profile.controls.story.value || this.COLLECTOR.get('story');
+          results.heritage = this._profile.controls.heritage.value || this.COLLECTOR.get('heritage');
+          results.gender = this._profile.controls.gender.value || this.COLLECTOR.get('gender');
           _query.save(results)
           .then((res:any)=>{
             if(res.length>0){
@@ -588,190 +470,25 @@ async editProfile(){
               this.pop('error', 'error creating your profile');
             }
           })
-        }else{
-
-          const _uProfile = Moralis.Object.extend("profile");
-          const _p = new _uProfile(this._profile.controls.email.value);
-
-          _p.save({
-
-            name:this._profile.controls.name.value,
-            email:this._profile.controls.email.value,
-            accountType:this._profile.controls.accountType.value,
-            preference:this._profile.controls.preference.value,
-            story:this._profile.controls.story.value,
-            heritage:this._profile.controls.heritage.value,
-            user:this.user
-
-          }).then(()=>{
-
-            this.pop('success', 'profile created');
-          })
-        }
-
       }
-
-    }
-  }
-}
-
-async editBlockchainProfile(){
-
-  const _uProfile = Moralis.Object.extend("profile");
-  const _query = new Moralis.Query(_uProfile);
-  _query.equalTo('user',this.user);
-  const results = await _query.first();
-  let heritage = results.get('heritage');
-// console.log(heritage);
-  this.service.SET_PROFILE(this.user,heritage)
-  .then((res:any)=>{
-    if(res.success){
-      this.pop('success', 'profile added to blockchain')
-    }else{
-      this.pop('error', res.msg)
-      // console.log(res);
-
-    }
-    // if(res){
-    //   this.pop('success', 'profile created');
-    // }else{
-    //   this.pop('error','error creating your profile');
-    // }
-  })
-}
-
-async SET_PROFILE(){
-  console.log("creating");
-
-  if(!this.user){
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'Connect your wallet 1st',
-      icon: 'error',
-      confirmButtonText: 'Close'
-    })
-
-  }else if(this.profile!=this.user){
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'You cannot edit this profile',
-      icon: 'error',
-      confirmButtonText: 'Close'
-    })
-  }else if(!this._profile.controls.name.value){
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'enter your cool user name',
-      icon: 'error',
-      confirmButtonText: 'Close'
-    })
-  }else if(!this._profile.controls.email.value){
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'enter your email',
-      icon: 'error',
-      confirmButtonText: 'Close'
-    })
-  }else if(!this._profile.controls.accountType.value){
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'are you a collector or creator?',
-      icon: 'error',
-      confirmButtonText: 'Close'
-    })
-  }else if(!this._profile.controls.preference.value){
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'what is your art preference?',
-      icon: 'error',
-      confirmButtonText: 'Close'
-    })
-  }else if(!this._profile.controls.story.value){
-
-    Swal.fire({
-      title: 'Error!',
-      text: 'what is your story?',
-      icon: 'error',
-      confirmButtonText: 'Close'
-    })
-  }else{
-
-    const _uProfile = Moralis.Object.extend("profile");
-    const _query = new Moralis.Query(_uProfile);
-    _query.equalTo('email',this._profile.controls.email.value)
-    const results = await _query.find();
-
-    if(results.length>0){
-      ///email in use
-      this.pop('error','that email is in use');
-
-    }else{
-      _query.equalTo('name',this._profile.controls.name.value);
-      const results = await _query.find();
-      if(results>0){
-        //name in use
-        this.pop('error','user name taken');
-
-      }else{
-
-        const _p = new _uProfile(this._profile.controls.email.value);
-
-        _p.save({
-
-          name:this._profile.controls.name.value,
-          email:this._profile.controls.email.value,
-          accountType:this._profile.controls.accountType.value,
-          preference:this._profile.controls.preference.value,
-          story:this._profile.controls.story.value,
-          user:this.user,
-          realName:this._profile.controls.realName.value,
-          heritage:this._profile.controls.heritage.value
-
-        })
-        .then((res:any)=>{
-          // console.log(res);
-          console.log("sending to back");
-          this.service.SET_PROFILE(this.user,this._profile.controls.heritage.value)
-          .then((res:any)=>{
-            if(res){
-              this.pop('success', 'profile created');
-            }else{
-              this.pop('error','error creating your profile');
-            }
-          })
-
-        },(error)=>{
-          this.pop('error', error);
-        })
-
-      }
-    }
-
-  }
 }
 
 async SETAVATAR(){
 
   let avatar = this._editProfile.controls.avatar.value;
-  let cover = this._editProfile.controls.cover.value;
+  //let cover = this._editProfile.controls.cover.value;
   this.service.GET_NFT_BALANCE(this.user,avatar)
   .then((res:any)=>{
     if(res<1){
       this.pop('error', 'you don\'t own this avatar nft or you have it listed for sale');
     }else{
-      this.service.GET_NFT_BALANCE(this.user,cover)
-      .then((res:any)=>{
-        if(res<1){
-          this.pop('error', 'you don\'t own this cover nft or you have it listed for sale');
-
+      this.service.SET_AVATAR(this.user,avatar,this.COLLECTOR.get('heritage'),this.COLLECTOR.get('gender'))
+      .then(async(res:any)=>{
+        if(res.success){
+          this.pop('success', 'updating avatar')
         }else{
-          this.service.SET_AVATAR()
+          this.pop('error', res.msg)
+
         }
       })
     }

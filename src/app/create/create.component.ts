@@ -51,12 +51,14 @@ export class CreateComponent implements OnInit {
   showEnableHANDNFT:boolean;
   ALBUMID:any;
   ALBUM:any;
+  ALBUMCOUNT:any
   pass:boolean;
   lat:any;
   lng:any;
   useThisId = 0;
   mintPass = 0
   fileUploading:boolean;
+  COLLECTOR:any;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
 

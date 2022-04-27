@@ -1,10 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ViewChildren, QueryList, NgZone, ChangeDetectionStrategy, ChangeDetectorRef } from "@angular/core";
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import {  Router, ActivatedRoute, ParamMap } from '@angular/router'
 
-const mailjet = require('node-mailjet').connect(
-  environment.MJ_APIKEY_PUBLIC,
-  environment.MJ_APIKEY_PRIVATE
-)
+import { environment } from '../../environments/environment';
+import { SERVICE } from '../service/web3.service';
+const axios = require('axios');
+const Moralis = require('moralis');
+
+// const mailjet = require('node-mailjet').connect(
+//   environment.MJ_APIKEY_PUBLIC,
+//   environment.MJ_APIKEY_PRIVATE
+// )
 @Component({
   selector: 'app-email',
   templateUrl: './email.component.html',
@@ -19,9 +25,13 @@ export class EmailComponent implements OnInit {
   message:any;
   name:any;
   nft_id:any;
+  service:any;
   NFT:any;
+  COLLECTOR:any;
 
-  constructor() { }
+  constructor(private _service: SERVICE,private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
+    this.service = _service;
+  }
 
   ngOnInit() {
 
@@ -32,7 +42,7 @@ export class EmailComponent implements OnInit {
 
   }
 
-  start(type:any,to:any){
+  async start(type:any,to:any){
 
     //1 = auction created
     //2 = bid placed
@@ -52,7 +62,7 @@ export class EmailComponent implements OnInit {
     this.email = this.COLLECTOR.get('email');
     this.name = this.COLLECTOR.get('name');
 
-    if(this.nft>0){
+    if(this.nft_id>0){
       this.service.GET_NFT(this.nft_id,0)
       .then(async(jordi:any)=>{
         //console.log(jordi)
@@ -117,33 +127,33 @@ export class EmailComponent implements OnInit {
 
   async send(email:any,name:any,subject:any,message:any){
 
-    const request = mailjet.post('send', { version: 'v3.1' }).request({
-        Messages: [
-          {
-            From: {
-              Email: 'cs@nftea.app',
-              Name: 'NFTea.app',
-            },
-            To: [
-              {
-                Email: email,
-                Name: name,
-              },
-            ],
-            Subject: subject,
-            //TextPart: 'Greetings from Mailjet!',
-            HTMLPart:
-              message,
-          },
-        ],
-      })
-      request
-        .then(result => {
-          console.log(result.body)
-        })
-        .catch(err => {
-          console.log(err.statusCode)
-        })
+    // const request = mailjet.post('send', { version: 'v3.1' }).request({
+    //     Messages: [
+    //       {
+    //         From: {
+    //           Email: 'cs@nftea.app',
+    //           Name: 'NFTea.app',
+    //         },
+    //         To: [
+    //           {
+    //             Email: email,
+    //             Name: name,
+    //           },
+    //         ],
+    //         Subject: subject,
+    //         //TextPart: 'Greetings from Mailjet!',
+    //         HTMLPart:
+    //           message,
+    //       },
+    //     ],
+    //   })
+    //   request
+    //     .then(result => {
+    //       console.log(result.body)
+    //     })
+    //     .catch(err => {
+    //       console.log(err.statusCode)
+    //     })
   }
 
 }

@@ -84,7 +84,7 @@ async GET_WEB3(): Promise<any>{
             if(results){
 
               results.set('active',1);
-              resutls.set('pending',0);
+              results.set('pending',0);
               results.save();
 
             }
@@ -105,7 +105,7 @@ async GET_WEB3(): Promise<any>{
             if(results){
 
               results.set('active',0);
-              resutls.set('pending',0);
+              results.set('pending',0);
               results.save();
 
             }
@@ -884,6 +884,7 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
+
   public GET_BID_ACCEPTED(_nft:any,_owner:any,_bidder:any): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -2037,23 +2038,7 @@ async GET_WEB3(): Promise<any>{
 
     })
   }
-  public GET_AUCTION(_host:any, _nft:any): Promise<any>{
-    return new Promise(async (resolve, reject)=>{
-      try {
 
-        await this.GET_WEB3();
-        let contract = new this.web3.eth.Contract(ABITEASHOP, TEASHOP);
-        let result = await contract.methods.GET_AUCTION(_nft,_host).call();
-        // console.log(result)
-        resolve(result);
-
-      } catch (error) {
-        console.log(error);
-      }
-
-
-    })
-  }
   public GET_STIR(_nft: any): Promise<any> {
     return new Promise(async (resolve, reject) => {
 

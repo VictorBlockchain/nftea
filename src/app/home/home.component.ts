@@ -40,7 +40,6 @@ export class HomeComponent implements OnInit {
   isMobile:boolean;
   @Input() user = '';
   COLLECTOR:any;
-  AUCTION:any;
 
   constructor(private deviceService: DeviceDetectorService,private formBuilder: FormBuilder,private _service: SERVICE,private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
     this.connected = false;

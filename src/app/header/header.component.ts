@@ -147,7 +147,7 @@ export class HeaderComponent implements OnInit {
     this.pop('success','logging you out')
     this.connected = false
     this.user = null;
-    this.satoBalance = 0;
+    this.teaBalance = 0;
     localStorage.clear();
     this.session.emit(null);
 

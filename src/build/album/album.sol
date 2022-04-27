@@ -1490,7 +1490,7 @@ contract COLLECTION  {
         _A[_Aid] = save;
         (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
         if(_a>0){
-          uint256 _p = 5000;
+          uint256 _p = 1500;
           i1155(TEAPASS).setPower(msg.sender,_p,1);
 
         }

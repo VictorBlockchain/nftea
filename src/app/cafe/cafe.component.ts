@@ -22,7 +22,7 @@ export class CafeComponent implements OnInit {
 
 
   _content: FormGroup;
-
+  _allow:FormGroup;
   userIsConnected:any;
   user:any;
   connected:boolean;
@@ -168,16 +168,16 @@ export class CafeComponent implements OnInit {
     // },3000)
   }
 
-  async UPLOAD(){
+  async UPLOAD(event:any){
 
     this.fileUploading = true;
     let toFile = event.target.files[0]
     const imageFile = new Moralis.File(toFile.name,toFile)
     await imageFile.saveIPFS();
-    this.imageURI= await imageFile.ipfs();
+    let imageURI= await imageFile.ipfs();
     this.zone.run(()=>{
 
-        this.media = this.imageURI
+        this.media = imageURI
         if(this.media){
           this.fileUploading = false;
           this.pop('success', 'file uploaded');

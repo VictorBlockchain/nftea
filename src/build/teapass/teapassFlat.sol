@@ -1490,9 +1490,9 @@ contract TEAPASS {
     address public HONEY;
     address public ALBUM;
     address public burn = 0x000000000000000000000000000000000000dEaD;
-    uint256 public powerMul = 2;
+    uint256 public powerDiv = 3;
     uint256 public upgradePowerNFT = 0;
-    uint256 public upgradePower = 1500000*10**9;
+    uint256 public upgradePower = 15000*10**9;
     bool public isPaused;
 
     constructor(address _nftea) {
@@ -1516,9 +1516,13 @@ contract TEAPASS {
         isPaused = false;
       }
     }
+    function setPowerDiv (uint256 _div) public {
+      require(isA[msg.sender], 'you are not an admin');
+      powerDiv = _div;
+    }
     function allowConnections(uint256 _nft) public {
 
-      require(_C[msg.sender]._power>=100000*10**9, 'your power is too low');
+      require(_C[msg.sender]._power>=10000*10**9, 'your power is too low');
       require(!isBANNED[msg.sender], 'you are banned');
       _H2_allowConnections[msg.sender] = true;
       _H2_nftToConnect[msg.sender] = _nft;
@@ -1535,7 +1539,7 @@ contract TEAPASS {
 
     function setProfile(uint256 _avatar, uint256 _cover, uint256 _heritage, uint256 _gender)public {
       require(i1155(NFTEA).balanceOf(msg.sender,_avatar)>0,'you do not own this avatar');
-      uint256  _pwr = 100000*10**9;
+      uint256  _pwr = 1000*10**9;
       if(_avatar==upgradePowerNFT && !powerUpgraded[msg.sender][upgradePowerNFT]){
         _pwr = upgradePower.add(_pwr);
         powerUpgraded[msg.sender][upgradePowerNFT] = true;
@@ -1631,8 +1635,14 @@ contract TEAPASS {
       uint256 _pwr = _value*10**9;
       if(_type==1){
 
-        _C[_collector]._power = _C[_collector]._power.add(_pwr);
+        if(_C[_collector]._power.add(_pwr)>1000000*10**9){
+          _C[_collector]._power = 1000000*10**9;
 
+        }else{
+
+          _C[_collector]._power = _C[_collector]._power.add(_pwr);
+
+        }
       }else{
 
           if(_C[_collector]._power.sub(_pwr)<0){
@@ -1688,7 +1698,7 @@ contract TEAPASS {
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
 
           _timeConnected = 7200;
-          uint256 _pwr = 100000;
+          uint256 _pwr = 25000;
           if(_C[msg.sender]._power.sub(_pwr)>0){
             _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
           }else{
@@ -1739,23 +1749,23 @@ contract TEAPASS {
       if(_C2_H_end[msg.sender][_host]<block.timestamp){
 
         _timeConnected = 7200;
-        _pwr = 100000;
+        _pwr = 10000;
 
 
       }else{
 
         _timeConnected = block.timestamp.sub(_C2_H_start[msg.sender][_host]);
-        _pwr = 10000;
+        _pwr = 25000;
       }
       _timeConnected = _timeConnected.div(60);
-      uint256 _value = _timeConnected.mul(_C[msg.sender]._power);
+      uint256 _P = _C[msg.sender]._power.mul(powerDiv).div(100);
+      uint256 _value = _timeConnected.mul(_P);
       uint256 bal = IERC20(TOKEN).balanceOf(TEAPOT);
       if(bal>_value){
-        _value = bal.mul(20).div(100);
+        _value = bal.mul(3).div(100);
       }
       bool success =  i1155(TEAPOT).disValueTeaPass(_host,_value, _token);
-      if(success){
-
+      require(success, 'tea pot payout failed');
         _C2_Hosts[msg.sender][_host] = _C2_Hosts[msg.sender][_host].add(_value);
         _H2_connected[_host] = _H2_connected[_host].sub(1);
         _H2_earnings[_host] = _H2_earnings[_host].add(_value);
@@ -1768,7 +1778,6 @@ contract TEAPASS {
         }else{
           _C[msg.sender]._power = 0;
         }
-      }
       emit passDissConnected(msg.sender,_host);
 
     }
