@@ -1698,7 +1698,7 @@ contract TEAPASS {
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
 
           _timeConnected = 7200;
-          uint256 _pwr = 25000;
+          uint256 _pwr = 5000;
           if(_C[msg.sender]._power.sub(_pwr)>0){
             _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
           }else{
@@ -1755,7 +1755,7 @@ contract TEAPASS {
       }else{
 
         _timeConnected = block.timestamp.sub(_C2_H_start[msg.sender][_host]);
-        _pwr = 25000;
+        _pwr = 500;
       }
       _timeConnected = _timeConnected.div(60);
       uint256 _P = _C[msg.sender]._power.mul(powerDiv).div(100);

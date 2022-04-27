@@ -867,8 +867,8 @@ contract TEA_SHOP {
         buyer = msg.sender;
       }
       IERC1155(NFTEA).safeTransferFrom(address(this),buyer,_nft,quantity,'');
-      IERC1155(TEAPASS).setPower(buyer,150000,1);
-      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,100000,1);
+      IERC1155(TEAPASS).setPower(buyer,5000,1);
+      IERC1155(TEAPASS).setPower(nftToHostToAuction[_nft][_host].seller,2500,1);
       IERC20(TOKEN).setIsWalletLimitExempt(buyer,true);
       nftToHostToBidderAccepted[_nft][_host][buyer] = true;
       if(nftToHostToAuction[_nft][_host].quantity.sub(1)<1){
