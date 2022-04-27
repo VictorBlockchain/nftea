@@ -407,17 +407,31 @@
 								</div>
 							</div>
 
-							<div class="dashed_box bg_white mt-30" *ngIf="!showPowerUpgrade && nft_id!=1">
-								<div class="row mt-20">
+							<div class="dashed_box bg_white mt-10" *ngIf="!showPowerUpgrade && nft_id!=1">
+								<div class="row">
 									<h4 class="text-center">Brew pot</h4>
-									<p class="text-center">This NFT gets you access to the assets in this brew pot address</p>
-									<div class="col text-center">
+									<div class="creator_item creator_card space-y-10 is_big" *ngIf="VAULT && VAULT.length>0">
+															<div class="avatars flex-column space-y-10">
+																<div class="media has_border">
+																		<img src="assets/img/icons/cup_blue_256.png" alt="Avatar" class="avatar avatar-md">
+																	<div class="has_number top">
+																		{{VAULT.length}}
+																	</div>
+																</div>
+																<div class="text-center" *ngFor="let data of VAULT">
+																	<p class="avatars_name medium color_black">{{data.name}}</p>
+																	<span class="sales color_text" >{{data.symbol}}: {{data.balance/1000000000 | number:'1.0-9'}}</span>
+																</div>
+															</div>
+														</div>
+									<div class="col text-center pt-2">
 										<a href="https://bscscan.com/address/{{NFT.teapot}}" target="_blank"><span>{{NFT.teapot || 'no brew pot'}}</span></a>
 									</div>
 									<p class="text-center mt-3">on brew date</p>
 									<h4 class="text-center">{{BREWDATE(NFT.brewDate) | date:'short'}}</h4>
 									<p class="text-center mt-10"><a href="javascript: void(0)" data-toggle="modal" data-target="#redeem_brew">withdraw brew</a></p>
 								</div>
+
 						<!-- <div class="row">
 
 							<div class="col-lg-12">

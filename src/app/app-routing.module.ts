@@ -87,7 +87,7 @@ const routes: Routes = [
     .then(mod => mod.ReferModule)
 },
 {
-  path: 'email/:type:/:to',
+  path: 'email/:type:/:to/:nft',
   loadChildren: () => import('./email/email.module')
     .then(mod => mod.EmailModule)
 },

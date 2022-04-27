@@ -171,18 +171,10 @@ export class ProfileComponent implements OnInit {
       for (let i = 0; i < loop.length; i++) {
         const element = loop[i];
         let ipfs:any;
-          if(element.token_uri){
+        let url = element.token_uri;
+        url = url.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
 
-           ipfs = await axios.get(element.token_uri);
-
-          }else{
-
-            let NFTDETAILS = await this.service.GET_NFT(element.token_id,null);
-            //console.log(NFTDETAILS.ipfs)
-            ipfs = await axios.get(NFTDETAILS.ipfs);
-            //ipfs = NFTDETAILS.ipfs;
-
-          }
+           ipfs = await axios.get(url);
 
             let isWrapped = await this.service.GET_WRAP(element.token_id);
             let q;
@@ -210,7 +202,7 @@ export class ProfileComponent implements OnInit {
       if(res.length>0){
         for (let i = 0; i < res.length; i++) {
           const element = res[i];
-          console.log(element)
+          //console.log(element)
 
           DATA.auction = await this.service.GET_AUCTION_ID(element);
         //  console.log(DATA.auction)

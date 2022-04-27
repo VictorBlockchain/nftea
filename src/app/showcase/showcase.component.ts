@@ -70,6 +70,7 @@ export class ShowcaseComponent implements OnInit {
   COLLECTOR:any;
   SELLER:any;
   COLLECTION:any;
+  VAULT:any;
   showPowerUpgrade:boolean;
 
   constructor(private formBuilder: FormBuilder, private _service: SERVICE, private zone: NgZone, private cd: ChangeDetectorRef,private route: ActivatedRoute,private router: Router) {
@@ -214,9 +215,14 @@ export class ShowcaseComponent implements OnInit {
             console.log('no response');
           }
           this.PRICE();
+
           this.GET_ALBUM(this.NFT.creator,this.NFT.collection._name);
           if(this.nft_id==1){
             this.checkPowerUp();
+          }
+          if(this.NFT.quantity==1){
+            this.getVault();
+
           }
           // console.log(this.NFT.auction);
         })
@@ -232,6 +238,14 @@ export class ShowcaseComponent implements OnInit {
     .then(async(res:any)=>{
       this.showPowerUpgrade = res;
       //console.log(res)
+    })
+  }
+
+  async getVault(){
+    this.service.GET_VAULT(this.NFT.teapot)
+    .then(async(res:any)=>{
+      this.VAULT = res;
+      console.log(res)
     })
   }
 

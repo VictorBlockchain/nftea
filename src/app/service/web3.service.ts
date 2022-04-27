@@ -684,6 +684,22 @@ async GET_WEB3(): Promise<any>{
       }
     })
   }
+  public GET_VAULT(_vault:any): Promise<string>{
+    return new Promise(async(resolve,reject)=>{
+      try {
+        await this.GET_WEB3();
+        const options = {
+          chain: environment.CHAIN,
+          address: _vault,
+          // to_block: "10253391",
+        };
+        const balances = await Moralis.Web3API.account.getTokenBalances(options);
+        resolve(balances);
+      } catch (error) {
+        console.log(error)
+      }
+    })
+  }
   public SET_PROFILE(user: any,heritage:any): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
