@@ -1620,10 +1620,10 @@ contract TEAPASS {
 
     }
 
-    function setPowerAdmin(uint256 _powermul, uint256 _upgradenft, uint256 _upgradepower) public {
+    function setPowerAdmin(uint256 _powerDiv, uint256 _upgradenft, uint256 _upgradepower) public {
 
         require(isA[msg.sender], 'you are not an admin');
-        powerMul = _powermul;
+        powerDiv = _powerDiv;
         upgradePowerNFT = _upgradenft;
         upgradePower = _upgradepower*10**9;
 
@@ -1698,7 +1698,7 @@ contract TEAPASS {
         if(_C2_H_end[msg.sender][_host]>block.timestamp){
 
           _timeConnected = 7200;
-          uint256 _pwr = 5000;
+          uint256 _pwr = 5000*10**9;
           if(_C[msg.sender]._power.sub(_pwr)>0){
             _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
           }else{
@@ -1749,19 +1749,19 @@ contract TEAPASS {
       if(_C2_H_end[msg.sender][_host]<block.timestamp){
 
         _timeConnected = 7200;
-        _pwr = 10000;
+        _pwr = 10000*10**9;
 
 
       }else{
 
         _timeConnected = block.timestamp.sub(_C2_H_start[msg.sender][_host]);
-        _pwr = 500;
+        _pwr = 500*10**9;
       }
       _timeConnected = _timeConnected.div(60);
       uint256 _P = _C[msg.sender]._power.mul(powerDiv).div(100);
       uint256 _value = _timeConnected.mul(_P);
       uint256 bal = IERC20(TOKEN).balanceOf(TEAPOT);
-      if(bal>_value){
+      if(bal<_value){
         _value = bal.mul(3).div(100);
       }
       bool success =  i1155(TEAPOT).disValueTeaPass(_host,_value, _token);
