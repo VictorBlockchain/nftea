@@ -1620,10 +1620,9 @@ contract TEAPASS {
 
     }
 
-    function setPowerAdmin(uint256 _powerDiv, uint256 _upgradenft, uint256 _upgradepower) public {
+    function setPowerAdmin(uint256 _upgradenft, uint256 _upgradepower) public {
 
         require(isA[msg.sender], 'you are not an admin');
-        powerDiv = _powerDiv;
         upgradePowerNFT = _upgradenft;
         upgradePower = _upgradepower*10**9;
 
@@ -1695,10 +1694,10 @@ contract TEAPASS {
         //get who this person is connected to
         address _host = _C2_H[msg.sender];
         uint256 _timeConnected = 0;
-        if(_C2_H_end[msg.sender][_host]>block.timestamp){
+        if(_C2_H_end[msg.sender][_host]<block.timestamp){
 
           _timeConnected = 7200;
-          uint256 _pwr = 5000*10**9;
+          uint256 _pwr = 1000*10**9;
           if(_C[msg.sender]._power.sub(_pwr)>0){
             _C[msg.sender]._power = _C[msg.sender]._power.sub(_pwr);
           }else{
@@ -1749,13 +1748,13 @@ contract TEAPASS {
       if(_C2_H_end[msg.sender][_host]<block.timestamp){
 
         _timeConnected = 7200;
-        _pwr = 10000*10**9;
+        _pwr = 1000*10**9;
 
 
       }else{
 
         _timeConnected = block.timestamp.sub(_C2_H_start[msg.sender][_host]);
-        _pwr = 500*10**9;
+        _pwr = 100*10**9;
       }
       _timeConnected = _timeConnected.div(60);
       uint256 _P = _C[msg.sender]._power.mul(powerDiv).div(100);
