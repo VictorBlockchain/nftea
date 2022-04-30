@@ -537,12 +537,12 @@ contract TEA_SHOP {
     }
   }
 
-  function adminStopAuction(uint256 _auction, uint256 _nft, address _host) public {
+  function adminStopAuction(uint256 _nft, address _host) public {
     require(isAdmin[msg.sender], 'you are not an admin');
 
     nftToHostToAuction[_nft][_host].status = 4;
-    auction[nftToHostToAuction[_nft][_host].id].status = 4;
-    auction[_auction].status = 4;
+    auction[nftToHostToAuction[_nft][_host].status = 4;
+    auction[auction[nftToHostToAuction[_nft][_host].id].status = 4;
     if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
 
       IERC20(TOKEN).transferFrom(nftToHostToAuction[_nft][_host].highestBidder,address(this), nftToHostToAuction[_nft][_host].highestBid);
@@ -800,6 +800,7 @@ contract TEA_SHOP {
       require(checkSuccess(), "End auction transfer failed");
       nftToHostToAuction[_nft][_host].status = 3;
       auction[nftToHostToAuction[_nft][_host].id].status = 3;
+      auction[auction[nftToHostToAuction[_nft][_host].id].status = 3;
       delete sellerToAuctions[_host][sellerToAuctionsIndex[_host][nftToHostToAuction[_nft][_host].id]];
       delete marketToAuctions[nftToHostToAuction[_nft][_host].market][marketToAuctionsIndex[nftToHostToAuction[_nft][_host].market][nftToHostToAuction[_nft][_host].id]];
       emit auctionClosed(msg.sender,nftToHostToAuction[_nft][_host].highestBidder,_nft);
@@ -888,6 +889,7 @@ contract TEA_SHOP {
       if(nftToHostToAuction[_nft][_host].quantity.sub(1)<1){
         nftToHostToAuction[_nft][_host].status = 2;
         auction[nftToHostToAuction[_nft][_host].id].status = 2;
+        auction[auction[nftToHostToAuction[_nft][_host].id].status = 2;
         nftToHostToAuction[_nft][_host].auctionEnd = block.timestamp;
         delete sellerToAuctions[_host][sellerToAuctionsIndex[_host][nftToHostToAuction[_nft][_host].id]];
         delete marketToAuctions[nftToHostToAuction[_nft][_host].market][marketToAuctionsIndex[nftToHostToAuction[_nft][_host].market][nftToHostToAuction[_nft][_host].id]];
