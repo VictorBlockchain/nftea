@@ -1440,6 +1440,7 @@ contract COLLECTION  {
         string _media;
         uint256 _category;
         uint256 _albumValue;
+        uint256 _nfts;
       }
 
       ALBUM[] public album;
@@ -1480,7 +1481,8 @@ contract COLLECTION  {
           _creator:msg.sender,
           _volume:0,
           _floor:0,
-          _albumValue:0
+          _albumValue:0,
+          _nfts: 0
         });
         _A[_Aid] = save;
 
@@ -1488,12 +1490,7 @@ contract COLLECTION  {
         _C2_As[msg.sender].push(_Aid);
         _C2_A2_index[msg.sender][_Aid] = _C2_As[msg.sender].length - 1;
         _A[_Aid] = save;
-        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
-        if(_a>0){
-          uint256 _p = 1500;
-          i1155(TEAPASS).setPower(msg.sender,_p,1);
 
-        }
         emit newAlbum(msg.sender,_Aid);
     }
 
@@ -1504,6 +1501,7 @@ contract COLLECTION  {
       _A2_N[_album].push(_nft);
       _A2_N2_index[_album][_nft] = _A2_N[_album].length - 1;
       _N2_A[_nft] = _album;
+      _A[_album]._nfts = _A2_N[_album].length;
       return true;
 
     }
@@ -1609,5 +1607,6 @@ contract COLLECTION  {
       _A[_album]._albumValue = _value;
 
     }
+
 
 }

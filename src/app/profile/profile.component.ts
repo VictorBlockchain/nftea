@@ -134,7 +134,7 @@ export class ProfileComponent implements OnInit {
               await this.service.GET_ALBUM(element)
               .then(async(res:any)=>{
                 this.ALBUMS.push(res)
-                // console.log(this.ALBUMS)
+                console.log(this.ALBUMS)
               })
             }
 
@@ -174,7 +174,15 @@ export class ProfileComponent implements OnInit {
         const element = loop[i];
         let ipfs:any;
         let url = element.token_uri;
-        url = url.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
+        if(url){
+          // console.log(element);
+          url = url.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
+
+        }else{
+
+          let jordi:any = await this.service.GET_NFT(element.token_id,0);
+          url = jordi.ipfs;
+        }
 
            ipfs = await axios.get(url);
 
@@ -317,6 +325,7 @@ export class ProfileComponent implements OnInit {
         gender:this._profile.controls.gender.value,
         avatar:0,
         cover:0,
+        verified:0,
         user:this.user
 
       }).then(()=>{

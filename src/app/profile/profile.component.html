@@ -219,9 +219,10 @@
 										<option value="art & all">Art & All</option>
 										<option value="music">Music</option>
 										<option value="prison art">Prison Art</option>
-										<option value="sexy women">Sexy Women</option>
-										<option value="sexy men">Sexy Men</option>
+										<option value="psychedelic">psychedelic</option>
+										<option value="religious">Religious</option>
 										<option value="coupons">Coupons</option>
+										<option value="poor Countries">Poor Countries</option>
 									</select>
 								</div>
 							</div>
@@ -334,9 +335,11 @@
 										<option value="art & all">Art & All</option>
 										<option value="music">Music</option>
 										<option value="prison art">Prison Art</option>
-										<option value="sexy women">Sexy Women</option>
-										<option value="sexy men">Sexy Men</option>
+										<option value="psychedelic">Psychedelic</option>
+										<option value="religious">Religious</option>
 										<option value="coupons">Coupons</option>
+										<option value="poor countries">Poor Countries</option>
+
 									</select>
 								</div>
 							</div>
@@ -373,6 +376,8 @@
 									<option value="european">European</option>
 									<option value="eastern european">Eastern European</option>
 									<option value="alien">Alien</option>
+									<option value="eastern european">Eastern European</option>
+
 								</select>
 							</div>
 					<div class="col-lg-12 col-md-12">
@@ -688,7 +693,6 @@
 			                        <th scope="col"><span>Volume</span></th>
 			                        <th scope="col"><span>Floor</span></th>
 			                        <th scope="col"><span>Value</span></th>
-			                        <th scope="col"><span>Owners</span></th>
 			                        <th scope="col"><span>NFTs</span></th>
 			                    </tr>
 			                </thead>
@@ -707,14 +711,13 @@
 																<span *ngIf="data._category==6">Art & All</span>
 																<span *ngIf="data._category==7">Music</span>
 																<span *ngIf="data._category==8">Prison</span>
-																<span *ngIf="data._category==9">Sexy Women</span>
-																<span *ngIf="data._category==10">Sexy Men</span>
+																<span *ngIf="data._category==9">psychedelic</span>
+																<span *ngIf="data._category==10">Religious</span>
 															</td>
 			                        <td><span class="color_green">{{data._volume/1000000000 | number:'1.0-9'}} TEA</span></td>
 			                        <td><span class="color_red">{{data._floor/1000000000 | number:'1.0-9'}} TEA</span></td>
 			                        <td><span>{{data._albumValue}}</span></td>
-			                        <td><span>0<span></span></span></td>
-			                        <td><span>0<span></span></span></td>
+			                        <td><span>{{data._nfts}}<span></span></span></td>
 			                    </tr>
 			                </tbody>
 			            </table>
@@ -757,7 +760,7 @@
 														</a>
 													</div> -->
 												<!-- </div>
-											</div> --> -->
+											</div> -->
 
 										</div>
 									</div>

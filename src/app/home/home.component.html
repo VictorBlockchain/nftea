@@ -21,18 +21,18 @@
 
               </li>
               <li> <a href="javascript: void(0)" (click)="changeMarket(2)">
-                      <i class="ri-layout-4-line orange" *ngIf="ACTIVE_TAB==2"></i>
-                      <i class="ri-layout-4-fill" *ngIf="ACTIVE_TAB!=2"></i> <span> Photography </span>
+                      <i class="ri-polaroid-line orange" *ngIf="ACTIVE_TAB==2"></i>
+                      <i class="ri-polaroid-fill" *ngIf="ACTIVE_TAB!=2"></i> <span> Photography </span>
                   </a>
 
               </li>
                 <li> <a href="javascript: void(0)" (click)="changeMarket(7)">
                   <i class="ri-music-2-line" *ngIf="ACTIVE_TAB==7"></i>
-                        <i class="ri-music-2-fill" *ngIf="ACTIVE_TAB!=7"></i> <span> Music </span>
+                        <i class="ri-music-2-fill" *ngIf="ACTIVE_TAB!=7"></i> <span> Music/Poems </span>
                     </a>
 
                 </li>
-                <li> <a href="javascript: void(0)" (click)="changeMarket(5)">
+                <li style="display:none"> <a href="javascript: void(0)" (click)="changeMarket(5)">
                   <i class="ri-film-line" *ngIf="ACTIVE_TAB==5"></i>
                         <i class="ri-film-fill" *ngIf="ACTIVE_TAB!=5"></i> <span> Film / Video </span>
                     </a>
@@ -52,14 +52,14 @@
 
                 </li>
                 <li> <a href="javascript: void(0)" (click)="changeMarket(9)">
-                  <i class="ri-women-line" *ngIf="ACTIVE_TAB==9"></i>
-                        <i class="ri-women-fill" *ngIf="ACTIVE_TAB!=9"></i> <span> Sexy Women </span>
+                  <i class="ri-footprint-line" *ngIf="ACTIVE_TAB==9"></i>
+                        <i class="ri-footprint-fill" *ngIf="ACTIVE_TAB!=9"></i> <span> Psychedelic </span>
                     </a>
 
                 </li>
                 <li> <a href="javascript: void(0)" (click)="changeMarket(10)">
-                  <i class="ri-men-line" *ngIf="ACTIVE_TAB==10"></i>
-                        <i class="ri-men-fill" *ngIf="ACTIVE_TAB!=10"></i> <span> Sexy Men </span>
+                  <i class="ri-book-line" *ngIf="ACTIVE_TAB==10"></i>
+                        <i class="ri-book-fill" *ngIf="ACTIVE_TAB!=10"></i> <span> Religious </span>
                     </a>
 
                 </li>
@@ -79,8 +79,12 @@
                   <i class="ri-book-line" *ngIf="ACTIVE_TAB==4"></i>
                         <i class="ri-book-fill" *ngIf="ACTIVE_TAB!=4"></i> <span> Cafe Wall </span>
                     </a>
-
                 </li>
+								<li> <a href="javascript: void(0)" (click)="changeMarket(12)">
+									<i class="ri-service-line" *ngIf="ACTIVE_TAB==12"></i>
+												<i class="ri-service-fill" *ngIf="ACTIVE_TAB!=12"></i> <span> Poor Countries </span>
+										</a>
+								</li>
 
             </ul>
           </div>

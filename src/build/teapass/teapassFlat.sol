@@ -1462,7 +1462,7 @@ contract TEAPASS {
       uint256 _power;
       uint256 _heritage;
       uint256 _gender;
-
+      bool _verified;
     }
     COLLECTOR[] public collectors;
     mapping(address=>COLLECTOR) public _C;
@@ -1482,6 +1482,7 @@ contract TEAPASS {
     mapping(address=>mapping(uint256=>bool)) public powerUpgraded;
     mapping(address=>uint256) public _H2_earnings;
     mapping(address=>bool) public isBANNED;
+    mapping(address=>bool) public canVerify;
 
     address public TOKEN;
     address public TEASHOP;
@@ -1500,6 +1501,7 @@ contract TEAPASS {
         NFTEA = _nftea;
         isC[NFTEA] = true;
         isA[msg.sender] = true;
+        canVerify[msg.sender] = true;
 
     }
 
@@ -1550,15 +1552,26 @@ contract TEAPASS {
         _cover:_cover,
         _heritage:_heritage,
         _power:_pwr,
-        _gender:_gender
+        _gender:_gender,
+        _verified:false;
       });
       _C[msg.sender] = save;
       emit collectorAdded(msg.sender, _avatar, _cover, _heritage, _gender);
     }
 
-    function getProfile(address _collector) public view returns(uint256,uint256,uint256,uint256,uint256){
+    function verify(address _collector, bool _value) public {
+      require(canVerify[msg.sender], 'you are not that cool');
+      _C[_collector]._verified = _value;
 
-      return (_C[_collector]._avatar,_C[_collector]._cover,_C[_collector]._heritage,_C[_collector]._power,_C[_collector]._gender);
+    }
+    function setVerifier(address _verifier, bool _value) public {
+      require(isA[msg.sender], 'you are not an admin');
+      canVerify[_verifier] = _value;
+
+    }
+    function getProfile(address _collector) public view returns(uint256,uint256,uint256,uint256,uint256,uint256){
+
+      return (_C[_collector]._avatar,_C[_collector]._cover,_C[_collector]._heritage,_C[_collector]._power,_C[_collector]._gender,_C[_collector]._verified);
 
     }
 
@@ -1683,6 +1696,7 @@ contract TEAPASS {
     function connectPass(address _to, address _token) public {
 
       require(_H2_allowConnections[_to],'this host is not accepting connections');
+      require(_C[msg.sender]._power>=2500*10**9, 'your power is too low');
       require(!isBANNED[msg.sender], 'you are banned');
       require(!isPaused, 'tea pass paused');
 

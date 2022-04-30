@@ -130,6 +130,11 @@
 				"internalType": "uint256",
 				"name": "_albumValue",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_nfts",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -393,6 +398,11 @@
 				"internalType": "uint256",
 				"name": "_albumValue",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_nfts",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -507,6 +517,11 @@
 					{
 						"internalType": "uint256",
 						"name": "_albumValue",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_nfts",
 						"type": "uint256"
 					}
 				],
@@ -691,6 +706,19 @@
 				"type": "bool"
 			}
 		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_nftea",
+				"type": "address"
+			}
+		],
+		"name": "setNFTEA",
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},

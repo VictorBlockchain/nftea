@@ -184,6 +184,7 @@ export class ShowcaseComponent implements OnInit {
             this.SELLER.power = s[3];
             this.SELLER.heritage = s[2];
             this.SELLER.gender = s[4];
+            this.SELLER.verified = s[5];
 
             let c:any = await this.service.GET_PROFILE1(this.user);
             if(s[0]==0){
@@ -609,6 +610,15 @@ export class ShowcaseComponent implements OnInit {
       Swal.fire({
         title: 'Error!',
         text: 'buy now price should not be less than reserve price',
+        icon: 'error',
+        confirmButtonText: 'Close'
+      });
+
+    }else if(this._auction.controls.market.value==12 && this.SELLER.verified<1){
+
+      Swal.fire({
+        title: 'Error!',
+        text: 'verify your account to sell in this market',
         icon: 'error',
         confirmButtonText: 'Close'
       });

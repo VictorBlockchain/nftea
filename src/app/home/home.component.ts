@@ -225,7 +225,7 @@ export class HomeComponent implements OnInit {
       }
       if(_market==7){
         this.ACTIVE_TAB = 7;
-        this.TAB_NAME = 'Music'
+        this.TAB_NAME = 'Music/Poems'
 
       }
       if(_market==8){
@@ -235,12 +235,22 @@ export class HomeComponent implements OnInit {
       }
       if(_market==9){
         this.ACTIVE_TAB = 9;
-        this.TAB_NAME = 'Sexy Women'
+        this.TAB_NAME = 'Psychedelic'
 
       }
       if(_market==10){
         this.ACTIVE_TAB = 10;
-        this.TAB_NAME = 'Sexy Men'
+        this.TAB_NAME = 'Religious'
+
+      }
+      if(_market==11){
+        this.ACTIVE_TAB = 11;
+        this.TAB_NAME = 'Coupons'
+
+      }
+      if(_market==12){
+        this.ACTIVE_TAB = 12;
+        this.TAB_NAME = 'Poor Countries'
 
       }
   }
