@@ -537,6 +537,20 @@ contract TEA_SHOP {
     }
   }
 
+  function adminStopAuction(uint256 _auction, uint256 _nft, address _host) public {
+    require(isAdmin[msg.sender], 'you are not an admin');
+
+    nftToHostToAuction[_nft][_host].status = 4;
+    auction[nftToHostToAuction[_nft][_host].id].status = 4;
+    auction[_auction].status = 4;
+    if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
+
+      IERC20(TOKEN).transferFrom(nftToHostToAuction[_nft][_host].highestBidder,address(this), nftToHostToAuction[_nft][_host].highestBid);
+      IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].seller,_nft,nftToHostToAuction[_nft][_host].quantity,'');
+
+    }
+
+  }
   function setAddress() public {
 
       require(isAdmin[msg.sender], 'you are not an admin');
