@@ -559,7 +559,7 @@ export class ShowcaseComponent implements OnInit {
   }
 
   async SET_AUCTION(){
-
+// console.log(this.SELLER)
     if(!this.user){
 
       Swal.fire({
@@ -614,7 +614,7 @@ export class ShowcaseComponent implements OnInit {
         confirmButtonText: 'Close'
       });
 
-    }else if(this._auction.controls.market.value==12 && this.SELLER.verified<1){
+    }else if(this._auction.controls.market.value==12 && (this.SELLER.verified<1 || !this.SELLER.verified)){
 
       Swal.fire({
         title: 'Error!',
@@ -627,7 +627,7 @@ export class ShowcaseComponent implements OnInit {
 
       let buyNow = this._auction.controls.buyNowValue.value;
       let minPrice = this._auction.controls.value.value;
-      console.log(this.NFT)
+      // console.log(this.NFT)
       this.service.SET_AUCTION(this.user,this.nft_id,buyNow,minPrice,this.NFT.partners,this.NFT.sips,this._auction.controls.quantity.value,this.NFT.royalty,this.NFT.shop.taxPartners,this.NFT.shop.taxSips,this.NFT.partners[0],this._auction.controls.market.value)
       .then((data:any)=>{
       // console.log(data)

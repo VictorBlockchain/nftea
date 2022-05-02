@@ -112,6 +112,7 @@ export class HomeComponent implements OnInit {
   async start(_market:any){
 
     console.log("starting " + _market);
+    this.NFT = []
     //get profile from database
     this.service.LISTENSHOP();
     const _uProfile = Moralis.Object.extend("profile");
@@ -187,6 +188,7 @@ export class HomeComponent implements OnInit {
       this.NFT = []
 
       setTimeout(() => {
+
         this.start(_market);
       }, 500);
     })

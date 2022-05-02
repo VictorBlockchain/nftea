@@ -203,7 +203,7 @@ export class ProfileComponent implements OnInit {
   }
 
   async getMyAuctions(){
-
+    console.log('getting my auctions');
     this.AUCTIONS = [];
     let NFTEA:any;
     NFTEA = [];
@@ -218,10 +218,15 @@ export class ProfileComponent implements OnInit {
 
           DATA.auction = await this.service.GET_AUCTION_ID(element);
         //  console.log(DATA.auction)
-          if(DATA.auction.active==true){
+          if(DATA.auction.status==1){
             this.AUCTIONCOUNT+=1;
             let r:any = await this.service.GET_NFT(DATA.auction.nft,'null');
-            let ipfs = await axios.get(r.ipfs);
+            let url = r.ipfs;
+            if(url){
+              // console.log(element);
+              url = url.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
+            }
+            let ipfs = await axios.get(url);
             DATA.nft = ipfs.data
             this.AUCTIONS.push(DATA);
           }

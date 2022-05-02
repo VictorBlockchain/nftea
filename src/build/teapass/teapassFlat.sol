@@ -1553,7 +1553,7 @@ contract TEAPASS {
         _heritage:_heritage,
         _power:_pwr,
         _gender:_gender,
-        _verified:false;
+        _verified:false
       });
       _C[msg.sender] = save;
       emit collectorAdded(msg.sender, _avatar, _cover, _heritage, _gender);
@@ -1569,7 +1569,7 @@ contract TEAPASS {
       canVerify[_verifier] = _value;
 
     }
-    function getProfile(address _collector) public view returns(uint256,uint256,uint256,uint256,uint256,uint256){
+    function getProfile(address _collector) public view returns(uint256,uint256,uint256,uint256,uint256,bool){
 
       return (_C[_collector]._avatar,_C[_collector]._cover,_C[_collector]._heritage,_C[_collector]._power,_C[_collector]._gender,_C[_collector]._verified);
 
@@ -1724,10 +1724,14 @@ contract TEAPASS {
 
         }
         _timeConnected = _timeConnected.div(60);
-        uint256 _value = _timeConnected.mul(_C[msg.sender]._power);
-
+        uint256 _P = _C[msg.sender]._power.mul(powerDiv).div(100);
+        uint256 _value = _timeConnected.mul(_P);
+        uint256 bal = IERC20(TOKEN).balanceOf(TEAPOT);
+        if(bal<_value){
+          _value = bal.mul(2).div(100);
+        }
         bool success =  i1155(TEAPOT).disValue(_host,_value, _token);
-        if(success){
+        require(success, 'teapot disvalue1 too error');
 
           _C2_Hosts[msg.sender][_host] = _C2_Hosts[msg.sender][_host].add(_value);
           _H2_earnings[_host] = _H2_earnings[_host].add(_value);
@@ -1736,7 +1740,6 @@ contract TEAPASS {
           _C2_H_start[msg.sender][_to] = block.timestamp;
           _C2_H_end[msg.sender][_to] = block.timestamp + 4 hours;
           _H2_connected[_to] = _H2_connected[_to].add(1);
-        }
       }else{
 
           _C2_H[msg.sender] = _to;
@@ -1778,7 +1781,7 @@ contract TEAPASS {
         _value = bal.mul(3).div(100);
       }
       bool success =  i1155(TEAPOT).disValueTeaPass(_host,_value, _token);
-      require(success, 'tea pot payout failed');
+      require(success, 'teapot disvalue2 too error');
         _C2_Hosts[msg.sender][_host] = _C2_Hosts[msg.sender][_host].add(_value);
         _H2_connected[_host] = _H2_connected[_host].sub(1);
         _H2_earnings[_host] = _H2_earnings[_host].add(_value);

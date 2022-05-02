@@ -542,13 +542,10 @@ contract TEA_SHOP {
 
     nftToHostToAuction[_nft][_host].status = 4;
     auction[nftToHostToAuction[_nft][_host].id].status = 4;
-    if(nftToHostToAuction[_nft][_host].highestBidder!=nftToHostToAuction[_nft][_host].seller){
-
-      IERC20(TOKEN).transferFrom(nftToHostToAuction[_nft][_host].highestBidder,address(this), nftToHostToAuction[_nft][_host].highestBid);
-      IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].seller,_nft,nftToHostToAuction[_nft][_host].quantity,'');
-
-    }
-
+    IERC20(TOKEN).transferFrom(nftToHostToAuction[_nft][_host].highestBidder,address(this), nftToHostToAuction[_nft][_host].highestBid);
+    IERC1155(NFTEA).safeTransferFrom(address(this),nftToHostToAuction[_nft][_host].seller,_nft,nftToHostToAuction[_nft][_host].quantity,'');
+    delete sellerToAuctions[_host][sellerToAuctionsIndex[_host][nftToHostToAuction[_nft][_host].id]];
+    delete marketToAuctions[nftToHostToAuction[_nft][_host].market][marketToAuctionsIndex[nftToHostToAuction[_nft][_host].market][nftToHostToAuction[_nft][_host].id]];
   }
   function setAddress() public {
 

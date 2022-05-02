@@ -1348,7 +1348,7 @@ interface i1155 is IERC1155{
     function disValue(address _contract, uint256 _value, address _token) external returns (bool);
     function setPower(address _user,uint256 _power, uint256 _type) external returns (bool);
     function _N2_V(uint256 _nft) external returns(address);
-    function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
+    function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256,bool);
     function getADDRESSES() external returns(address,address,address,address,address,address,address,address);
 
 
@@ -1489,17 +1489,18 @@ contract Honey  {
 
       address _contract = i1155(NFTEA)._N2_V(_nft);
       require(_Coll2_N2_H[msg.sender][_nft]<1, 'you already added honey');
-             (,,,uint256 _power,) = i1155(TEAPASS).getProfile(msg.sender);
-      require(_power>300000000000000,'you do not have that much power');
+             (,,,uint256 _power,,) = i1155(TEAPASS).getProfile(msg.sender);
+      require(_power<10000*10**9,'you do not have that much power');
       uint256 bal = IERC20(TEATOKEN).balanceOf(TEAPOT);
-      require(bal>=_power, 'teapot is low');
+      uint256 _value = _power.mul(5).div(100);
+      require(bal>_value, 'teapot is low');
 
-        bool success = i1155(TEAPOT).disValue(_contract,_power,TEATOKEN);
-        if(success){
+        bool success = i1155(TEAPOT).disValue(_contract,_value,TEATOKEN);
+        require(success, 'teapot distribution failed');
 
-            honeyId = honeyId.add(1);
+          honeyId = honeyId.add(1);
 
-          _Coll2_N2_H[msg.sender][_nft] = _power;
+          _Coll2_N2_H[msg.sender][_nft] = _value;
 
           _Con2_hId[_contract].push(honeyId);
           _N2_hId[_nft].push(honeyId);
@@ -1515,8 +1516,7 @@ contract Honey  {
           });
 
           _H2_stir[honeyId].push(save);
-          i1155(TEAPASS).setPower(msg.sender,5000,2);
-        }
+          i1155(TEAPASS).setPower(msg.sender,100,2);
     }
 
     function getHoneyContract(address _contract) public view returns(uint256[] memory){

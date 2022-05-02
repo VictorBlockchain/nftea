@@ -1355,7 +1355,7 @@ interface i1155 is IERC1155{
     function payArtist(uint256 _nft, uint256 _value) external returns(bool);
     function setVault(uint256 _nft, string memory _ipfs) external returns(address);
     function clearVault(uint256 _nft, uint256 _index) external returns(bool);
-    function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256);
+    function getProfile(address _collector) external returns(uint256,uint256,uint256,uint256,uint256,bool);
     function setNFT(uint256 _nft, uint256 _album, address _creator) external returns(bool);
     function getNFTALBUM(uint256 _nft) external returns(uint256);
 
@@ -1624,9 +1624,9 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
       require(_WN2_redeemCount[_wnft].sub(_count)>0, 'invalid redeem count');
       _WN2_redeemCount[_wnft] = _WN2_redeemCount[_wnft].sub(_count);
 
-      (,,,uint256 _p,) = i1155(TEAPASS).getProfile(msg.sender);
+      (,,,uint256 _p,,) = i1155(TEAPASS).getProfile(msg.sender);
       if(_p>0){
-
+        _p = _p.mul(10).div(100);
         i1155(TEAPOT).disValue(msg.sender,_p,TOKEN);
 
       }
@@ -1706,7 +1706,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
             userToReserveIds[_creator][_rIndex] = 0;
 
           }
-          (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+          (uint256 _a,,,,,) = i1155(TEAPASS).getProfile(msg.sender);
           if(_a>0){
 
           i1155(TEAPASS).setPower(msg.sender,mintPoints,1);
@@ -1789,7 +1789,7 @@ contract NFTEA is ERC1155, Ownable, Pausable, ERC1155Burnable, ERC1155Supply {
             userToReserveIds[msg.sender].push(_Nid);
             reserveIndex[_Nid][msg.sender] = i;
         }
-        (uint256 _a,,,,) = i1155(TEAPASS).getProfile(msg.sender);
+        (uint256 _a,,,,,) = i1155(TEAPASS).getProfile(msg.sender);
         if(_a>0){
 
         i1155(TEAPASS).setPower(msg.sender,reservePoints, 1);
