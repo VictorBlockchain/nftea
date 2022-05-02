@@ -172,6 +172,8 @@ export class ProfileComponent implements OnInit {
       }
       for (let i = 0; i < loop.length; i++) {
         const element = loop[i];
+        // console.log(element);
+
         let ipfs:any;
         let url = element.token_uri;
         if(url){
@@ -181,7 +183,7 @@ export class ProfileComponent implements OnInit {
         }else{
 
           let jordi:any = await this.service.GET_NFT(element.token_id,0);
-          url = jordi.ipfs;
+          url = jordi.ipfs.replace('https://ipfs.moralis.io:2053/ipfs/', 'https://gateway.moralisipfs.com/ipfs/');
         }
 
            ipfs = await axios.get(url);
@@ -463,25 +465,31 @@ async editProfile(){
   }else{
 
         ///update database
-        const _uProfile = Moralis.Object.extend("profile");
-        const _query = new Moralis.Query(_uProfile);
-        _query.equalTo('user',this.user);
-        const results = await _query.first();
-        //console.log(results);
-          results.email = this._profile.controls.email.value || this.COLLECTOR.get('email');
-          results.name = this._profile.controls.name.value || this.COLLECTOR.get('name');
-          results.accountType = this._profile.controls.accountType.value || this.COLLECTOR.get('accountType');
-          results.preference = this._profile.controls.preference.value || this.COLLECTOR.get('preference');
-          results.story = this._profile.controls.story.value || this.COLLECTOR.get('story');
-          results.heritage = this._profile.controls.heritage.value || this.COLLECTOR.get('heritage');
-          results.gender = this._profile.controls.gender.value || this.COLLECTOR.get('gender');
-          _query.save(results)
-          .then((res:any)=>{
-            if(res.length>0){
-              this.pop('success','profile updated');
+          const _uProfile = Moralis.Object.extend("profile");
+          let _query = new Moralis.Query(_uProfile);
+          _query.equalTo('user',this.user);
+          _query.first()
+          .then(async(results:any)=>{
+            // console.log(results.get('user'))
+            if(results.get('user')){
+              results.set('active',1);
+              results.set('pending',0);
+              results.set('email', this._editProfile.controls.email.value || this.COLLECTOR.get('email'));
+              results.set('name', this._editProfile.controls.name.value || this.COLLECTOR.get('name'));
+              results.set('accountType', this._editProfile.controls.accountType.value || this.COLLECTOR.get('accountType'));
+              results.set('preference', this._editProfile.controls.preference.value || this.COLLECTOR.get('preference'));
+              results.set('story', this._editProfile.controls.story.value || this.COLLECTOR.get('story'));
+              results.set('heritage', this._editProfile.controls.heritage.value || this.COLLECTOR.get('heritage'));
+              results.set('gender', this._editProfile.controls.gender.value || this.COLLECTOR.get('gender'));
+              results.save()
+              .then(async(res)=>{
+                if(res){
+                  console.log(res.get('name'))
+                  this.pop('success','profile updated');
 
-            }else{
-              this.pop('error', 'error creating your profile');
+                }
+              })
+
             }
           })
       }
@@ -559,9 +567,9 @@ createForm(){
 
     name: [''],
     email:[''],
-    avatar:[''],
-    cover:[''],
-    country:[''],
+    gender:[''],
+    realName:[''],
+    accountType:[''],
     preference:[''],
     story:[''],
     heritage:[''],
